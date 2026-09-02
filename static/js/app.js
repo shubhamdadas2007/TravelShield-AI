@@ -27,6 +27,9 @@ document.addEventListener('DOMContentLoaded', () => {
     dateInput.value = today;
   }
 
+  // Check live backend API connectivity
+  checkBackendStatus(false);
+
   // Setup Firebase Auth State Listener with persistent session
   const savedUser = localStorage.getItem('travelshield_user');
   const isExplicitLogout = localStorage.getItem('travelshield_logged_out') === 'true';
@@ -649,9 +652,78 @@ Traveler says: "${text}"`
   typingDiv.remove();
   const aiMsg = document.createElement('div');
   aiMsg.style.cssText = "align-self: flex-start; background: white; border: 1px solid #e2e8f0; color: #0f172a; padding: 0.85rem 1rem; border-radius: 14px 14px 14px 2px; font-size: 0.85rem; max-width: 90%; word-break: break-word; line-height: 1.45; box-shadow: 0 2px 5px rgba(0,0,0,0.03);";
-  aiMsg.innerHTML = replyText.replace(/\n/g, '<br>');
+  aiMsg.innerHTML = `<div style="display:flex; align-items:center; gap:6px; margin-bottom:5px; font-size:0.75rem; font-weight:700; color:#4f46e5;">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M12 2C12 7.52285 7.52285 12 2 12C7.52285 12 12 16.4771 12 22C12 16.4771 16.4771 12 22 12C16.4771 12 12 7.52285 12 2Z" fill="url(#gemini-btn-icon-grad)"/></svg>
+    Gemini 3.6 Flash Concierge
+  </div>` + replyText.replace(/\n/g, '<br>');
   messagesContainer.appendChild(aiMsg);
   messagesContainer.scrollTop = messagesContainer.scrollHeight;
+}
+
+// ==============================================================
+// FASTAPI BACKEND SERVER CONNECTIVITY & HEALTH
+// ==============================================================
+let BACKEND_API_BASE = localStorage.getItem('backend_url') || 'http://127.0.0.1:8000';
+
+async function checkBackendStatus(notifyUser = false) {
+  const indicator = document.getElementById('backend-indicator');
+  const dot = document.getElementById('backend-dot');
+  const label = document.getElementById('backend-label');
+  const pill = document.getElementById('settings-backend-pill');
+  const urlInput = document.getElementById('backend-url-input');
+
+  if (urlInput) urlInput.value = BACKEND_API_BASE;
+
+  try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 2000);
+    const res = await fetch(`${BACKEND_API_BASE}/api/trips/1`, { signal: controller.signal });
+    clearTimeout(timeoutId);
+
+    if (res.ok) {
+      if (indicator) {
+        indicator.style.background = '#ecfdf5';
+        indicator.style.color = '#059669';
+        indicator.style.borderColor = '#a7f3d0';
+      }
+      if (dot) dot.style.background = '#10b981';
+      if (label) label.innerText = 'Backend: Connected (v2.3)';
+      if (pill) {
+        pill.className = 'status-pill confirmed';
+        pill.innerText = 'Connected (v2.3.0)';
+      }
+      if (notifyUser) showToast(`🟢 FastAPI Backend Connected: ${BACKEND_API_BASE}`, 'success');
+      return true;
+    }
+  } catch (e) {
+    // offline/github pages mode fallback
+  }
+
+  // If local backend is not currently active
+  if (indicator) {
+    indicator.style.background = '#eff6ff';
+    indicator.style.color = '#2563eb';
+    indicator.style.borderColor = '#bfdbfe';
+  }
+  if (dot) dot.style.background = '#3b82f6';
+  if (label) label.innerText = 'Engine: Client-Side (GitHub Pages)';
+  if (pill) {
+    pill.className = 'status-pill recovered';
+    pill.innerText = 'Standby (GitHub Pages Mode)';
+  }
+  if (notifyUser) {
+    showToast(`ℹ️ Running in Client-Side Engine Mode. Launch 'start_backend.bat' to connect FastAPI.`, 'info');
+  }
+  return false;
+}
+
+async function testAndSaveBackendUrl() {
+  const input = document.getElementById('backend-url-input');
+  if (input && input.value.trim()) {
+    BACKEND_API_BASE = input.value.trim().replace(/\/$/, "");
+    localStorage.setItem('backend_url', BACKEND_API_BASE);
+  }
+  await checkBackendStatus(true);
 }
 
 function shareReport() {

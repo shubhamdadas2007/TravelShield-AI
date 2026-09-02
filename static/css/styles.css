@@ -922,35 +922,31 @@ input:checked + .slider:before {
   box-shadow: 0 2px 8px rgba(79, 70, 229, 0.4);
 }
 
-/* Floating Gemini Assistant Button */
+/* Floating Gemini Assistant Button (Small, Sleek & Compact) */
 .gemini-floating-btn {
   position: fixed;
-  bottom: 24px;
-  right: 24px;
+  bottom: 22px;
+  right: 22px;
   z-index: 999;
-  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #2563eb 100%);
-  color: white;
-  border: none;
+  background: #0f172a;
+  color: #f8fafc;
+  border: 1px solid rgba(255, 255, 255, 0.16);
   border-radius: 9999px;
-  padding: 0.85rem 1.35rem;
-  font-weight: 800;
-  font-size: 0.875rem;
+  padding: 0.45rem 0.85rem;
+  font-weight: 700;
+  font-size: 0.775rem;
   display: flex;
   align-items: center;
-  gap: 0.6rem;
-  box-shadow: 0 10px 25px rgba(79, 70, 229, 0.35);
+  gap: 0.45rem;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.25);
   cursor: pointer;
-  transition: all 0.25s ease;
-  animation: pulse-gemini-btn 3s infinite;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .gemini-floating-btn:hover {
-  transform: translateY(-2px) scale(1.03);
-  box-shadow: 0 14px 30px rgba(79, 70, 229, 0.45);
-}
-
-@keyframes pulse-gemini-btn {
-  0%, 100% { box-shadow: 0 10px 25px rgba(79, 70, 229, 0.35); }
-  50% { box-shadow: 0 10px 35px rgba(124, 58, 237, 0.55); }
+  transform: translateY(-2px);
+  background: #1e293b;
+  border-color: #818cf8;
+  box-shadow: 0 10px 25px rgba(99, 102, 241, 0.35);
 }
 
 /* Floating Gemini Chat Drawer */

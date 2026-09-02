@@ -930,35 +930,31 @@ input:checked + .slider:before {
   box-shadow: 0 2px 8px rgba(79, 70, 229, 0.4);
 }
 
-/* Floating Gemini Assistant Button */
+/* Floating Gemini Assistant Button (Small, Sleek & Compact) */
 .gemini-floating-btn {
   position: fixed;
-  bottom: 24px;
-  right: 24px;
+  bottom: 22px;
+  right: 22px;
   z-index: 999;
-  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #2563eb 100%);
-  color: white;
-  border: none;
+  background: #0f172a;
+  color: #f8fafc;
+  border: 1px solid rgba(255, 255, 255, 0.16);
   border-radius: 9999px;
-  padding: 0.85rem 1.35rem;
-  font-weight: 800;
-  font-size: 0.875rem;
+  padding: 0.45rem 0.85rem;
+  font-weight: 700;
+  font-size: 0.775rem;
   display: flex;
   align-items: center;
-  gap: 0.6rem;
-  box-shadow: 0 10px 25px rgba(79, 70, 229, 0.35);
+  gap: 0.45rem;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.25);
   cursor: pointer;
-  transition: all 0.25s ease;
-  animation: pulse-gemini-btn 3s infinite;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .gemini-floating-btn:hover {
-  transform: translateY(-2px) scale(1.03);
-  box-shadow: 0 14px 30px rgba(79, 70, 229, 0.45);
-}
-
-@keyframes pulse-gemini-btn {
-  0%, 100% { box-shadow: 0 10px 25px rgba(79, 70, 229, 0.35); }
-  50% { box-shadow: 0 10px 35px rgba(124, 58, 237, 0.55); }
+  transform: translateY(-2px);
+  background: #1e293b;
+  border-color: #818cf8;
+  box-shadow: 0 10px 25px rgba(99, 102, 241, 0.35);
 }
 
 /* Floating Gemini Chat Drawer */
@@ -1168,6 +1164,10 @@ input:checked + .slider:before {
         <span style="font-size:0.75rem; background:#eff6ff; color:#2563eb; border:1px solid #bfdbfe; font-weight:700; padding:0.2rem 0.6rem; border-radius:9999px; display:inline-flex; align-items:center; gap:0.35rem;">
           <span style="width:6px; height:6px; background:#2563eb; border-radius:50%; display:inline-block;"></span>
           Live Data: Active
+        </span>
+        <span id="backend-indicator" style="font-size:0.75rem; background:#ecfdf5; color:#059669; border:1px solid #a7f3d0; font-weight:700; padding:0.2rem 0.6rem; border-radius:9999px; display:inline-flex; align-items:center; gap:0.35rem; cursor:pointer;" onclick="switchTab('settings')" title="FastAPI Backend Status (Click to configure)">
+          <span id="backend-dot" style="width:6px; height:6px; background:#10b981; border-radius:50%; display:inline-block;"></span>
+          <span id="backend-label">Backend: Connected (v2.3)</span>
         </span>
       </div>
 
@@ -1788,6 +1788,40 @@ input:checked + .slider:before {
               </label>
             </div>
           </div>
+
+          <!-- Card 3: FastAPI Backend Server Configuration -->
+          <div class="card" style="margin-top:1.5rem;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+              <h3 style="font-size:1.1rem; font-weight:800; display:flex; align-items:center; gap:0.5rem;">
+                ⚙️ FastAPI Backend Server Configuration
+              </h3>
+              <span id="settings-backend-pill" class="status-pill confirmed" style="font-size:0.75rem;">Connected (v2.3.0)</span>
+            </div>
+
+            <p style="font-size:0.825rem; color:#64748b; line-height:1.5; margin-bottom:1rem;">
+              TravelShield AI runs a high-performance Python FastAPI backend engine with SQLite database persistence, live Aviationstack flight tracking, and AOPAY bus search adapters.
+            </p>
+
+            <div style="display:grid; grid-template-columns:1fr auto auto; gap:0.75rem; align-items:center;">
+              <div>
+                <label style="font-size:0.75rem; font-weight:700; color:#64748b;">BACKEND API BASE URL</label>
+                <input type="text" id="backend-url-input" value="http://127.0.0.1:8000" style="width:100%; padding:0.65rem 0.85rem; border:1px solid var(--border-color); border-radius:8px; font-size:0.85rem; outline:none; font-family:monospace;">
+              </div>
+              <button class="btn btn-primary" style="align-self:flex-end; padding:0.65rem 1rem; background:#4f46e5;" onclick="testAndSaveBackendUrl()">
+                Test & Connect
+              </button>
+              <a href="http://127.0.0.1:8000/docs" target="_blank" class="btn btn-outline" style="align-self:flex-end; padding:0.65rem 1rem;" title="Open interactive Swagger API documentation">
+                API Docs (/docs) ↗
+              </a>
+            </div>
+
+            <div style="margin-top:1rem; background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:0.75rem 1rem; font-size:0.775rem; color:#475569; display:flex; justify-content:space-between; align-items:center;">
+              <div>
+                <b>To run backend locally:</b> Double click <code>start_backend.bat</code> or run <code>python -m uvicorn app.main:app --reload</code>
+              </div>
+              <span style="color:#10b981; font-weight:700;">Port: 8000</span>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -1933,20 +1967,40 @@ input:checked + .slider:before {
     </div>
   </div>
 
-  <!-- FLOATING GEMINI ASSISTANT LAUNCHER -->
-  <button class="gemini-floating-btn" id="btn-toggle-gemini-assistant" onclick="toggleGeminiDrawer()">
-    <span style="font-size:1.15rem;">✨</span>
-    <span>Gemini Assistant</span>
-    <span style="width:8px; height:8px; background:#4ade80; border-radius:50%; display:inline-block;"></span>
+  <!-- FLOATING GEMINI ASSISTANT LAUNCHER (Small, Sleek Logo) -->
+  <button class="gemini-floating-btn" id="btn-toggle-gemini-assistant" onclick="toggleGeminiDrawer()" title="Ask Gemini AI Assistant">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0;">
+      <path d="M12 2C12 7.52285 7.52285 12 2 12C7.52285 12 12 16.4771 12 22C12 16.4771 16.4771 12 22 12C16.4771 12 12 7.52285 12 2Z" fill="url(#gemini-btn-icon-grad)"/>
+      <defs>
+        <linearGradient id="gemini-btn-icon-grad" x1="2" y1="2" x2="22" y2="22" gradientUnits="userSpaceOnUse">
+          <stop stop-color="#38bdf8"/>
+          <stop offset="0.5" stop-color="#818cf8"/>
+          <stop offset="1" stop-color="#c084fc"/>
+        </linearGradient>
+      </defs>
+    </svg>
+    <span>Ask Gemini</span>
+    <span style="width:6px; height:6px; background:#4ade80; border-radius:50%; display:inline-block;"></span>
   </button>
 
   <!-- FLOATING GEMINI CHAT DRAWER -->
   <div class="gemini-chat-drawer" id="gemini-assistant-drawer" style="display:none;">
     <div class="gemini-drawer-header">
       <div style="display:flex; align-items:center; gap:0.6rem;">
-        <div style="background:rgba(255,255,255,0.15); width:32px; height:32px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:1.1rem;">✨</div>
+        <div style="background:rgba(255,255,255,0.12); width:28px; height:28px; border-radius:7px; display:flex; align-items:center; justify-content:center;">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2C12 7.52285 7.52285 12 2 12C7.52285 12 12 16.4771 12 22C12 16.4771 16.4771 12 22 12C16.4771 12 12 7.52285 12 2Z" fill="url(#gemini-drawer-header-grad)"/>
+            <defs>
+              <linearGradient id="gemini-drawer-header-grad" x1="2" y1="2" x2="22" y2="22" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#38bdf8"/>
+                <stop offset="0.5" stop-color="#818cf8"/>
+                <stop offset="1" stop-color="#c084fc"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
         <div>
-          <div style="font-weight:800; font-size:0.95rem; font-family:'Outfit',sans-serif;">Gemini AI Assistant</div>
+          <div style="font-weight:800; font-size:0.92rem; font-family:'Outfit',sans-serif;">Gemini AI Assistant</div>
           <div style="font-size:0.7rem; color:#94a3b8; display:flex; align-items:center; gap:0.35rem;">
             <span style="width:6px; height:6px; background:#10b981; border-radius:50%; display:inline-block;"></span>
             Gemini 3.6 Flash · Online
@@ -1959,6 +2013,10 @@ input:checked + .slider:before {
     <div class="gemini-drawer-body" id="gemini-drawer-messages">
       <!-- Initial AI Message -->
       <div style="background:white; border:1px solid #e2e8f0; border-radius:14px; padding:0.85rem 1rem; font-size:0.85rem; color:#0f172a; line-height:1.45; box-shadow:0 2px 5px rgba(0,0,0,0.03);">
+        <div style="display:flex; align-items:center; gap:6px; margin-bottom:5px; font-size:0.75rem; font-weight:700; color:#4f46e5;">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M12 2C12 7.52285 7.52285 12 2 12C7.52285 12 12 16.4771 12 22C12 16.4771 16.4771 12 22 12C16.4771 12 12 7.52285 12 2Z" fill="url(#gemini-btn-icon-grad)"/></svg>
+          Gemini 3.6 Flash Concierge
+        </div>
         👋 <b>Hi Jenny!</b> I've analyzed your itinerary (PNR YH892A). Your inbound flight AI 812 was delayed by 6h 30m, causing a missed connection to Goa. How can I help you recover your journey?
       </div>
 
@@ -2010,6 +2068,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const today = new Date().toISOString().split('T')[0];
     dateInput.value = today;
   }
+
+  // Check live backend API connectivity
+  checkBackendStatus(false);
 
   // Setup Firebase Auth State Listener with persistent session
   const savedUser = localStorage.getItem('travelshield_user');
@@ -2633,9 +2694,78 @@ Traveler says: "${text}"`
   typingDiv.remove();
   const aiMsg = document.createElement('div');
   aiMsg.style.cssText = "align-self: flex-start; background: white; border: 1px solid #e2e8f0; color: #0f172a; padding: 0.85rem 1rem; border-radius: 14px 14px 14px 2px; font-size: 0.85rem; max-width: 90%; word-break: break-word; line-height: 1.45; box-shadow: 0 2px 5px rgba(0,0,0,0.03);";
-  aiMsg.innerHTML = replyText.replace(/\n/g, '<br>');
+  aiMsg.innerHTML = `<div style="display:flex; align-items:center; gap:6px; margin-bottom:5px; font-size:0.75rem; font-weight:700; color:#4f46e5;">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M12 2C12 7.52285 7.52285 12 2 12C7.52285 12 12 16.4771 12 22C12 16.4771 16.4771 12 22 12C16.4771 12 12 7.52285 12 2Z" fill="url(#gemini-btn-icon-grad)"/></svg>
+    Gemini 3.6 Flash Concierge
+  </div>` + replyText.replace(/\n/g, '<br>');
   messagesContainer.appendChild(aiMsg);
   messagesContainer.scrollTop = messagesContainer.scrollHeight;
+}
+
+// ==============================================================
+// FASTAPI BACKEND SERVER CONNECTIVITY & HEALTH
+// ==============================================================
+let BACKEND_API_BASE = localStorage.getItem('backend_url') || 'http://127.0.0.1:8000';
+
+async function checkBackendStatus(notifyUser = false) {
+  const indicator = document.getElementById('backend-indicator');
+  const dot = document.getElementById('backend-dot');
+  const label = document.getElementById('backend-label');
+  const pill = document.getElementById('settings-backend-pill');
+  const urlInput = document.getElementById('backend-url-input');
+
+  if (urlInput) urlInput.value = BACKEND_API_BASE;
+
+  try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 2000);
+    const res = await fetch(`${BACKEND_API_BASE}/api/trips/1`, { signal: controller.signal });
+    clearTimeout(timeoutId);
+
+    if (res.ok) {
+      if (indicator) {
+        indicator.style.background = '#ecfdf5';
+        indicator.style.color = '#059669';
+        indicator.style.borderColor = '#a7f3d0';
+      }
+      if (dot) dot.style.background = '#10b981';
+      if (label) label.innerText = 'Backend: Connected (v2.3)';
+      if (pill) {
+        pill.className = 'status-pill confirmed';
+        pill.innerText = 'Connected (v2.3.0)';
+      }
+      if (notifyUser) showToast(`🟢 FastAPI Backend Connected: ${BACKEND_API_BASE}`, 'success');
+      return true;
+    }
+  } catch (e) {
+    // offline/github pages mode fallback
+  }
+
+  // If local backend is not currently active
+  if (indicator) {
+    indicator.style.background = '#eff6ff';
+    indicator.style.color = '#2563eb';
+    indicator.style.borderColor = '#bfdbfe';
+  }
+  if (dot) dot.style.background = '#3b82f6';
+  if (label) label.innerText = 'Engine: Client-Side (GitHub Pages)';
+  if (pill) {
+    pill.className = 'status-pill recovered';
+    pill.innerText = 'Standby (GitHub Pages Mode)';
+  }
+  if (notifyUser) {
+    showToast(`ℹ️ Running in Client-Side Engine Mode. Launch 'start_backend.bat' to connect FastAPI.`, 'info');
+  }
+  return false;
+}
+
+async function testAndSaveBackendUrl() {
+  const input = document.getElementById('backend-url-input');
+  if (input && input.value.trim()) {
+    BACKEND_API_BASE = input.value.trim().replace(/\/$/, "");
+    localStorage.setItem('backend_url', BACKEND_API_BASE);
+  }
+  await checkBackendStatus(true);
 }
 
 function shareReport() {
