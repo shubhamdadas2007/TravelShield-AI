@@ -16,7 +16,7 @@ class GeminiAIEngine:
             try:
                 import google.generativeai as genai
                 genai.configure(api_key=self.api_key)
-                self.model = genai.GenerativeModel('gemini-2.5-flash')
+                self.model = genai.GenerativeModel('gemini-3.6-flash')
             except Exception as e:
                 print(f"[GeminiAIEngine] SDK init note: {e}")
 
