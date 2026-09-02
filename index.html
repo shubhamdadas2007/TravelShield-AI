@@ -1789,8 +1789,185 @@ input:checked + .slider:before {
             </div>
           </div>
 
-          <!-- Card 3: FastAPI Backend Server Configuration -->
-          <div class="card" style="margin-top:1.5rem;">
+          <!-- Card 3: Traveler Profile & Loyalty Sync -->
+          <div class="card">
+            <h3 style="font-size:1.1rem; font-weight:800; margin-bottom:1rem; display:flex; align-items:center; gap:0.5rem;">
+              👤 Traveler Profile & Loyalty Sync
+            </h3>
+
+            <div style="display:flex; flex-direction:column; gap:0.75rem;">
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem;">
+                <div>
+                  <label style="font-size:0.75rem; font-weight:700; color:#64748b;">TRAVELER NAME</label>
+                  <input type="text" id="pref-traveler-name" value="Jenny Wilson" style="width:100%; padding:0.55rem 0.75rem; border:1px solid var(--border-color); border-radius:8px; font-size:0.85rem; outline:none;">
+                </div>
+                <div>
+                  <label style="font-size:0.75rem; font-weight:700; color:#64748b;">EMAIL ADDRESS</label>
+                  <input type="email" id="pref-traveler-email" value="jenny.wilson@travelshield.ai" style="width:100%; padding:0.55rem 0.75rem; border:1px solid var(--border-color); border-radius:8px; font-size:0.85rem; outline:none;">
+                </div>
+              </div>
+
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem;">
+                <div>
+                  <label style="font-size:0.75rem; font-weight:700; color:#64748b;">AIRLINE FREQUENT FLYER</label>
+                  <input type="text" id="pref-airline-loyalty" value="AI-98241098" placeholder="e.g. AI-98241098" style="width:100%; padding:0.55rem 0.75rem; border:1px solid var(--border-color); border-radius:8px; font-size:0.85rem; outline:none;">
+                </div>
+                <div>
+                  <label style="font-size:0.75rem; font-weight:700; color:#64748b;">IRCTC / RAIL LOYALTY ID</label>
+                  <input type="text" id="pref-rail-loyalty" value="IRCTC-771829" placeholder="e.g. IRCTC-771829" style="width:100%; padding:0.55rem 0.75rem; border:1px solid var(--border-color); border-radius:8px; font-size:0.85rem; outline:none;">
+                </div>
+              </div>
+
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem;">
+                <div>
+                  <label style="font-size:0.75rem; font-weight:700; color:#64748b;">SEATING PREFERENCE</label>
+                  <select id="pref-seating" style="width:100%; padding:0.55rem 0.75rem; border:1px solid var(--border-color); border-radius:8px; font-size:0.85rem; outline:none; background:white;">
+                    <option value="window" selected>Window Seat</option>
+                    <option value="aisle">Aisle Seat</option>
+                    <option value="extra-legroom">Extra Legroom</option>
+                  </select>
+                </div>
+                <div>
+                  <label style="font-size:0.75rem; font-weight:700; color:#64748b;">DIETARY PREFERENCE</label>
+                  <select id="pref-meal" style="width:100%; padding:0.55rem 0.75rem; border:1px solid var(--border-color); border-radius:8px; font-size:0.85rem; outline:none; background:white;">
+                    <option value="veg" selected>Vegetarian (Hindu / Jain)</option>
+                    <option value="non-veg">Non-Vegetarian</option>
+                    <option value="vegan">Vegan</option>
+                    <option value="diabetic">Diabetic Friendly</option>
+                  </select>
+                </div>
+              </div>
+
+              <button class="btn btn-primary" style="margin-top:0.35rem; justify-content:center; padding:0.65rem; background:#4f46e5;" onclick="saveTravelerProfile()">
+                Save Traveler Profile
+              </button>
+            </div>
+          </div>
+
+          <!-- Card 4: Disruption Tolerance & Policy Rules -->
+          <div class="card">
+            <h3 style="font-size:1.1rem; font-weight:800; margin-bottom:1rem; display:flex; align-items:center; gap:0.5rem;">
+              🎯 Disruption Tolerance & Policy Rules
+            </h3>
+
+            <div style="display:flex; flex-direction:column; gap:0.75rem;">
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem;">
+                <div>
+                  <label style="font-size:0.75rem; font-weight:700; color:#64748b;">REROUTE DELAY TRIGGER</label>
+                  <select id="policy-delay-trigger" style="width:100%; padding:0.55rem 0.75rem; border:1px solid var(--border-color); border-radius:8px; font-size:0.85rem; outline:none; background:white;">
+                    <option value="30">Delay > 30 Mins (Aggressive)</option>
+                    <option value="45" selected>Delay > 45 Mins (Standard)</option>
+                    <option value="60">Delay > 60 Mins (Relaxed)</option>
+                    <option value="90">Delay > 90 Mins (Conservative)</option>
+                  </select>
+                </div>
+                <div>
+                  <label style="font-size:0.75rem; font-weight:700; color:#64748b;">MINIMUM CONNECTION BUFFER</label>
+                  <select id="policy-buffer-time" style="width:100%; padding:0.55rem 0.75rem; border:1px solid var(--border-color); border-radius:8px; font-size:0.85rem; outline:none; background:white;">
+                    <option value="45">45 Mins (Tight Transit)</option>
+                    <option value="60" selected>60 Mins (Recommended)</option>
+                    <option value="90">90 Mins (Safe Transit)</option>
+                    <option value="120">120 Mins (Heavy Baggage)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem;">
+                <div>
+                  <label style="font-size:0.75rem; font-weight:700; color:#64748b;">DEFAULT RECOVERY TIER</label>
+                  <select id="policy-default-strategy" style="width:100%; padding:0.55rem 0.75rem; border:1px solid var(--border-color); border-radius:8px; font-size:0.85rem; outline:none; background:white;">
+                    <option value="speed" selected>The Sprinter (Speed Priority)</option>
+                    <option value="balanced">The Optimal (Comfort & Value)</option>
+                    <option value="budget">The Economical (Cost Priority)</option>
+                  </select>
+                </div>
+                <div>
+                  <label style="font-size:0.75rem; font-weight:700; color:#64748b;">MAX OUT-OF-POCKET LIMIT</label>
+                  <input type="text" id="policy-max-cost" value="$250.00" style="width:100%; padding:0.55rem 0.75rem; border:1px solid var(--border-color); border-radius:8px; font-size:0.85rem; outline:none;">
+                </div>
+              </div>
+
+              <button class="btn btn-primary" style="margin-top:0.35rem; justify-content:center; padding:0.65rem; background:#4f46e5;" onclick="saveDisruptionPolicies()">
+                Save Disruption Policies
+              </button>
+            </div>
+          </div>
+
+          <!-- Card 5: Live API Keys & Integration Controls -->
+          <div class="card">
+            <h3 style="font-size:1.1rem; font-weight:800; margin-bottom:1rem; display:flex; align-items:center; gap:0.5rem;">
+              🔑 API Keys & Live Integrations
+            </h3>
+
+            <div style="display:flex; flex-direction:column; gap:0.75rem;">
+              <div>
+                <label style="font-size:0.75rem; font-weight:700; color:#64748b;">GEMINI 3.6 FLASH API KEY</label>
+                <div style="display:flex; gap:0.5rem;">
+                  <input type="password" id="key-gemini" placeholder="•••••••• (Active & Configured)" style="flex:1; padding:0.55rem 0.75rem; border:1px solid var(--border-color); border-radius:8px; font-size:0.85rem; outline:none; font-family:monospace;">
+                  <button type="button" class="btn btn-outline" style="padding:0.4rem 0.65rem; font-size:0.75rem;" onclick="toggleKeyVisibility('key-gemini')">👁</button>
+                </div>
+              </div>
+
+              <div>
+                <label style="font-size:0.75rem; font-weight:700; color:#64748b;">AVIATIONSTACK FLIGHT API KEY</label>
+                <div style="display:flex; gap:0.5rem;">
+                  <input type="password" id="key-aviationstack" value="66ffbf6a7c0fc63a1a593ed8cf28df31" style="flex:1; padding:0.55rem 0.75rem; border:1px solid var(--border-color); border-radius:8px; font-size:0.85rem; outline:none; font-family:monospace;">
+                  <button type="button" class="btn btn-outline" style="padding:0.4rem 0.65rem; font-size:0.75rem;" onclick="toggleKeyVisibility('key-aviationstack')">👁</button>
+                </div>
+              </div>
+
+              <div>
+                <label style="font-size:0.75rem; font-weight:700; color:#64748b;">AOPAY BUS BOOKING API ENDPOINT</label>
+                <input type="text" id="key-aopay" value="https://api.aopay.in/v2/bus/search" style="width:100%; padding:0.55rem 0.75rem; border:1px solid var(--border-color); border-radius:8px; font-size:0.85rem; outline:none; font-family:monospace;">
+              </div>
+
+              <button class="btn btn-primary" style="margin-top:0.35rem; justify-content:center; padding:0.65rem; background:#4f46e5;" onclick="saveApiKeys()">
+                Save & Update Live API Keys
+              </button>
+            </div>
+          </div>
+
+          <!-- Card 6: Emergency & Notification Channels -->
+          <div class="card">
+            <h3 style="font-size:1.1rem; font-weight:800; margin-bottom:1rem; display:flex; align-items:center; gap:0.5rem;">
+              📱 Emergency & Notification Channels
+            </h3>
+
+            <div style="display:flex; flex-direction:column; gap:0.85rem;">
+              <div>
+                <label style="font-size:0.75rem; font-weight:700; color:#64748b;">WHATSAPP CONCIERGE NUMBER</label>
+                <div style="display:flex; gap:0.5rem; margin-top:0.25rem;">
+                  <input type="tel" id="notif-whatsapp" value="+91 98200 12345" placeholder="+91..." style="flex:1; padding:0.55rem 0.75rem; border:1px solid var(--border-color); border-radius:8px; font-size:0.85rem; outline:none;">
+                  <button class="btn btn-outline" style="padding:0.4rem 0.75rem; font-size:0.75rem;" onclick="showToast('💬 WhatsApp Test Alert sent to your number!', 'success')">Test Send</button>
+                </div>
+              </div>
+
+              <div class="toggle-switch-container" style="padding:0.4rem 0;">
+                <div>
+                  <b style="font-size:0.85rem; color:#0f172a;">Auto-File Airline Delay Compensation</b>
+                  <div style="font-size:0.725rem; color:#64748b;">Drafts DGCA / EU261 passenger charter claims when delay exceeds 3 hours.</div>
+                </div>
+                <label class="switch">
+                  <input type="checkbox" id="toggle-compensation" checked onchange="handleToggleChange('Auto Delay Compensation Filing', this.checked)">
+                  <span class="slider"></span>
+                </label>
+              </div>
+
+              <div class="toggle-switch-container" style="padding:0.4rem 0;">
+                <div>
+                  <b style="font-size:0.85rem; color:#0f172a;">Live Gate Change Broadcast</b>
+                  <div style="font-size:0.725rem; color:#64748b;">Push notifications for terminal changes, baggage belts, and platform shifts.</div>
+                </div>
+                <label class="switch">
+                  <input type="checkbox" id="toggle-gate-broadcast" checked onchange="handleToggleChange('Gate Change Alerts', this.checked)">
+                  <span class="slider"></span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 7: FastAPI Backend Server Configuration -->
+          <div class="card">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
               <h3 style="font-size:1.1rem; font-weight:800; display:flex; align-items:center; gap:0.5rem;">
                 ⚙️ FastAPI Backend Server Configuration
@@ -1822,6 +1999,30 @@ input:checked + .slider:before {
               <span style="color:#10b981; font-weight:700;">Port: 8000</span>
             </div>
           </div>
+
+          <!-- Card 8: Data, Privacy & Demo Reset -->
+          <div class="card">
+            <h3 style="font-size:1.1rem; font-weight:800; margin-bottom:1rem; display:flex; align-items:center; gap:0.5rem;">
+              🛡️ Data Management & Recovery Audit
+            </h3>
+
+            <p style="font-size:0.825rem; color:#64748b; line-height:1.5; margin-bottom:1rem;">
+              Export full forensic audit trails of itinerary disruptions, or reset local demo scenarios for testing.
+            </p>
+
+            <div style="display:flex; flex-direction:column; gap:0.75rem;">
+              <button class="btn btn-outline" style="justify-content:center; padding:0.65rem; font-weight:700; display:flex; align-items:center; gap:0.5rem;" onclick="downloadAuditReport()">
+                📥 Download Disruption Audit Report (.JSON)
+              </button>
+              <button class="btn btn-outline" style="justify-content:center; padding:0.65rem; font-weight:700; color:#b45309; border-color:#fde68a; background:#fffbeb;" onclick="clearDisruptionCache()">
+                🧹 Clear Disruption Cache & Stored Itineraries
+              </button>
+              <button class="btn btn-outline" style="justify-content:center; padding:0.65rem; font-weight:700; color:#4f46e5; border-color:#c7d2fe; background:#eff6ff;" onclick="resetDemoSettings()">
+                🔄 Reset All Settings to Demo Defaults
+              </button>
+            </div>
+          </div>
+
         </div>
       </div>
 
@@ -2071,6 +2272,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Check live backend API connectivity
   checkBackendStatus(false);
+
+  // Initialize Settings Inputs
+  const keyGeminiEl = document.getElementById('key-gemini');
+  if (keyGeminiEl && typeof GEMINI_API_KEY !== 'undefined') {
+    keyGeminiEl.value = GEMINI_API_KEY;
+  }
+  const savedProfile = localStorage.getItem('travelshield_traveler_profile');
+  if (savedProfile) {
+    try {
+      const p = JSON.parse(savedProfile);
+      if (document.getElementById('pref-traveler-name')) document.getElementById('pref-traveler-name').value = p.name || '';
+      if (document.getElementById('pref-traveler-email')) document.getElementById('pref-traveler-email').value = p.email || '';
+      if (document.getElementById('pref-airline-loyalty')) document.getElementById('pref-airline-loyalty').value = p.airLoyalty || '';
+      if (document.getElementById('pref-rail-loyalty')) document.getElementById('pref-rail-loyalty').value = p.railLoyalty || '';
+      if (document.getElementById('pref-seating')) document.getElementById('pref-seating').value = p.seating || 'window';
+      if (document.getElementById('pref-meal')) document.getElementById('pref-meal').value = p.meal || 'veg';
+    } catch (e) {}
+  }
 
   // Setup Firebase Auth State Listener with persistent session
   const savedUser = localStorage.getItem('travelshield_user');
@@ -2766,6 +2985,121 @@ async function testAndSaveBackendUrl() {
     localStorage.setItem('backend_url', BACKEND_API_BASE);
   }
   await checkBackendStatus(true);
+}
+
+// ==============================================================
+// SETTINGS TAB EXTENDED FEATURE HANDLERS
+// ==============================================================
+function toggleKeyVisibility(inputId) {
+  const el = document.getElementById(inputId);
+  if (el) {
+    el.type = el.type === 'password' ? 'text' : 'password';
+  }
+}
+
+function saveTravelerProfile() {
+  const name = document.getElementById('pref-traveler-name')?.value.trim() || 'Jenny Wilson';
+  const email = document.getElementById('pref-traveler-email')?.value.trim() || 'jenny.wilson@travelshield.ai';
+  const airLoyalty = document.getElementById('pref-airline-loyalty')?.value.trim() || '';
+  const railLoyalty = document.getElementById('pref-rail-loyalty')?.value.trim() || '';
+  const seating = document.getElementById('pref-seating')?.value || 'window';
+  const meal = document.getElementById('pref-meal')?.value || 'veg';
+
+  const profile = { name, email, airLoyalty, railLoyalty, seating, meal };
+  localStorage.setItem('travelshield_traveler_profile', JSON.stringify(profile));
+  
+  updateAuthUI(true, name, true);
+  showToast(`✅ Traveler Profile saved for ${name}! Loyalty programs synced.`, 'success');
+}
+
+function saveDisruptionPolicies() {
+  const delayTrigger = document.getElementById('policy-delay-trigger')?.value || '45';
+  const bufferTime = document.getElementById('policy-buffer-time')?.value || '60';
+  const strategy = document.getElementById('policy-default-strategy')?.value || 'speed';
+  const maxCost = document.getElementById('policy-max-cost')?.value.trim() || '$250.00';
+
+  const policies = { delayTrigger, bufferTime, strategy, maxCost };
+  localStorage.setItem('travelshield_disruption_policies', JSON.stringify(policies));
+  showToast(`✅ Disruption Policies Updated: Trigger >${delayTrigger}m, Buffer ${bufferTime}m, Strategy ${strategy.toUpperCase()}`, 'success');
+}
+
+function saveApiKeys() {
+  const gemini = document.getElementById('key-gemini')?.value.trim();
+  const aviationstack = document.getElementById('key-aviationstack')?.value.trim();
+  const aopay = document.getElementById('key-aopay')?.value.trim();
+
+  if (gemini) localStorage.setItem('gemini_api_key', gemini);
+  if (aviationstack) localStorage.setItem('aviationstack_api_key', aviationstack);
+  if (aopay) localStorage.setItem('aopay_bus_api_url', aopay);
+
+  showToast('🔑 API Keys securely saved in local storage!', 'success');
+}
+
+function downloadAuditReport() {
+  const auditData = {
+    report_id: "TS-AUDIT-" + Date.now(),
+    generated_at: new Date().toISOString(),
+    booking_reference: "YH892A",
+    traveler: {
+      name: "Jenny Wilson",
+      email: "jenny.wilson@travelshield.ai",
+      status: "VERIFIED"
+    },
+    itinerary: {
+      origin: "DEL (Indira Gandhi Intl)",
+      layover: "BOM (Chhatrapati Shivaji Intl)",
+      destination: "GOI (Dabolim Goa)",
+      affected_leg: "Flight AI 492 (BOM -> GOI)"
+    },
+    disruption: {
+      inbound_delay_minutes: 390,
+      root_cause: "Severe Monsoon Weather & Air Traffic Control Hold",
+      impact_severity: "CRITICAL_MISSED_CONNECTION"
+    },
+    downstream_impacts: [
+      { entity: "Radisson Blu Resort Goa", type: "HOTEL", status: "HOLD_PLACED", loss_prevented: "$210.00" },
+      { entity: "Hertz Car Rental Dabolim", type: "VEHICLE", status: "WINDOW_EXTENDED", loss_prevented: "$85.00" },
+      { entity: "Return Flight AI 812", type: "AIRLINE", status: "SCHEDULED_ON_TIME", loss_prevented: "$550.00" }
+    ],
+    applied_recovery_plan: {
+      plan_title: typeof activeSelectedPlan !== 'undefined' ? activeSelectedPlan : "The Sprinter",
+      score: 95,
+      mode: "FLIGHT_REROUTE",
+      status: "EXECUTED_REBOOKED"
+    },
+    compliance_audit: {
+      dgca_compensation_eligible: true,
+      estimated_claim_value: "₹10,000 / $120.00",
+      ai_model: "Google Gemini 3.6 Flash",
+      system_version: "TravelShield AI Engine v2.4.0"
+    }
+  };
+
+  const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(auditData, null, 2));
+  const downloadAnchor = document.createElement('a');
+  downloadAnchor.setAttribute("href", dataStr);
+  downloadAnchor.setAttribute("download", `TravelShield_Audit_YH892A.json`);
+  document.body.appendChild(downloadAnchor);
+  downloadAnchor.click();
+  downloadAnchor.remove();
+
+  showToast('📥 Disruption Audit Report downloaded successfully!', 'success');
+}
+
+function clearDisruptionCache() {
+  localStorage.removeItem('travelshield_disruption_policies');
+  localStorage.removeItem('toggle_Autonomous Multi-Modal Rerouting');
+  localStorage.removeItem('toggle_Hotel Check-In Protection');
+  localStorage.removeItem('toggle_Car Rental Hold Sync');
+  showToast('🧹 Disruption cache & temporary recovery plans cleared.', 'info');
+}
+
+function resetDemoSettings() {
+  localStorage.clear();
+  showToast('🔄 Settings reset to Jenny Wilson demo defaults! Refreshing...', 'success');
+  setTimeout(() => {
+    window.location.reload();
+  }, 1000);
 }
 
 function shareReport() {

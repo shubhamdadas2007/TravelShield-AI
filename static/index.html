@@ -723,8 +723,185 @@
             </div>
           </div>
 
-          <!-- Card 3: FastAPI Backend Server Configuration -->
-          <div class="card" style="margin-top:1.5rem;">
+          <!-- Card 3: Traveler Profile & Loyalty Sync -->
+          <div class="card">
+            <h3 style="font-size:1.1rem; font-weight:800; margin-bottom:1rem; display:flex; align-items:center; gap:0.5rem;">
+              👤 Traveler Profile & Loyalty Sync
+            </h3>
+
+            <div style="display:flex; flex-direction:column; gap:0.75rem;">
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem;">
+                <div>
+                  <label style="font-size:0.75rem; font-weight:700; color:#64748b;">TRAVELER NAME</label>
+                  <input type="text" id="pref-traveler-name" value="Jenny Wilson" style="width:100%; padding:0.55rem 0.75rem; border:1px solid var(--border-color); border-radius:8px; font-size:0.85rem; outline:none;">
+                </div>
+                <div>
+                  <label style="font-size:0.75rem; font-weight:700; color:#64748b;">EMAIL ADDRESS</label>
+                  <input type="email" id="pref-traveler-email" value="jenny.wilson@travelshield.ai" style="width:100%; padding:0.55rem 0.75rem; border:1px solid var(--border-color); border-radius:8px; font-size:0.85rem; outline:none;">
+                </div>
+              </div>
+
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem;">
+                <div>
+                  <label style="font-size:0.75rem; font-weight:700; color:#64748b;">AIRLINE FREQUENT FLYER</label>
+                  <input type="text" id="pref-airline-loyalty" value="AI-98241098" placeholder="e.g. AI-98241098" style="width:100%; padding:0.55rem 0.75rem; border:1px solid var(--border-color); border-radius:8px; font-size:0.85rem; outline:none;">
+                </div>
+                <div>
+                  <label style="font-size:0.75rem; font-weight:700; color:#64748b;">IRCTC / RAIL LOYALTY ID</label>
+                  <input type="text" id="pref-rail-loyalty" value="IRCTC-771829" placeholder="e.g. IRCTC-771829" style="width:100%; padding:0.55rem 0.75rem; border:1px solid var(--border-color); border-radius:8px; font-size:0.85rem; outline:none;">
+                </div>
+              </div>
+
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem;">
+                <div>
+                  <label style="font-size:0.75rem; font-weight:700; color:#64748b;">SEATING PREFERENCE</label>
+                  <select id="pref-seating" style="width:100%; padding:0.55rem 0.75rem; border:1px solid var(--border-color); border-radius:8px; font-size:0.85rem; outline:none; background:white;">
+                    <option value="window" selected>Window Seat</option>
+                    <option value="aisle">Aisle Seat</option>
+                    <option value="extra-legroom">Extra Legroom</option>
+                  </select>
+                </div>
+                <div>
+                  <label style="font-size:0.75rem; font-weight:700; color:#64748b;">DIETARY PREFERENCE</label>
+                  <select id="pref-meal" style="width:100%; padding:0.55rem 0.75rem; border:1px solid var(--border-color); border-radius:8px; font-size:0.85rem; outline:none; background:white;">
+                    <option value="veg" selected>Vegetarian (Hindu / Jain)</option>
+                    <option value="non-veg">Non-Vegetarian</option>
+                    <option value="vegan">Vegan</option>
+                    <option value="diabetic">Diabetic Friendly</option>
+                  </select>
+                </div>
+              </div>
+
+              <button class="btn btn-primary" style="margin-top:0.35rem; justify-content:center; padding:0.65rem; background:#4f46e5;" onclick="saveTravelerProfile()">
+                Save Traveler Profile
+              </button>
+            </div>
+          </div>
+
+          <!-- Card 4: Disruption Tolerance & Policy Rules -->
+          <div class="card">
+            <h3 style="font-size:1.1rem; font-weight:800; margin-bottom:1rem; display:flex; align-items:center; gap:0.5rem;">
+              🎯 Disruption Tolerance & Policy Rules
+            </h3>
+
+            <div style="display:flex; flex-direction:column; gap:0.75rem;">
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem;">
+                <div>
+                  <label style="font-size:0.75rem; font-weight:700; color:#64748b;">REROUTE DELAY TRIGGER</label>
+                  <select id="policy-delay-trigger" style="width:100%; padding:0.55rem 0.75rem; border:1px solid var(--border-color); border-radius:8px; font-size:0.85rem; outline:none; background:white;">
+                    <option value="30">Delay > 30 Mins (Aggressive)</option>
+                    <option value="45" selected>Delay > 45 Mins (Standard)</option>
+                    <option value="60">Delay > 60 Mins (Relaxed)</option>
+                    <option value="90">Delay > 90 Mins (Conservative)</option>
+                  </select>
+                </div>
+                <div>
+                  <label style="font-size:0.75rem; font-weight:700; color:#64748b;">MINIMUM CONNECTION BUFFER</label>
+                  <select id="policy-buffer-time" style="width:100%; padding:0.55rem 0.75rem; border:1px solid var(--border-color); border-radius:8px; font-size:0.85rem; outline:none; background:white;">
+                    <option value="45">45 Mins (Tight Transit)</option>
+                    <option value="60" selected>60 Mins (Recommended)</option>
+                    <option value="90">90 Mins (Safe Transit)</option>
+                    <option value="120">120 Mins (Heavy Baggage)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem;">
+                <div>
+                  <label style="font-size:0.75rem; font-weight:700; color:#64748b;">DEFAULT RECOVERY TIER</label>
+                  <select id="policy-default-strategy" style="width:100%; padding:0.55rem 0.75rem; border:1px solid var(--border-color); border-radius:8px; font-size:0.85rem; outline:none; background:white;">
+                    <option value="speed" selected>The Sprinter (Speed Priority)</option>
+                    <option value="balanced">The Optimal (Comfort & Value)</option>
+                    <option value="budget">The Economical (Cost Priority)</option>
+                  </select>
+                </div>
+                <div>
+                  <label style="font-size:0.75rem; font-weight:700; color:#64748b;">MAX OUT-OF-POCKET LIMIT</label>
+                  <input type="text" id="policy-max-cost" value="$250.00" style="width:100%; padding:0.55rem 0.75rem; border:1px solid var(--border-color); border-radius:8px; font-size:0.85rem; outline:none;">
+                </div>
+              </div>
+
+              <button class="btn btn-primary" style="margin-top:0.35rem; justify-content:center; padding:0.65rem; background:#4f46e5;" onclick="saveDisruptionPolicies()">
+                Save Disruption Policies
+              </button>
+            </div>
+          </div>
+
+          <!-- Card 5: Live API Keys & Integration Controls -->
+          <div class="card">
+            <h3 style="font-size:1.1rem; font-weight:800; margin-bottom:1rem; display:flex; align-items:center; gap:0.5rem;">
+              🔑 API Keys & Live Integrations
+            </h3>
+
+            <div style="display:flex; flex-direction:column; gap:0.75rem;">
+              <div>
+                <label style="font-size:0.75rem; font-weight:700; color:#64748b;">GEMINI 3.6 FLASH API KEY</label>
+                <div style="display:flex; gap:0.5rem;">
+                  <input type="password" id="key-gemini" placeholder="•••••••• (Active & Configured)" style="flex:1; padding:0.55rem 0.75rem; border:1px solid var(--border-color); border-radius:8px; font-size:0.85rem; outline:none; font-family:monospace;">
+                  <button type="button" class="btn btn-outline" style="padding:0.4rem 0.65rem; font-size:0.75rem;" onclick="toggleKeyVisibility('key-gemini')">👁</button>
+                </div>
+              </div>
+
+              <div>
+                <label style="font-size:0.75rem; font-weight:700; color:#64748b;">AVIATIONSTACK FLIGHT API KEY</label>
+                <div style="display:flex; gap:0.5rem;">
+                  <input type="password" id="key-aviationstack" value="66ffbf6a7c0fc63a1a593ed8cf28df31" style="flex:1; padding:0.55rem 0.75rem; border:1px solid var(--border-color); border-radius:8px; font-size:0.85rem; outline:none; font-family:monospace;">
+                  <button type="button" class="btn btn-outline" style="padding:0.4rem 0.65rem; font-size:0.75rem;" onclick="toggleKeyVisibility('key-aviationstack')">👁</button>
+                </div>
+              </div>
+
+              <div>
+                <label style="font-size:0.75rem; font-weight:700; color:#64748b;">AOPAY BUS BOOKING API ENDPOINT</label>
+                <input type="text" id="key-aopay" value="https://api.aopay.in/v2/bus/search" style="width:100%; padding:0.55rem 0.75rem; border:1px solid var(--border-color); border-radius:8px; font-size:0.85rem; outline:none; font-family:monospace;">
+              </div>
+
+              <button class="btn btn-primary" style="margin-top:0.35rem; justify-content:center; padding:0.65rem; background:#4f46e5;" onclick="saveApiKeys()">
+                Save & Update Live API Keys
+              </button>
+            </div>
+          </div>
+
+          <!-- Card 6: Emergency & Notification Channels -->
+          <div class="card">
+            <h3 style="font-size:1.1rem; font-weight:800; margin-bottom:1rem; display:flex; align-items:center; gap:0.5rem;">
+              📱 Emergency & Notification Channels
+            </h3>
+
+            <div style="display:flex; flex-direction:column; gap:0.85rem;">
+              <div>
+                <label style="font-size:0.75rem; font-weight:700; color:#64748b;">WHATSAPP CONCIERGE NUMBER</label>
+                <div style="display:flex; gap:0.5rem; margin-top:0.25rem;">
+                  <input type="tel" id="notif-whatsapp" value="+91 98200 12345" placeholder="+91..." style="flex:1; padding:0.55rem 0.75rem; border:1px solid var(--border-color); border-radius:8px; font-size:0.85rem; outline:none;">
+                  <button class="btn btn-outline" style="padding:0.4rem 0.75rem; font-size:0.75rem;" onclick="showToast('💬 WhatsApp Test Alert sent to your number!', 'success')">Test Send</button>
+                </div>
+              </div>
+
+              <div class="toggle-switch-container" style="padding:0.4rem 0;">
+                <div>
+                  <b style="font-size:0.85rem; color:#0f172a;">Auto-File Airline Delay Compensation</b>
+                  <div style="font-size:0.725rem; color:#64748b;">Drafts DGCA / EU261 passenger charter claims when delay exceeds 3 hours.</div>
+                </div>
+                <label class="switch">
+                  <input type="checkbox" id="toggle-compensation" checked onchange="handleToggleChange('Auto Delay Compensation Filing', this.checked)">
+                  <span class="slider"></span>
+                </label>
+              </div>
+
+              <div class="toggle-switch-container" style="padding:0.4rem 0;">
+                <div>
+                  <b style="font-size:0.85rem; color:#0f172a;">Live Gate Change Broadcast</b>
+                  <div style="font-size:0.725rem; color:#64748b;">Push notifications for terminal changes, baggage belts, and platform shifts.</div>
+                </div>
+                <label class="switch">
+                  <input type="checkbox" id="toggle-gate-broadcast" checked onchange="handleToggleChange('Gate Change Alerts', this.checked)">
+                  <span class="slider"></span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 7: FastAPI Backend Server Configuration -->
+          <div class="card">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
               <h3 style="font-size:1.1rem; font-weight:800; display:flex; align-items:center; gap:0.5rem;">
                 ⚙️ FastAPI Backend Server Configuration
@@ -756,6 +933,30 @@
               <span style="color:#10b981; font-weight:700;">Port: 8000</span>
             </div>
           </div>
+
+          <!-- Card 8: Data, Privacy & Demo Reset -->
+          <div class="card">
+            <h3 style="font-size:1.1rem; font-weight:800; margin-bottom:1rem; display:flex; align-items:center; gap:0.5rem;">
+              🛡️ Data Management & Recovery Audit
+            </h3>
+
+            <p style="font-size:0.825rem; color:#64748b; line-height:1.5; margin-bottom:1rem;">
+              Export full forensic audit trails of itinerary disruptions, or reset local demo scenarios for testing.
+            </p>
+
+            <div style="display:flex; flex-direction:column; gap:0.75rem;">
+              <button class="btn btn-outline" style="justify-content:center; padding:0.65rem; font-weight:700; display:flex; align-items:center; gap:0.5rem;" onclick="downloadAuditReport()">
+                📥 Download Disruption Audit Report (.JSON)
+              </button>
+              <button class="btn btn-outline" style="justify-content:center; padding:0.65rem; font-weight:700; color:#b45309; border-color:#fde68a; background:#fffbeb;" onclick="clearDisruptionCache()">
+                🧹 Clear Disruption Cache & Stored Itineraries
+              </button>
+              <button class="btn btn-outline" style="justify-content:center; padding:0.65rem; font-weight:700; color:#4f46e5; border-color:#c7d2fe; background:#eff6ff;" onclick="resetDemoSettings()">
+                🔄 Reset All Settings to Demo Defaults
+              </button>
+            </div>
+          </div>
+
         </div>
       </div>
 

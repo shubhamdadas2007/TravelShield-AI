@@ -30,6 +30,24 @@ document.addEventListener('DOMContentLoaded', () => {
   // Check live backend API connectivity
   checkBackendStatus(false);
 
+  // Initialize Settings Inputs
+  const keyGeminiEl = document.getElementById('key-gemini');
+  if (keyGeminiEl && typeof GEMINI_API_KEY !== 'undefined') {
+    keyGeminiEl.value = GEMINI_API_KEY;
+  }
+  const savedProfile = localStorage.getItem('travelshield_traveler_profile');
+  if (savedProfile) {
+    try {
+      const p = JSON.parse(savedProfile);
+      if (document.getElementById('pref-traveler-name')) document.getElementById('pref-traveler-name').value = p.name || '';
+      if (document.getElementById('pref-traveler-email')) document.getElementById('pref-traveler-email').value = p.email || '';
+      if (document.getElementById('pref-airline-loyalty')) document.getElementById('pref-airline-loyalty').value = p.airLoyalty || '';
+      if (document.getElementById('pref-rail-loyalty')) document.getElementById('pref-rail-loyalty').value = p.railLoyalty || '';
+      if (document.getElementById('pref-seating')) document.getElementById('pref-seating').value = p.seating || 'window';
+      if (document.getElementById('pref-meal')) document.getElementById('pref-meal').value = p.meal || 'veg';
+    } catch (e) {}
+  }
+
   // Setup Firebase Auth State Listener with persistent session
   const savedUser = localStorage.getItem('travelshield_user');
   const isExplicitLogout = localStorage.getItem('travelshield_logged_out') === 'true';
@@ -724,6 +742,121 @@ async function testAndSaveBackendUrl() {
     localStorage.setItem('backend_url', BACKEND_API_BASE);
   }
   await checkBackendStatus(true);
+}
+
+// ==============================================================
+// SETTINGS TAB EXTENDED FEATURE HANDLERS
+// ==============================================================
+function toggleKeyVisibility(inputId) {
+  const el = document.getElementById(inputId);
+  if (el) {
+    el.type = el.type === 'password' ? 'text' : 'password';
+  }
+}
+
+function saveTravelerProfile() {
+  const name = document.getElementById('pref-traveler-name')?.value.trim() || 'Jenny Wilson';
+  const email = document.getElementById('pref-traveler-email')?.value.trim() || 'jenny.wilson@travelshield.ai';
+  const airLoyalty = document.getElementById('pref-airline-loyalty')?.value.trim() || '';
+  const railLoyalty = document.getElementById('pref-rail-loyalty')?.value.trim() || '';
+  const seating = document.getElementById('pref-seating')?.value || 'window';
+  const meal = document.getElementById('pref-meal')?.value || 'veg';
+
+  const profile = { name, email, airLoyalty, railLoyalty, seating, meal };
+  localStorage.setItem('travelshield_traveler_profile', JSON.stringify(profile));
+  
+  updateAuthUI(true, name, true);
+  showToast(`✅ Traveler Profile saved for ${name}! Loyalty programs synced.`, 'success');
+}
+
+function saveDisruptionPolicies() {
+  const delayTrigger = document.getElementById('policy-delay-trigger')?.value || '45';
+  const bufferTime = document.getElementById('policy-buffer-time')?.value || '60';
+  const strategy = document.getElementById('policy-default-strategy')?.value || 'speed';
+  const maxCost = document.getElementById('policy-max-cost')?.value.trim() || '$250.00';
+
+  const policies = { delayTrigger, bufferTime, strategy, maxCost };
+  localStorage.setItem('travelshield_disruption_policies', JSON.stringify(policies));
+  showToast(`✅ Disruption Policies Updated: Trigger >${delayTrigger}m, Buffer ${bufferTime}m, Strategy ${strategy.toUpperCase()}`, 'success');
+}
+
+function saveApiKeys() {
+  const gemini = document.getElementById('key-gemini')?.value.trim();
+  const aviationstack = document.getElementById('key-aviationstack')?.value.trim();
+  const aopay = document.getElementById('key-aopay')?.value.trim();
+
+  if (gemini) localStorage.setItem('gemini_api_key', gemini);
+  if (aviationstack) localStorage.setItem('aviationstack_api_key', aviationstack);
+  if (aopay) localStorage.setItem('aopay_bus_api_url', aopay);
+
+  showToast('🔑 API Keys securely saved in local storage!', 'success');
+}
+
+function downloadAuditReport() {
+  const auditData = {
+    report_id: "TS-AUDIT-" + Date.now(),
+    generated_at: new Date().toISOString(),
+    booking_reference: "YH892A",
+    traveler: {
+      name: "Jenny Wilson",
+      email: "jenny.wilson@travelshield.ai",
+      status: "VERIFIED"
+    },
+    itinerary: {
+      origin: "DEL (Indira Gandhi Intl)",
+      layover: "BOM (Chhatrapati Shivaji Intl)",
+      destination: "GOI (Dabolim Goa)",
+      affected_leg: "Flight AI 492 (BOM -> GOI)"
+    },
+    disruption: {
+      inbound_delay_minutes: 390,
+      root_cause: "Severe Monsoon Weather & Air Traffic Control Hold",
+      impact_severity: "CRITICAL_MISSED_CONNECTION"
+    },
+    downstream_impacts: [
+      { entity: "Radisson Blu Resort Goa", type: "HOTEL", status: "HOLD_PLACED", loss_prevented: "$210.00" },
+      { entity: "Hertz Car Rental Dabolim", type: "VEHICLE", status: "WINDOW_EXTENDED", loss_prevented: "$85.00" },
+      { entity: "Return Flight AI 812", type: "AIRLINE", status: "SCHEDULED_ON_TIME", loss_prevented: "$550.00" }
+    ],
+    applied_recovery_plan: {
+      plan_title: typeof activeSelectedPlan !== 'undefined' ? activeSelectedPlan : "The Sprinter",
+      score: 95,
+      mode: "FLIGHT_REROUTE",
+      status: "EXECUTED_REBOOKED"
+    },
+    compliance_audit: {
+      dgca_compensation_eligible: true,
+      estimated_claim_value: "₹10,000 / $120.00",
+      ai_model: "Google Gemini 3.6 Flash",
+      system_version: "TravelShield AI Engine v2.4.0"
+    }
+  };
+
+  const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(auditData, null, 2));
+  const downloadAnchor = document.createElement('a');
+  downloadAnchor.setAttribute("href", dataStr);
+  downloadAnchor.setAttribute("download", `TravelShield_Audit_YH892A.json`);
+  document.body.appendChild(downloadAnchor);
+  downloadAnchor.click();
+  downloadAnchor.remove();
+
+  showToast('📥 Disruption Audit Report downloaded successfully!', 'success');
+}
+
+function clearDisruptionCache() {
+  localStorage.removeItem('travelshield_disruption_policies');
+  localStorage.removeItem('toggle_Autonomous Multi-Modal Rerouting');
+  localStorage.removeItem('toggle_Hotel Check-In Protection');
+  localStorage.removeItem('toggle_Car Rental Hold Sync');
+  showToast('🧹 Disruption cache & temporary recovery plans cleared.', 'info');
+}
+
+function resetDemoSettings() {
+  localStorage.clear();
+  showToast('🔄 Settings reset to Jenny Wilson demo defaults! Refreshing...', 'success');
+  setTimeout(() => {
+    window.location.reload();
+  }, 1000);
 }
 
 function shareReport() {
