@@ -1,6 +1,7 @@
 # Secrets and Environment Variables (Strictly Excluded)
 .env
 .env.*
+!.env.example
 *.env
 
 # SQLite and Local Databases
