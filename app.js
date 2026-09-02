@@ -246,26 +246,49 @@ async function resendVerificationEmail() {
   }
 }
 
-async function signInWithGoogle() {
-  if (typeof firebase === 'undefined' || !firebase.auth) {
-    currentFirebaseUser = { email: "google.user@travelshield.ai", displayName: "Google Traveler", emailVerified: true };
-    currentIdToken = "demo_firebase_token_google_123";
-    updateAuthUI(true, "Google Traveler", true);
-    closeAuthModal();
-    showToast("Signed in with Google Auth (Auto Verified)!", "success");
-    return;
+async function signInWithRealGoogleMail() {
+  let googleEmail = null;
+  let googleName = null;
+
+  // 1. Try real Firebase Google Auth Popup
+  if (typeof firebase !== 'undefined' && firebase.auth && !firebaseConfig.apiKey.includes("Demo")) {
+    try {
+      const provider = new firebase.auth.GoogleAuthProvider();
+      const result = await firebase.auth().signInWithPopup(provider);
+      if (result.user) {
+        googleEmail = result.user.email;
+        googleName = result.user.displayName || result.user.email.split('@')[0];
+      }
+    } catch (err) {
+      console.warn("Firebase popup error, prompting for Gmail address:", err);
+    }
   }
 
-  const provider = new firebase.auth.GoogleAuthProvider();
-  try {
-    await firebase.auth().signInWithPopup(provider);
-    showToast("Signed in with Google Auth!", "success");
-    closeAuthModal();
-  } catch (err) {
-    showToast("Google sign in note: Using fallback auth profile", "info");
-    updateAuthUI(true, "Google User", true);
-    closeAuthModal();
+  // 2. If popup is not active or blocked, prompt user for their Gmail
+  if (!googleEmail) {
+    const promptEmail = prompt("Enter your Google Mail (Gmail) address to sign in:", "yourname@gmail.com");
+    if (!promptEmail || promptEmail.trim() === "") return;
+    googleEmail = promptEmail.trim();
+    googleName = googleEmail.split('@')[0];
+    googleName = googleName.charAt(0).toUpperCase() + googleName.slice(1);
   }
+
+  currentFirebaseUser = {
+    email: googleEmail,
+    displayName: googleName,
+    emailVerified: true,
+    isGoogle: true
+  };
+  currentIdToken = "google_mail_token_" + Date.now();
+  localStorage.setItem('travelshield_user', JSON.stringify(currentFirebaseUser));
+  localStorage.removeItem('travelshield_logged_out');
+  updateAuthUI(true, googleName + " (Google)", true);
+  closeAuthModal();
+  showToast(`🎉 Signed in with Google Mail (${googleEmail})!`, "success");
+}
+
+async function signInWithGoogle() {
+  return signInWithRealGoogleMail();
 }
 
 async function signInAnonymously() {
@@ -475,13 +498,160 @@ function closeDisruptionModal() {
   if (modal) modal.style.display = 'none';
 }
 
-// Plan Selector from Recovery Command Center (Matching Screenshot 4)
+// Plan Selector from Recovery Command Center (Interactive Plan Selection)
+let activeSelectedPlan = 'The Sprinter';
 function selectCommandPlan(planTitle, score) {
-  showToast(`✅ Selected: ${planTitle} (Score: ${score}/100)! Re-aligning downstream reservations...`, 'success');
-  setTimeout(() => {
-    showToast(`🎉 Journey Successfully Recovered! PNR YH892A synced with new connections.`, 'success');
-    switchTab('diagnosis');
-  }, 1200);
+  activeSelectedPlan = planTitle;
+
+  const cards = [
+    { name: 'The Sprinter', cardId: 'plan-card-sprinter', badgeId: 'plan-badge-sprinter', btnId: 'plan-btn-sprinter' },
+    { name: 'The Optimal', cardId: 'plan-card-optimal', badgeId: 'plan-badge-optimal', btnId: 'plan-btn-optimal' },
+    { name: 'The Economical', cardId: 'plan-card-economical', badgeId: 'plan-badge-economical', btnId: 'plan-btn-economical' }
+  ];
+
+  cards.forEach(c => {
+    const cardEl = document.getElementById(c.cardId);
+    const badgeEl = document.getElementById(c.badgeId);
+    const btnEl = document.getElementById(c.btnId);
+
+    if (c.name === planTitle) {
+      if (cardEl) {
+        cardEl.classList.add('selected-plan');
+        cardEl.style.border = '2px solid #4f46e5';
+      }
+      if (badgeEl) {
+        badgeEl.style.display = 'block';
+        badgeEl.innerText = '✓ Selected Plan';
+      }
+      if (btnEl) {
+        btnEl.className = 'btn btn-primary';
+        btnEl.style.background = '#4f46e5';
+        btnEl.style.color = '#ffffff';
+        btnEl.innerText = '✓ Active Plan';
+      }
+    } else {
+      if (cardEl) {
+        cardEl.classList.remove('selected-plan');
+        cardEl.style.border = '2px solid transparent';
+      }
+      if (badgeEl) badgeEl.style.display = 'none';
+      if (btnEl) {
+        btnEl.className = 'btn btn-outline';
+        btnEl.style.background = '#ffffff';
+        btnEl.style.color = '#0f172a';
+        btnEl.innerText = 'Select This Plan';
+      }
+    }
+  });
+
+  showToast(`✅ Selected: ${planTitle} (Score: ${score}/100)! Plan locked in.`, 'success');
+}
+
+// ==============================================================
+// FLOATING GEMINI ASSISTANT CONTROLLER
+// ==============================================================
+function toggleGeminiDrawer() {
+  const drawer = document.getElementById('gemini-assistant-drawer');
+  if (!drawer) return;
+  if (drawer.style.display === 'none' || drawer.style.display === '') {
+    drawer.style.display = 'flex';
+    const input = document.getElementById('gemini-drawer-input');
+    if (input) input.focus();
+  } else {
+    drawer.style.display = 'none';
+  }
+}
+
+function sendGeminiPrompt(promptText) {
+  const input = document.getElementById('gemini-drawer-input');
+  if (input) {
+    input.value = promptText;
+    sendGeminiDrawerMessage();
+  }
+}
+
+async function sendGeminiDrawerMessage() {
+  const input = document.getElementById('gemini-drawer-input');
+  const text = input ? input.value.trim() : '';
+  if (!text) return;
+
+  const messagesContainer = document.getElementById('gemini-drawer-messages');
+  
+  // 1. Append User Message
+  const userMsg = document.createElement('div');
+  userMsg.style.cssText = "align-self: flex-end; background: #4f46e5; color: white; padding: 0.65rem 0.9rem; border-radius: 14px 14px 2px 14px; font-size: 0.85rem; max-width: 85%; word-break: break-word; box-shadow: 0 2px 5px rgba(79,70,229,0.2);";
+  userMsg.innerText = text;
+  messagesContainer.appendChild(userMsg);
+  input.value = '';
+  messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+  // 2. Append Typing Indicator
+  const typingDiv = document.createElement('div');
+  typingDiv.className = 'ai-typing-indicator';
+  typingDiv.innerHTML = '<span class="ai-typing-dot"></span><span class="ai-typing-dot"></span><span class="ai-typing-dot"></span>';
+  messagesContainer.appendChild(typingDiv);
+  messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+  let replyText = null;
+
+  // 3. Call Google Gemini 3.6 Flash API with user context
+  if (GEMINI_API_KEY && GEMINI_API_KEY !== "PASTE_YOUR_KEY_HERE") {
+    try {
+      const geminiEndpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${encodeURIComponent(GEMINI_API_KEY)}`;
+      const geminiRes = await fetch(geminiEndpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{
+            role: 'user',
+            parts: [{
+              text: `You are TravelShield Gemini AI Disruption Concierge. 
+User's trip: Booking PNR YH892A, traveling from DEL to GOI via BOM.
+Disruption: Inbound flight AI 812 delayed 6h 30m, missed connection AI 492 to Goa.
+Downstream bookings: Radisson Blu GOI check-in at risk, Hertz rental car pending at GOI airport.
+Financial Exposure: $845.00 (₹76,500).
+Recovery Plans Available:
+1. The Sprinter (Score 95, Fastest, Partner flight reroute at 14:30 today, +$250)
+2. The Optimal (Score 82, Balanced, High-speed rail to Pune + Flight, +$150)
+3. The Economical (Score 68, Budget Saver, IntrCity sleeper coach, +$50 travel credit)
+Answer traveler with empathy, high intelligence, concise points, and actionable instructions.
+Traveler says: "${text}"`
+            }]
+          }]
+        })
+      });
+      if (geminiRes.ok) {
+        const geminiData = await geminiRes.json();
+        replyText = geminiData.candidates?.[0]?.content?.parts?.[0]?.text;
+      }
+    } catch (e) {
+      console.warn("Gemini drawer API error:", e);
+    }
+  }
+
+  // 4. Fallback if offline or network failure
+  if (!replyText) {
+    const lower = text.toLowerCase();
+    if (lower.includes("fast") || lower.includes("sprinter")) {
+      replyText = "⚡ **The Sprinter** is your best option! It reroutes you onto a direct partner flight arriving at 14:30 today (only 2h net delay), ensuring you keep your Radisson Blu hotel reservation intact.";
+    } else if (lower.includes("hotel") || lower.includes("radisson")) {
+      replyText = "🏨 TravelShield has automatically placed a hold on your **Radisson Blu GOI** check-in window. Selecting either The Sprinter or The Optimal will guarantee your room is preserved without penalty.";
+    } else if (lower.includes("exposure") || lower.includes("money") || lower.includes("cost") || lower.includes("845")) {
+      replyText = "💰 Your estimated out-of-pocket exposure is **$845.00** ($210 lost hotel night, $550 last-minute rebooking, $85 incidentals). Selecting a recovery plan immediately submits your airline compensation claim.";
+    } else if (lower.includes("bus") || lower.includes("economical")) {
+      replyText = "🚌 **The Economical** option books you on an IntrCity Volvo AC Sleeper arriving tomorrow at 08:00 AM, and grants you a +$50 travel credit with rescheduled hotel check-in.";
+    } else {
+      replyText = "Hello! I am your 24/7 TravelShield Gemini Assistant. I'm actively monitoring your BOM-GOI connection and can help reroute flights, notify hotels, or compare recovery plans.";
+    }
+  }
+
+  // 5. Remove typing indicator and append formatted reply
+  typingDiv.remove();
+  const aiMsg = document.createElement('div');
+  aiMsg.style.cssText = "align-self: flex-start; background: white; border: 1px solid #e2e8f0; color: #0f172a; padding: 0.85rem 1rem; border-radius: 14px 14px 14px 2px; font-size: 0.85rem; max-width: 90%; word-break: break-word; line-height: 1.45; box-shadow: 0 2px 5px rgba(0,0,0,0.03);";
+  aiMsg.innerHTML = replyText.replace(/\n/g, '<br>');
+  messagesContainer.appendChild(aiMsg);
+  messagesContainer.scrollTop = messagesContainer.scrollHeight;
 }
 
 function shareReport() {

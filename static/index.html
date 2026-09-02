@@ -65,6 +65,12 @@
             Settings
           </a>
         </li>
+        <li class="nav-item" id="nav-gemini-assistant" onclick="toggleGeminiDrawer()">
+          <a href="#" style="color:#4f46e5; font-weight:700;">
+            <span style="font-size:1.1rem;">✨</span>
+            Gemini Assistant
+          </a>
+        </li>
       </ul>
     </div>
 
@@ -75,9 +81,9 @@
       </button>
       
       <div class="sidebar-contact-card" style="margin-top:1rem;">
-        <div style="font-size:1.1rem; margin-bottom:0.25rem;">🎧</div>
-        <p>24/7 AI Travel Concierge</p>
-        <button onclick="showToast('Connecting to 24/7 Concierge Support...', 'info')">Contact Support</button>
+        <div style="font-size:1.1rem; margin-bottom:0.25rem;">✨</div>
+        <p>Gemini 3.6 Flash Concierge</p>
+        <button onclick="toggleGeminiDrawer()">Ask Assistant</button>
       </div>
     </div>
   </aside>
@@ -326,9 +332,9 @@
 
         <div class="plans-comparison-grid">
           <!-- Plan 1: The Sprinter -->
-          <div class="comparison-col-card recommended-plan">
-            <div style="position:absolute; top:-12px; left:20px; background:#4f46e5; color:white; font-size:0.7rem; font-weight:800; padding:0.2rem 0.75rem; border-radius:9999px;">
-              Recommended
+          <div class="comparison-col-card selected-plan" id="plan-card-sprinter" onclick="selectCommandPlan('The Sprinter', 95)">
+            <div class="plan-selected-badge" id="plan-badge-sprinter">
+              ✓ Selected Plan
             </div>
 
             <div>
@@ -371,15 +377,19 @@
               </div>
             </div>
 
-            <button class="btn btn-primary" style="width:100%; justify-content:center; background:#4f46e5; padding:0.85rem;" onclick="selectCommandPlan('The Sprinter', 95)">
-              Select This Plan
+            <button class="btn btn-primary" id="plan-btn-sprinter" style="width:100%; justify-content:center; background:#4f46e5; padding:0.85rem;" onclick="event.stopPropagation(); selectCommandPlan('The Sprinter', 95)">
+              ✓ Active Plan
             </button>
           </div>
 
           <!-- Plan 2: The Optimal -->
-          <div class="comparison-col-card">
+          <div class="comparison-col-card" id="plan-card-optimal" onclick="selectCommandPlan('The Optimal', 82)">
+            <div class="plan-selected-badge" id="plan-badge-optimal" style="display:none;">
+              ✓ Selected Plan
+            </div>
+
             <div>
-              <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+              <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-top:0.5rem;">
                 <div>
                   <h3 style="font-size:1.3rem; font-weight:900; font-family:'Outfit',sans-serif;">The Optimal</h3>
                   <div style="font-size:0.75rem; font-weight:800; color:#64748b; text-transform:uppercase; letter-spacing:0.04em;">BALANCED APPROACH</div>
@@ -418,15 +428,19 @@
               </div>
             </div>
 
-            <button class="btn btn-outline" style="width:100%; justify-content:center; padding:0.85rem;" onclick="selectCommandPlan('The Optimal', 82)">
+            <button class="btn btn-outline" id="plan-btn-optimal" style="width:100%; justify-content:center; padding:0.85rem;" onclick="event.stopPropagation(); selectCommandPlan('The Optimal', 82)">
               Select This Plan
             </button>
           </div>
 
           <!-- Plan 3: The Economical -->
-          <div class="comparison-col-card">
+          <div class="comparison-col-card" id="plan-card-economical" onclick="selectCommandPlan('The Economical', 68)">
+            <div class="plan-selected-badge" id="plan-badge-economical" style="display:none;">
+              ✓ Selected Plan
+            </div>
+
             <div>
-              <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+              <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-top:0.5rem;">
                 <div>
                   <h3 style="font-size:1.3rem; font-weight:900; font-family:'Outfit',sans-serif;">The Economical</h3>
                   <div style="font-size:0.75rem; font-weight:800; color:#64748b; text-transform:uppercase; letter-spacing:0.04em;">BUDGET SAVER</div>
@@ -465,7 +479,7 @@
               </div>
             </div>
 
-            <button class="btn btn-outline" style="width:100%; justify-content:center; padding:0.85rem;" onclick="selectCommandPlan('The Economical', 68)">
+            <button class="btn btn-outline" id="plan-btn-economical" style="width:100%; justify-content:center; padding:0.85rem;" onclick="event.stopPropagation(); selectCommandPlan('The Economical', 68)">
               Select This Plan
             </button>
           </div>
@@ -840,12 +854,58 @@
             Sign In with Email
           </button>
 
-          <button type="button" class="btn btn-outline" style="width:100%; justify-content:center; padding:0.65rem; margin-top:0.25rem; font-weight:700; display:flex; align-items:center; gap:0.5rem;" onclick="signInWithGoogle()">
-            <svg width="16" height="16" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.26v3.15C3.29 21.36 7.37 24 12 24z"/><path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.26C.46 8.16 0 9.98 0 12s.46 3.84 1.26 5.42l4.02-3.15z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.37 0 3.29 2.64 1.26 6.58l4.02 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/></svg>
-            Sign in with Google
+          <button type="button" class="btn btn-outline" style="width:100%; justify-content:center; padding:0.75rem; margin-top:0.35rem; font-weight:700; display:flex; align-items:center; gap:0.6rem; border-color:#e2e8f0;" onclick="signInWithRealGoogleMail()">
+            <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.26v3.15C3.29 21.36 7.37 24 12 24z"/><path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.26C.46 8.16 0 9.98 0 12s.46 3.84 1.26 5.42l4.02-3.15z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.37 0 3.29 2.64 1.26 6.58l4.02 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/></svg>
+            Sign in with Google Mail (Gmail)
           </button>
         </div>
       </form>
+    </div>
+  </div>
+
+  <!-- FLOATING GEMINI ASSISTANT LAUNCHER -->
+  <button class="gemini-floating-btn" id="btn-toggle-gemini-assistant" onclick="toggleGeminiDrawer()">
+    <span style="font-size:1.15rem;">✨</span>
+    <span>Gemini Assistant</span>
+    <span style="width:8px; height:8px; background:#4ade80; border-radius:50%; display:inline-block;"></span>
+  </button>
+
+  <!-- FLOATING GEMINI CHAT DRAWER -->
+  <div class="gemini-chat-drawer" id="gemini-assistant-drawer" style="display:none;">
+    <div class="gemini-drawer-header">
+      <div style="display:flex; align-items:center; gap:0.6rem;">
+        <div style="background:rgba(255,255,255,0.15); width:32px; height:32px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:1.1rem;">✨</div>
+        <div>
+          <div style="font-weight:800; font-size:0.95rem; font-family:'Outfit',sans-serif;">Gemini AI Assistant</div>
+          <div style="font-size:0.7rem; color:#94a3b8; display:flex; align-items:center; gap:0.35rem;">
+            <span style="width:6px; height:6px; background:#10b981; border-radius:50%; display:inline-block;"></span>
+            Gemini 3.6 Flash · Online
+          </div>
+        </div>
+      </div>
+      <button onclick="toggleGeminiDrawer()" style="background:none; border:none; color:#94a3b8; font-size:1.25rem; cursor:pointer;">✕</button>
+    </div>
+
+    <div class="gemini-drawer-body" id="gemini-drawer-messages">
+      <!-- Initial AI Message -->
+      <div style="background:white; border:1px solid #e2e8f0; border-radius:14px; padding:0.85rem 1rem; font-size:0.85rem; color:#0f172a; line-height:1.45; box-shadow:0 2px 5px rgba(0,0,0,0.03);">
+        👋 <b>Hi Jenny!</b> I've analyzed your itinerary (PNR YH892A). Your inbound flight AI 812 was delayed by 6h 30m, causing a missed connection to Goa. How can I help you recover your journey?
+      </div>
+
+      <!-- Quick Prompt Chips -->
+      <div style="display:flex; flex-wrap:wrap; gap:0.4rem; margin:0.25rem 0;">
+        <button class="ai-prompt-chip" onclick="sendGeminiPrompt('What is the fastest way to reach Goa today?')">⚡ Fastest Route</button>
+        <button class="ai-prompt-chip" onclick="sendGeminiPrompt('Will I lose my Radisson hotel reservation?')">🏨 Protect Hotel</button>
+        <button class="ai-prompt-chip" onclick="sendGeminiPrompt('How does The Sprinter compare to The Economical?')">⚖️ Compare Plans</button>
+        <button class="ai-prompt-chip" onclick="sendGeminiPrompt('Explain my $845 financial exposure')">💰 Exposure Breakdown</button>
+      </div>
+    </div>
+
+    <div class="gemini-drawer-footer">
+      <input type="text" id="gemini-drawer-input" class="gemini-drawer-input" placeholder="Ask Gemini about your trip..." onkeydown="if(event.key==='Enter') sendGeminiDrawerMessage()">
+      <button class="btn btn-primary" style="padding:0.65rem 0.95rem; border-radius:10px; background:#4f46e5;" onclick="sendGeminiDrawerMessage()">
+        ➤
+      </button>
     </div>
   </div>
 

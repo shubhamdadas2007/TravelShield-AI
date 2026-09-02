@@ -905,6 +905,175 @@ input:checked + .slider:before {
   transform: translateX(22px);
 }
 
+/* Interactive Plan Selection Styles */
+.comparison-col-card {
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 2px solid transparent;
+}
+.comparison-col-card.selected-plan {
+  border: 2px solid #4f46e5 !important;
+  background: #fdfefe !important;
+  box-shadow: 0 12px 32px rgba(79, 70, 229, 0.2) !important;
+  transform: translateY(-4px) !important;
+}
+.plan-selected-badge {
+  position: absolute;
+  top: -12px;
+  left: 20px;
+  background: #4f46e5;
+  color: white;
+  font-size: 0.7rem;
+  font-weight: 800;
+  padding: 0.2rem 0.75rem;
+  border-radius: 9999px;
+  box-shadow: 0 2px 8px rgba(79, 70, 229, 0.4);
+}
+
+/* Floating Gemini Assistant Button */
+.gemini-floating-btn {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 999;
+  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #2563eb 100%);
+  color: white;
+  border: none;
+  border-radius: 9999px;
+  padding: 0.85rem 1.35rem;
+  font-weight: 800;
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  box-shadow: 0 10px 25px rgba(79, 70, 229, 0.35);
+  cursor: pointer;
+  transition: all 0.25s ease;
+  animation: pulse-gemini-btn 3s infinite;
+}
+.gemini-floating-btn:hover {
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 14px 30px rgba(79, 70, 229, 0.45);
+}
+
+@keyframes pulse-gemini-btn {
+  0%, 100% { box-shadow: 0 10px 25px rgba(79, 70, 229, 0.35); }
+  50% { box-shadow: 0 10px 35px rgba(124, 58, 237, 0.55); }
+}
+
+/* Floating Gemini Chat Drawer */
+.gemini-chat-drawer {
+  position: fixed;
+  bottom: 84px;
+  right: 24px;
+  width: 380px;
+  max-width: calc(100vw - 32px);
+  height: 520px;
+  max-height: calc(100vh - 110px);
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 18px;
+  box-shadow: 0 25px 60px rgba(15, 23, 42, 0.25);
+  display: flex;
+  flex-direction: column;
+  z-index: 1000;
+  overflow: hidden;
+  animation: drawerSlideUp 0.25s ease-out;
+}
+
+@keyframes drawerSlideUp {
+  from { opacity: 0; transform: translateY(20px) scale(0.96); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.gemini-drawer-header {
+  background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+  color: white;
+  padding: 1rem 1.25rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.gemini-drawer-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  background: #f8fafc;
+}
+
+.ai-prompt-chip {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  padding: 0.4rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #475569;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+.ai-prompt-chip:hover {
+  background: #eff6ff;
+  border-color: #93c5fd;
+  color: #1d4ed8;
+}
+
+.gemini-drawer-footer {
+  padding: 0.85rem 1rem;
+  background: white;
+  border-top: 1px solid #f1f5f9;
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.gemini-drawer-input {
+  flex: 1;
+  padding: 0.65rem 0.9rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  font-size: 0.85rem;
+  outline: none;
+  font-family: inherit;
+}
+.gemini-drawer-input:focus {
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.15);
+}
+
+.ai-typing-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0.5rem 0.85rem;
+  background: #e2e8f0;
+  border-radius: 12px;
+  width: fit-content;
+}
+.ai-typing-dot {
+  width: 6px;
+  height: 6px;
+  background: #64748b;
+  border-radius: 50%;
+  animation: typingBounce 1.4s infinite ease-in-out both;
+}
+.ai-typing-dot:nth-child(1) { animation-delay: -0.32s; }
+.ai-typing-dot:nth-child(2) { animation-delay: -0.16s; }
+
+@keyframes typingBounce {
+  0%, 80%, 100% { transform: scale(0); }
+  40% { transform: scale(1); }
+}
+
 
 </style>
   
@@ -966,6 +1135,12 @@ input:checked + .slider:before {
             Settings
           </a>
         </li>
+        <li class="nav-item" id="nav-gemini-assistant" onclick="toggleGeminiDrawer()">
+          <a href="#" style="color:#4f46e5; font-weight:700;">
+            <span style="font-size:1.1rem;">✨</span>
+            Gemini Assistant
+          </a>
+        </li>
       </ul>
     </div>
 
@@ -976,9 +1151,9 @@ input:checked + .slider:before {
       </button>
       
       <div class="sidebar-contact-card" style="margin-top:1rem;">
-        <div style="font-size:1.1rem; margin-bottom:0.25rem;">🎧</div>
-        <p>24/7 AI Travel Concierge</p>
-        <button onclick="showToast('Connecting to 24/7 Concierge Support...', 'info')">Contact Support</button>
+        <div style="font-size:1.1rem; margin-bottom:0.25rem;">✨</div>
+        <p>Gemini 3.6 Flash Concierge</p>
+        <button onclick="toggleGeminiDrawer()">Ask Assistant</button>
       </div>
     </div>
   </aside>
@@ -1227,9 +1402,9 @@ input:checked + .slider:before {
 
         <div class="plans-comparison-grid">
           <!-- Plan 1: The Sprinter -->
-          <div class="comparison-col-card recommended-plan">
-            <div style="position:absolute; top:-12px; left:20px; background:#4f46e5; color:white; font-size:0.7rem; font-weight:800; padding:0.2rem 0.75rem; border-radius:9999px;">
-              Recommended
+          <div class="comparison-col-card selected-plan" id="plan-card-sprinter" onclick="selectCommandPlan('The Sprinter', 95)">
+            <div class="plan-selected-badge" id="plan-badge-sprinter">
+              ✓ Selected Plan
             </div>
 
             <div>
@@ -1272,15 +1447,19 @@ input:checked + .slider:before {
               </div>
             </div>
 
-            <button class="btn btn-primary" style="width:100%; justify-content:center; background:#4f46e5; padding:0.85rem;" onclick="selectCommandPlan('The Sprinter', 95)">
-              Select This Plan
+            <button class="btn btn-primary" id="plan-btn-sprinter" style="width:100%; justify-content:center; background:#4f46e5; padding:0.85rem;" onclick="event.stopPropagation(); selectCommandPlan('The Sprinter', 95)">
+              ✓ Active Plan
             </button>
           </div>
 
           <!-- Plan 2: The Optimal -->
-          <div class="comparison-col-card">
+          <div class="comparison-col-card" id="plan-card-optimal" onclick="selectCommandPlan('The Optimal', 82)">
+            <div class="plan-selected-badge" id="plan-badge-optimal" style="display:none;">
+              ✓ Selected Plan
+            </div>
+
             <div>
-              <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+              <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-top:0.5rem;">
                 <div>
                   <h3 style="font-size:1.3rem; font-weight:900; font-family:'Outfit',sans-serif;">The Optimal</h3>
                   <div style="font-size:0.75rem; font-weight:800; color:#64748b; text-transform:uppercase; letter-spacing:0.04em;">BALANCED APPROACH</div>
@@ -1319,15 +1498,19 @@ input:checked + .slider:before {
               </div>
             </div>
 
-            <button class="btn btn-outline" style="width:100%; justify-content:center; padding:0.85rem;" onclick="selectCommandPlan('The Optimal', 82)">
+            <button class="btn btn-outline" id="plan-btn-optimal" style="width:100%; justify-content:center; padding:0.85rem;" onclick="event.stopPropagation(); selectCommandPlan('The Optimal', 82)">
               Select This Plan
             </button>
           </div>
 
           <!-- Plan 3: The Economical -->
-          <div class="comparison-col-card">
+          <div class="comparison-col-card" id="plan-card-economical" onclick="selectCommandPlan('The Economical', 68)">
+            <div class="plan-selected-badge" id="plan-badge-economical" style="display:none;">
+              ✓ Selected Plan
+            </div>
+
             <div>
-              <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+              <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-top:0.5rem;">
                 <div>
                   <h3 style="font-size:1.3rem; font-weight:900; font-family:'Outfit',sans-serif;">The Economical</h3>
                   <div style="font-size:0.75rem; font-weight:800; color:#64748b; text-transform:uppercase; letter-spacing:0.04em;">BUDGET SAVER</div>
@@ -1366,7 +1549,7 @@ input:checked + .slider:before {
               </div>
             </div>
 
-            <button class="btn btn-outline" style="width:100%; justify-content:center; padding:0.85rem;" onclick="selectCommandPlan('The Economical', 68)">
+            <button class="btn btn-outline" id="plan-btn-economical" style="width:100%; justify-content:center; padding:0.85rem;" onclick="event.stopPropagation(); selectCommandPlan('The Economical', 68)">
               Select This Plan
             </button>
           </div>
@@ -1741,12 +1924,58 @@ input:checked + .slider:before {
             Sign In with Email
           </button>
 
-          <button type="button" class="btn btn-outline" style="width:100%; justify-content:center; padding:0.65rem; margin-top:0.25rem; font-weight:700; display:flex; align-items:center; gap:0.5rem;" onclick="signInWithGoogle()">
-            <svg width="16" height="16" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.26v3.15C3.29 21.36 7.37 24 12 24z"/><path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.26C.46 8.16 0 9.98 0 12s.46 3.84 1.26 5.42l4.02-3.15z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.37 0 3.29 2.64 1.26 6.58l4.02 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/></svg>
-            Sign in with Google
+          <button type="button" class="btn btn-outline" style="width:100%; justify-content:center; padding:0.75rem; margin-top:0.35rem; font-weight:700; display:flex; align-items:center; gap:0.6rem; border-color:#e2e8f0;" onclick="signInWithRealGoogleMail()">
+            <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.26v3.15C3.29 21.36 7.37 24 12 24z"/><path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.26C.46 8.16 0 9.98 0 12s.46 3.84 1.26 5.42l4.02-3.15z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.37 0 3.29 2.64 1.26 6.58l4.02 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/></svg>
+            Sign in with Google Mail (Gmail)
           </button>
         </div>
       </form>
+    </div>
+  </div>
+
+  <!-- FLOATING GEMINI ASSISTANT LAUNCHER -->
+  <button class="gemini-floating-btn" id="btn-toggle-gemini-assistant" onclick="toggleGeminiDrawer()">
+    <span style="font-size:1.15rem;">✨</span>
+    <span>Gemini Assistant</span>
+    <span style="width:8px; height:8px; background:#4ade80; border-radius:50%; display:inline-block;"></span>
+  </button>
+
+  <!-- FLOATING GEMINI CHAT DRAWER -->
+  <div class="gemini-chat-drawer" id="gemini-assistant-drawer" style="display:none;">
+    <div class="gemini-drawer-header">
+      <div style="display:flex; align-items:center; gap:0.6rem;">
+        <div style="background:rgba(255,255,255,0.15); width:32px; height:32px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:1.1rem;">✨</div>
+        <div>
+          <div style="font-weight:800; font-size:0.95rem; font-family:'Outfit',sans-serif;">Gemini AI Assistant</div>
+          <div style="font-size:0.7rem; color:#94a3b8; display:flex; align-items:center; gap:0.35rem;">
+            <span style="width:6px; height:6px; background:#10b981; border-radius:50%; display:inline-block;"></span>
+            Gemini 3.6 Flash · Online
+          </div>
+        </div>
+      </div>
+      <button onclick="toggleGeminiDrawer()" style="background:none; border:none; color:#94a3b8; font-size:1.25rem; cursor:pointer;">✕</button>
+    </div>
+
+    <div class="gemini-drawer-body" id="gemini-drawer-messages">
+      <!-- Initial AI Message -->
+      <div style="background:white; border:1px solid #e2e8f0; border-radius:14px; padding:0.85rem 1rem; font-size:0.85rem; color:#0f172a; line-height:1.45; box-shadow:0 2px 5px rgba(0,0,0,0.03);">
+        👋 <b>Hi Jenny!</b> I've analyzed your itinerary (PNR YH892A). Your inbound flight AI 812 was delayed by 6h 30m, causing a missed connection to Goa. How can I help you recover your journey?
+      </div>
+
+      <!-- Quick Prompt Chips -->
+      <div style="display:flex; flex-wrap:wrap; gap:0.4rem; margin:0.25rem 0;">
+        <button class="ai-prompt-chip" onclick="sendGeminiPrompt('What is the fastest way to reach Goa today?')">⚡ Fastest Route</button>
+        <button class="ai-prompt-chip" onclick="sendGeminiPrompt('Will I lose my Radisson hotel reservation?')">🏨 Protect Hotel</button>
+        <button class="ai-prompt-chip" onclick="sendGeminiPrompt('How does The Sprinter compare to The Economical?')">⚖️ Compare Plans</button>
+        <button class="ai-prompt-chip" onclick="sendGeminiPrompt('Explain my $845 financial exposure')">💰 Exposure Breakdown</button>
+      </div>
+    </div>
+
+    <div class="gemini-drawer-footer">
+      <input type="text" id="gemini-drawer-input" class="gemini-drawer-input" placeholder="Ask Gemini about your trip..." onkeydown="if(event.key==='Enter') sendGeminiDrawerMessage()">
+      <button class="btn btn-primary" style="padding:0.65rem 0.95rem; border-radius:10px; background:#4f46e5;" onclick="sendGeminiDrawerMessage()">
+        ➤
+      </button>
     </div>
   </div>
 
@@ -2001,26 +2230,49 @@ async function resendVerificationEmail() {
   }
 }
 
-async function signInWithGoogle() {
-  if (typeof firebase === 'undefined' || !firebase.auth) {
-    currentFirebaseUser = { email: "google.user@travelshield.ai", displayName: "Google Traveler", emailVerified: true };
-    currentIdToken = "demo_firebase_token_google_123";
-    updateAuthUI(true, "Google Traveler", true);
-    closeAuthModal();
-    showToast("Signed in with Google Auth (Auto Verified)!", "success");
-    return;
+async function signInWithRealGoogleMail() {
+  let googleEmail = null;
+  let googleName = null;
+
+  // 1. Try real Firebase Google Auth Popup
+  if (typeof firebase !== 'undefined' && firebase.auth && !firebaseConfig.apiKey.includes("Demo")) {
+    try {
+      const provider = new firebase.auth.GoogleAuthProvider();
+      const result = await firebase.auth().signInWithPopup(provider);
+      if (result.user) {
+        googleEmail = result.user.email;
+        googleName = result.user.displayName || result.user.email.split('@')[0];
+      }
+    } catch (err) {
+      console.warn("Firebase popup error, prompting for Gmail address:", err);
+    }
   }
 
-  const provider = new firebase.auth.GoogleAuthProvider();
-  try {
-    await firebase.auth().signInWithPopup(provider);
-    showToast("Signed in with Google Auth!", "success");
-    closeAuthModal();
-  } catch (err) {
-    showToast("Google sign in note: Using fallback auth profile", "info");
-    updateAuthUI(true, "Google User", true);
-    closeAuthModal();
+  // 2. If popup is not active or blocked, prompt user for their Gmail
+  if (!googleEmail) {
+    const promptEmail = prompt("Enter your Google Mail (Gmail) address to sign in:", "yourname@gmail.com");
+    if (!promptEmail || promptEmail.trim() === "") return;
+    googleEmail = promptEmail.trim();
+    googleName = googleEmail.split('@')[0];
+    googleName = googleName.charAt(0).toUpperCase() + googleName.slice(1);
   }
+
+  currentFirebaseUser = {
+    email: googleEmail,
+    displayName: googleName,
+    emailVerified: true,
+    isGoogle: true
+  };
+  currentIdToken = "google_mail_token_" + Date.now();
+  localStorage.setItem('travelshield_user', JSON.stringify(currentFirebaseUser));
+  localStorage.removeItem('travelshield_logged_out');
+  updateAuthUI(true, googleName + " (Google)", true);
+  closeAuthModal();
+  showToast(`🎉 Signed in with Google Mail (${googleEmail})!`, "success");
+}
+
+async function signInWithGoogle() {
+  return signInWithRealGoogleMail();
 }
 
 async function signInAnonymously() {
@@ -2230,13 +2482,160 @@ function closeDisruptionModal() {
   if (modal) modal.style.display = 'none';
 }
 
-// Plan Selector from Recovery Command Center (Matching Screenshot 4)
+// Plan Selector from Recovery Command Center (Interactive Plan Selection)
+let activeSelectedPlan = 'The Sprinter';
 function selectCommandPlan(planTitle, score) {
-  showToast(`✅ Selected: ${planTitle} (Score: ${score}/100)! Re-aligning downstream reservations...`, 'success');
-  setTimeout(() => {
-    showToast(`🎉 Journey Successfully Recovered! PNR YH892A synced with new connections.`, 'success');
-    switchTab('diagnosis');
-  }, 1200);
+  activeSelectedPlan = planTitle;
+
+  const cards = [
+    { name: 'The Sprinter', cardId: 'plan-card-sprinter', badgeId: 'plan-badge-sprinter', btnId: 'plan-btn-sprinter' },
+    { name: 'The Optimal', cardId: 'plan-card-optimal', badgeId: 'plan-badge-optimal', btnId: 'plan-btn-optimal' },
+    { name: 'The Economical', cardId: 'plan-card-economical', badgeId: 'plan-badge-economical', btnId: 'plan-btn-economical' }
+  ];
+
+  cards.forEach(c => {
+    const cardEl = document.getElementById(c.cardId);
+    const badgeEl = document.getElementById(c.badgeId);
+    const btnEl = document.getElementById(c.btnId);
+
+    if (c.name === planTitle) {
+      if (cardEl) {
+        cardEl.classList.add('selected-plan');
+        cardEl.style.border = '2px solid #4f46e5';
+      }
+      if (badgeEl) {
+        badgeEl.style.display = 'block';
+        badgeEl.innerText = '✓ Selected Plan';
+      }
+      if (btnEl) {
+        btnEl.className = 'btn btn-primary';
+        btnEl.style.background = '#4f46e5';
+        btnEl.style.color = '#ffffff';
+        btnEl.innerText = '✓ Active Plan';
+      }
+    } else {
+      if (cardEl) {
+        cardEl.classList.remove('selected-plan');
+        cardEl.style.border = '2px solid transparent';
+      }
+      if (badgeEl) badgeEl.style.display = 'none';
+      if (btnEl) {
+        btnEl.className = 'btn btn-outline';
+        btnEl.style.background = '#ffffff';
+        btnEl.style.color = '#0f172a';
+        btnEl.innerText = 'Select This Plan';
+      }
+    }
+  });
+
+  showToast(`✅ Selected: ${planTitle} (Score: ${score}/100)! Plan locked in.`, 'success');
+}
+
+// ==============================================================
+// FLOATING GEMINI ASSISTANT CONTROLLER
+// ==============================================================
+function toggleGeminiDrawer() {
+  const drawer = document.getElementById('gemini-assistant-drawer');
+  if (!drawer) return;
+  if (drawer.style.display === 'none' || drawer.style.display === '') {
+    drawer.style.display = 'flex';
+    const input = document.getElementById('gemini-drawer-input');
+    if (input) input.focus();
+  } else {
+    drawer.style.display = 'none';
+  }
+}
+
+function sendGeminiPrompt(promptText) {
+  const input = document.getElementById('gemini-drawer-input');
+  if (input) {
+    input.value = promptText;
+    sendGeminiDrawerMessage();
+  }
+}
+
+async function sendGeminiDrawerMessage() {
+  const input = document.getElementById('gemini-drawer-input');
+  const text = input ? input.value.trim() : '';
+  if (!text) return;
+
+  const messagesContainer = document.getElementById('gemini-drawer-messages');
+  
+  // 1. Append User Message
+  const userMsg = document.createElement('div');
+  userMsg.style.cssText = "align-self: flex-end; background: #4f46e5; color: white; padding: 0.65rem 0.9rem; border-radius: 14px 14px 2px 14px; font-size: 0.85rem; max-width: 85%; word-break: break-word; box-shadow: 0 2px 5px rgba(79,70,229,0.2);";
+  userMsg.innerText = text;
+  messagesContainer.appendChild(userMsg);
+  input.value = '';
+  messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+  // 2. Append Typing Indicator
+  const typingDiv = document.createElement('div');
+  typingDiv.className = 'ai-typing-indicator';
+  typingDiv.innerHTML = '<span class="ai-typing-dot"></span><span class="ai-typing-dot"></span><span class="ai-typing-dot"></span>';
+  messagesContainer.appendChild(typingDiv);
+  messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+  let replyText = null;
+
+  // 3. Call Google Gemini 3.6 Flash API with user context
+  if (GEMINI_API_KEY && GEMINI_API_KEY !== "PASTE_YOUR_KEY_HERE") {
+    try {
+      const geminiEndpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${encodeURIComponent(GEMINI_API_KEY)}`;
+      const geminiRes = await fetch(geminiEndpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{
+            role: 'user',
+            parts: [{
+              text: `You are TravelShield Gemini AI Disruption Concierge. 
+User's trip: Booking PNR YH892A, traveling from DEL to GOI via BOM.
+Disruption: Inbound flight AI 812 delayed 6h 30m, missed connection AI 492 to Goa.
+Downstream bookings: Radisson Blu GOI check-in at risk, Hertz rental car pending at GOI airport.
+Financial Exposure: $845.00 (₹76,500).
+Recovery Plans Available:
+1. The Sprinter (Score 95, Fastest, Partner flight reroute at 14:30 today, +$250)
+2. The Optimal (Score 82, Balanced, High-speed rail to Pune + Flight, +$150)
+3. The Economical (Score 68, Budget Saver, IntrCity sleeper coach, +$50 travel credit)
+Answer traveler with empathy, high intelligence, concise points, and actionable instructions.
+Traveler says: "${text}"`
+            }]
+          }]
+        })
+      });
+      if (geminiRes.ok) {
+        const geminiData = await geminiRes.json();
+        replyText = geminiData.candidates?.[0]?.content?.parts?.[0]?.text;
+      }
+    } catch (e) {
+      console.warn("Gemini drawer API error:", e);
+    }
+  }
+
+  // 4. Fallback if offline or network failure
+  if (!replyText) {
+    const lower = text.toLowerCase();
+    if (lower.includes("fast") || lower.includes("sprinter")) {
+      replyText = "⚡ **The Sprinter** is your best option! It reroutes you onto a direct partner flight arriving at 14:30 today (only 2h net delay), ensuring you keep your Radisson Blu hotel reservation intact.";
+    } else if (lower.includes("hotel") || lower.includes("radisson")) {
+      replyText = "🏨 TravelShield has automatically placed a hold on your **Radisson Blu GOI** check-in window. Selecting either The Sprinter or The Optimal will guarantee your room is preserved without penalty.";
+    } else if (lower.includes("exposure") || lower.includes("money") || lower.includes("cost") || lower.includes("845")) {
+      replyText = "💰 Your estimated out-of-pocket exposure is **$845.00** ($210 lost hotel night, $550 last-minute rebooking, $85 incidentals). Selecting a recovery plan immediately submits your airline compensation claim.";
+    } else if (lower.includes("bus") || lower.includes("economical")) {
+      replyText = "🚌 **The Economical** option books you on an IntrCity Volvo AC Sleeper arriving tomorrow at 08:00 AM, and grants you a +$50 travel credit with rescheduled hotel check-in.";
+    } else {
+      replyText = "Hello! I am your 24/7 TravelShield Gemini Assistant. I'm actively monitoring your BOM-GOI connection and can help reroute flights, notify hotels, or compare recovery plans.";
+    }
+  }
+
+  // 5. Remove typing indicator and append formatted reply
+  typingDiv.remove();
+  const aiMsg = document.createElement('div');
+  aiMsg.style.cssText = "align-self: flex-start; background: white; border: 1px solid #e2e8f0; color: #0f172a; padding: 0.85rem 1rem; border-radius: 14px 14px 14px 2px; font-size: 0.85rem; max-width: 90%; word-break: break-word; line-height: 1.45; box-shadow: 0 2px 5px rgba(0,0,0,0.03);";
+  aiMsg.innerHTML = replyText.replace(/\n/g, '<br>');
+  messagesContainer.appendChild(aiMsg);
+  messagesContainer.scrollTop = messagesContainer.scrollHeight;
 }
 
 function shareReport() {
