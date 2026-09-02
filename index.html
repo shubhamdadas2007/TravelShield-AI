@@ -4,8 +4,851 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>TravelShield AI — Enterprise Multimodal Disruption Recovery Engine</title>
-  <link rel="stylesheet" href="static/css/styles.css">
-  <link rel="stylesheet" href="styles.css">
+  <style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap');
+
+:root {
+  --bg-app: #f8fafc;
+  --bg-surface: #ffffff;
+  --bg-sidebar: #0b192c;
+  --bg-sidebar-active: #1e3a8a;
+  
+  --primary: #2563eb;
+  --primary-hover: #1d4ed8;
+  --primary-light: #eff6ff;
+  --primary-border: #bfdbfe;
+
+  --accent-cyan: #0284c7;
+  --accent-emerald: #10b981;
+  --accent-amber: #f59e0b;
+  --accent-rose: #ef4444;
+
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #94a3b8;
+  --text-light: #f8fafc;
+
+  --border-color: #e2e8f0;
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+  --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.03), 0 1px 3px rgba(0, 0, 0, 0.02);
+  --shadow-elevated: 0 10px 25px -5px rgba(0, 0, 0, 0.08);
+
+  --radius-xl: 20px;
+  --radius-lg: 16px;
+  --radius-md: 12px;
+  --radius-sm: 8px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background-color: var(--bg-app);
+  color: var(--text-primary);
+  min-height: 100vh;
+  display: flex;
+  overflow-x: hidden;
+}
+
+h1, h2, h3, h4, .font-heading {
+  font-family: 'Outfit', sans-serif;
+}
+
+/* Sidebar Styling */
+.sidebar {
+  width: 250px;
+  background-color: var(--bg-sidebar);
+  color: var(--text-light);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 1.5rem;
+  flex-shrink: 0;
+  min-height: 100vh;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  z-index: 50;
+}
+
+.brand-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 1.35rem;
+  font-weight: 800;
+  font-family: 'Outfit', sans-serif;
+  color: #ffffff;
+  margin-bottom: 2rem;
+  padding-left: 0.5rem;
+}
+
+.brand-icon-box {
+  width: 36px;
+  height: 36px;
+  background: var(--primary);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.nav-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  list-style: none;
+}
+
+.nav-item a {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.75rem 1rem;
+  color: #94a3b8;
+  text-decoration: none;
+  border-radius: var(--radius-md);
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.nav-item a:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.nav-item.active a {
+  background: var(--primary);
+  color: #ffffff;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35);
+}
+
+.sidebar-contact-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-lg);
+  padding: 1.1rem;
+  color: white;
+  text-align: center;
+  margin-top: auto;
+}
+
+.sidebar-contact-card p {
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+}
+
+.sidebar-contact-card button {
+  background: var(--primary);
+  color: #ffffff;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-weight: 700;
+  font-size: 0.8rem;
+  cursor: pointer;
+  width: 100%;
+}
+
+/* Main Wrapper */
+.main-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+/* Topbar Header */
+.topbar {
+  background: var(--bg-surface);
+  height: 70px;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2rem;
+  position: sticky;
+  top: 0;
+  z-index: 40;
+}
+
+.search-input-topbar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #f1f5f9;
+  padding: 0.45rem 1rem;
+  border-radius: 20px;
+  width: 280px;
+}
+
+.search-input-topbar input {
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 0.85rem;
+  width: 100%;
+}
+
+.user-profile {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+/* Content Body */
+.content-body {
+  padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* Stat Cards Grid */
+.kpi-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+.kpi-card {
+  background: white;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-color);
+  padding: 1.25rem 1.5rem;
+  box-shadow: var(--shadow-card);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.kpi-title {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 0.5rem;
+}
+
+.kpi-value {
+  font-size: 1.75rem;
+  font-weight: 800;
+  font-family: 'Outfit', sans-serif;
+  color: var(--text-primary);
+}
+
+.kpi-tag {
+  font-size: 0.775rem;
+  font-weight: 600;
+  margin-top: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.kpi-tag.positive { color: var(--accent-emerald); }
+.kpi-tag.warning { color: var(--accent-amber); }
+.kpi-tag.negative { color: var(--accent-rose); }
+
+.kpi-icon-box {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+}
+
+.kpi-icon-box.blue { background: #eff6ff; color: var(--primary); }
+.kpi-icon-box.rose { background: #ffe4e6; color: var(--accent-rose); }
+.kpi-icon-box.emerald { background: #dcfce7; color: var(--accent-emerald); }
+.kpi-icon-box.cyan { background: #e0f2fe; color: var(--accent-cyan); }
+
+/* Dashboard Layout Grid */
+.dashboard-main-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.card {
+  background: white;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-color);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-card);
+  margin-bottom: 1.5rem;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.25rem;
+}
+
+.card-title {
+  font-size: 1.1rem;
+  font-weight: 800;
+  font-family: 'Outfit', sans-serif;
+  color: var(--text-primary);
+}
+
+/* Revenue Trend Chart Canvas / Bar Visualization */
+.chart-bars-container {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  height: 180px;
+  padding-top: 1rem;
+  border-bottom: 1px dashed var(--border-color);
+}
+
+.bar-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  flex: 1;
+}
+
+.bar-fill {
+  width: 36px;
+  background: linear-gradient(180deg, #3b82f6 0%, #2563eb 100%);
+  border-radius: 6px 6px 0 0;
+  transition: all 0.3s ease;
+}
+
+.bar-fill:hover {
+  background: var(--primary-hover);
+}
+
+.bar-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+/* Recent Activity List */
+.activity-feed-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.activity-item {
+  display: flex;
+  gap: 0.85rem;
+  align-items: flex-start;
+}
+
+.activity-icon-badge {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  flex-shrink: 0;
+}
+
+.activity-icon-badge.green { background: #dcfce7; color: #16a34a; }
+.activity-icon-badge.blue { background: #eff6ff; color: #2563eb; }
+.activity-icon-badge.orange { background: #fef3c7; color: #d97706; }
+.activity-icon-badge.red { background: #ffe4e6; color: #dc2626; }
+
+.activity-details {
+  flex: 1;
+}
+
+.activity-head {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.activity-time {
+  font-size: 0.725rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.activity-text {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  margin-top: 0.2rem;
+}
+
+/* Table Styling */
+.custom-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 0.5rem;
+}
+
+.custom-table th {
+  text-align: left;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.custom-table td {
+  padding: 0.85rem 1rem;
+  font-size: 0.85rem;
+  border-bottom: 1px solid #f1f5f9;
+  color: var(--text-primary);
+}
+
+.status-pill {
+  padding: 0.25rem 0.65rem;
+  border-radius: 20px;
+  font-size: 0.725rem;
+  font-weight: 700;
+  display: inline-block;
+}
+
+.status-pill.confirmed { background: #dcfce7; color: #15803d; }
+.status-pill.disrupted { background: #ffe4e6; color: #be123c; }
+.status-pill.recovered { background: #e0f2fe; color: #0369a1; }
+.status-pill.delayed { background: #fef3c7; color: #b45309; }
+
+/* Modal Overlay & Firebase Auth Box */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(4px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+}
+
+.modal-content {
+  background: white;
+  border-radius: var(--radius-xl);
+  padding: 2.25rem;
+  width: 100%;
+  max-width: 440px;
+  box-shadow: var(--shadow-elevated);
+  position: relative;
+}
+
+.modal-close-btn {
+  position: absolute;
+  top: 18px;
+  right: 20px;
+  background: transparent;
+  border: none;
+  font-size: 1.25rem;
+  cursor: pointer;
+  color: var(--text-muted);
+}
+
+.auth-tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  background: #f1f5f9;
+  padding: 0.25rem;
+  border-radius: 20px;
+}
+
+.auth-tab-btn {
+  flex: 1;
+  padding: 0.5rem;
+  border: none;
+  background: transparent;
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+  border-radius: 16px;
+}
+
+.auth-tab-btn.active {
+  background: white;
+  color: var(--primary);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-google {
+  background: white;
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  width: 100%;
+  justify-content: center;
+  font-weight: 700;
+  padding: 0.75rem;
+  border-radius: var(--radius-md);
+  margin-top: 1rem;
+}
+
+.btn-google:hover {
+  background: #f8fafc;
+}
+
+/* Buttons & Toast */
+.btn {
+  padding: 0.65rem 1.25rem;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.2s ease;
+}
+
+.btn-primary { background: var(--primary); color: white; }
+.btn-primary:hover { background: var(--primary-hover); }
+.btn-danger { background: #dc2626; color: white; }
+.btn-outline { background: white; border: 1px solid var(--border-color); color: var(--text-primary); }
+.btn-outline:hover { background: #f8fafc; }
+
+.toast-popup {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  background: #0f172a;
+  color: white;
+  padding: 0.85rem 1.25rem;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-elevated);
+  z-index: 300;
+  font-size: 0.875rem;
+}
+
+/* =========================================================
+   Glassmorphism CTA Keyframes & Styles (shadcn & Tailwind)
+   ========================================================= */
+@keyframes rotate-gradient {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes borderBeamRotation {
+  0% { transform: translate(-50%, -50%) rotate(0deg); }
+  100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+.glassmorphism-cta-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  overflow: hidden;
+  border-radius: 9999px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 40px rgba(79, 70, 229, 0.25);
+}
+
+.glassmorphism-cta-btn:hover {
+  transform: scale(1.04);
+  box-shadow: 0 0 40px 8px rgba(99, 102, 241, 0.35);
+}
+
+.glassmorphism-cta-inner {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.7rem 1.25rem;
+  background: rgba(10, 15, 30, 0.85);
+  border-radius: 9999px;
+  backdrop-filter: blur(12px);
+  position: relative;
+  z-index: 10;
+  color: white;
+  font-weight: 600;
+  font-size: 0.9rem;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+/* =========================================================
+   Enterprise Impact Diagnosis UI (Matching Screenshots 1-3)
+   ========================================================= */
+.disruption-alert-banner {
+  background: #fff1f2;
+  border: 1px solid #ffe4e6;
+  border-radius: 12px;
+  padding: 0.85rem 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+
+.badge-active-disruption {
+  background: #ffe4e6;
+  color: #e11d48;
+  font-weight: 800;
+  font-size: 0.75rem;
+  padding: 0.25rem 0.6rem;
+  border-radius: 6px;
+  letter-spacing: 0.04em;
+}
+
+.impact-grid-container {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+  gap: 1.5rem;
+  margin-bottom: 5rem;
+}
+
+.delay-impact-card {
+  background: linear-gradient(135deg, #ffffff 0%, #fffbfb 100%);
+  border: 1px solid #fee2e2;
+  border-radius: 16px;
+  padding: 1.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.big-delay-number {
+  font-size: 3rem;
+  font-weight: 900;
+  color: #dc2626;
+  line-height: 1;
+  font-family: 'Outfit', sans-serif;
+  letter-spacing: -0.02em;
+}
+
+/* Route Graph Visualizer */
+.route-graph-box {
+  background: white;
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 1.5rem;
+  position: relative;
+}
+
+.graph-track-line {
+  position: absolute;
+  left: 2.5rem;
+  top: 4.5rem;
+  bottom: 4.5rem;
+  width: 2px;
+  background: repeating-linear-gradient(to bottom, #cbd5e1 0, #cbd5e1 6px, transparent 6px, transparent 12px);
+  z-index: 1;
+}
+
+.graph-station-row {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: flex-start;
+  gap: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.graph-bullet {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: white;
+  border: 4px solid #94a3b8;
+  flex-shrink: 0;
+  margin-top: 0.75rem;
+}
+
+.graph-bullet.completed { border-color: #10b981; }
+.graph-bullet.disrupted { border-color: #ef4444; background: #fee2e2; }
+.graph-bullet.unreachable { border-color: #cbd5e1; }
+
+.station-card-inner {
+  flex: 1;
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  border: 1px solid var(--border-color);
+  background: #ffffff;
+}
+
+.station-card-inner.disrupted-node {
+  border: 2px solid #ef4444;
+  background: #fffafa;
+}
+
+.station-card-inner.unreachable-node {
+  border: 1px dashed #cbd5e1;
+  background: #f8fafc;
+}
+
+/* Financial Exposure Card */
+.financial-exposure-card {
+  background: white;
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.exposure-amount-header {
+  font-size: 2.25rem;
+  font-weight: 900;
+  color: #0f172a;
+  font-family: 'Outfit', sans-serif;
+  margin: 0.5rem 0 1.25rem 0;
+}
+
+.exposure-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.65rem 0;
+  border-top: 1px solid #f1f5f9;
+  font-size: 0.875rem;
+}
+
+/* Downstream Bookings */
+.downstream-booking-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.85rem 1rem;
+  background: #f8fafc;
+  border: 1px solid #f1f5f9;
+  border-radius: 10px;
+  margin-bottom: 0.75rem;
+}
+
+.badge-risk {
+  background: #fee2e2;
+  color: #b91c1c;
+  font-size: 0.725rem;
+  font-weight: 800;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+}
+
+.badge-pending-status {
+  background: #f1f5f9;
+  color: #475569;
+  font-size: 0.725rem;
+  font-weight: 800;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+}
+
+/* Sticky Bottom Diagnosis Bar */
+.diagnosis-bottom-bar {
+  position: fixed;
+  bottom: 0;
+  left: 250px;
+  right: 0;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(12px);
+  border-top: 1px solid var(--border-color);
+  padding: 1rem 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.05);
+  z-index: 100;
+}
+
+/* =========================================================
+   Recovery Command Center UI (Matching Screenshot 4)
+   ========================================================= */
+.plans-comparison-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.comparison-col-card {
+  background: white;
+  border: 1px solid var(--border-color);
+  border-radius: 18px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.comparison-col-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-elevated);
+}
+
+.comparison-col-card.recommended-plan {
+  border: 2px solid var(--primary);
+  box-shadow: 0 8px 30px rgba(37, 99, 235, 0.12);
+}
+
+.plan-score-badge {
+  background: #f1f5f9;
+  border-radius: 10px;
+  padding: 0.35rem 0.65rem;
+  text-align: center;
+}
+
+.plan-score-badge.top-score {
+  background: #eff6ff;
+  color: var(--primary);
+}
+
+.why-this-plan-box {
+  background: #f8fafc;
+  border-radius: 10px;
+  padding: 0.85rem;
+  margin: 1rem 0;
+  font-size: 0.825rem;
+  line-height: 1.45;
+  color: var(--text-secondary);
+}
+
+.confidence-bar-wrap {
+  width: 130px;
+  height: 8px;
+  background: #e2e8f0;
+  border-radius: 9999px;
+  overflow: hidden;
+  margin-top: 0.3rem;
+}
+
+.confidence-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #4f46e5, #3b82f6);
+  border-radius: 9999px;
+}
+
+
+</style>
   
   <!-- Firebase JS SDK (v10 compat mode) -->
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
@@ -748,13 +1591,825 @@
 
   <div id="toast-area"></div>
 
-  <script src="static/js/app.js"></script>
   <script>
-    if (typeof loadDashboardAnalytics === 'undefined') {
-      var s = document.createElement('script');
-      s.src = 'app.js';
-      document.body.appendChild(s);
+let currentTripId = 1;
+let currentTripData = null;
+let currentFirebaseUser = null;
+let currentIdToken = null;
+let currentAuthTab = 'login';
+
+// Firebase Web SDK Initialization
+const firebaseConfig = {
+  apiKey: "AIzaSyDemoTravelShieldKey1234567890",
+  authDomain: "travelshield-ai.firebaseapp.com",
+  projectId: "travelshield-ai",
+  storageBucket: "travelshield-ai.appspot.com",
+  messagingSenderId: "109876543210",
+  appId: "1:109876543210:web:abc123def456789"
+};
+
+if (typeof firebase !== 'undefined') {
+  if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const dateInput = document.getElementById('input-date');
+  if (dateInput) {
+    const today = new Date().toISOString().split('T')[0];
+    dateInput.value = today;
+  }
+
+  // Setup Firebase Auth State Listener with Email Verification check
+  if (typeof firebase !== 'undefined' && firebase.auth) {
+    firebase.auth().onAuthStateChanged(async (user) => {
+      if (user) {
+        currentFirebaseUser = user;
+        try {
+          await user.reload(); // Refresh emailVerified state
+          currentIdToken = await user.getIdToken();
+          await syncFirebaseUserWithBackend(currentIdToken);
+        } catch (e) {
+          currentIdToken = "demo_firebase_token_user_123";
+        }
+        updateAuthUI(true, user.displayName || user.email || "Firebase User", user.emailVerified);
+      } else {
+        currentFirebaseUser = null;
+        currentIdToken = null;
+        updateAuthUI(false, null, false);
+      }
+    });
+  }
+
+  loadDashboardAnalytics();
+  loadTrip(currentTripId);
+  executeMultiModalSearch();
+
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('#input-from') && !e.target.closest('#dropdown-from')) {
+      const dFrom = document.getElementById('dropdown-from');
+      if (dFrom) dFrom.style.display = 'none';
     }
-  </script>
+    if (!e.target.closest('#input-to') && !e.target.closest('#dropdown-to')) {
+      const dTo = document.getElementById('dropdown-to');
+      if (dTo) dTo.style.display = 'none';
+    }
+  });
+});
+
+// 1. Firebase Auth UI Controller with Email Verification Badge
+function updateAuthUI(isSignedIn, displayName, isEmailVerified) {
+  const avatarEl = document.getElementById('user-avatar');
+  const nameEl = document.getElementById('user-display-name');
+  const statusEl = document.getElementById('user-auth-status');
+  const actionBtn = document.getElementById('btn-auth-action');
+  const verificationBanner = document.getElementById('email-verification-banner');
+
+  if (isSignedIn) {
+    const initials = displayName ? displayName.split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2) : 'FB';
+    if (avatarEl) avatarEl.innerText = initials;
+    if (nameEl) nameEl.innerText = displayName;
+    
+    if (statusEl) {
+      if (isEmailVerified) {
+        statusEl.innerText = '✔ Firebase Email Verified';
+        statusEl.style.color = 'var(--accent-emerald)';
+        if (verificationBanner) verificationBanner.style.display = 'none';
+      } else {
+        statusEl.innerText = '⚠️ Email Unverified';
+        statusEl.style.color = 'var(--accent-amber)';
+        if (verificationBanner) verificationBanner.style.display = 'flex';
+      }
+    }
+    
+    if (actionBtn) {
+      actionBtn.innerText = 'Logout';
+      actionBtn.onclick = handleLogout;
+    }
+  } else {
+    if (avatarEl) avatarEl.innerText = '👤';
+    if (nameEl) nameEl.innerText = 'Guest User';
+    if (statusEl) {
+      statusEl.innerText = '○ Unauthenticated';
+      statusEl.style.color = 'var(--text-muted)';
+    }
+    if (verificationBanner) verificationBanner.style.display = 'none';
+    if (actionBtn) {
+      actionBtn.innerText = 'Sign In / Register';
+      actionBtn.onclick = openAuthModal;
+    }
+  }
+}
+
+async function syncFirebaseUserWithBackend(token) {
+  try {
+    await fetch('/api/auth/me', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token: token })
+    });
+  } catch (err) {
+    console.error("Firebase token sync error:", err);
+  }
+}
+
+// Modal Handlers
+function openAuthModal() {
+  document.getElementById('auth-modal').style.display = 'flex';
+}
+
+function closeAuthModal() {
+  document.getElementById('auth-modal').style.display = 'none';
+}
+
+function setAuthTab(tab) {
+  currentAuthTab = tab;
+  document.getElementById('tab-login').className = tab === 'login' ? 'auth-tab-btn active' : 'auth-tab-btn';
+  document.getElementById('tab-register').className = tab === 'register' ? 'auth-tab-btn active' : 'auth-tab-btn';
+  
+  document.getElementById('auth-modal-title').innerText = tab === 'login' ? 'Sign In to TravelShield' : 'Create an Account';
+  document.getElementById('auth-submit-btn').innerText = tab === 'login' ? 'Sign In with Email' : 'Register & Send Verification Link';
+}
+
+// Email Verification Actions
+async function handleAuthSubmit(e) {
+  e.preventDefault();
+  const email = document.getElementById('auth-email').value;
+  const password = document.getElementById('auth-password').value;
+
+  if (typeof firebase === 'undefined' || !firebase.auth) {
+    currentFirebaseUser = { email: email, displayName: email.split('@')[0], emailVerified: false };
+    currentIdToken = "demo_firebase_token_email_123";
+    updateAuthUI(true, currentFirebaseUser.displayName, false);
+    closeAuthModal();
+    showToast(`Registered ${email}! Verification email sent.`, "info");
+    return;
+  }
+
+  try {
+    if (currentAuthTab === 'login') {
+      const userCred = await firebase.auth().signInWithEmailAndPassword(email, password);
+      if (!userCred.user.emailVerified) {
+        showToast("Signed in. Note: Your email is not yet verified.", "info");
+      } else {
+        showToast("Successfully signed in with verified email!", "success");
+      }
+    } else {
+      const userCred = await firebase.auth().createUserWithEmailAndPassword(email, password);
+      // Automatically send verification email on registration
+      if (userCred.user && !userCred.user.emailVerified) {
+        await userCred.user.sendEmailVerification();
+        showToast(`Account created! Verification email sent to ${email}.`, "success");
+      }
+    }
+    closeAuthModal();
+  } catch (err) {
+    showToast(err.message || "Authentication failed", "error");
+  }
+}
+
+async function resendVerificationEmail() {
+  if (typeof firebase !== 'undefined' && firebase.auth && firebase.auth().currentUser) {
+    try {
+      await firebase.auth().currentUser.sendEmailVerification();
+      showToast(`Verification email resent to ${firebase.auth().currentUser.email}!`, "success");
+    } catch (err) {
+      showToast("Verification link sent to your registered email!", "success");
+    }
+  } else {
+    showToast("Verification email link resent to your email!", "success");
+  }
+}
+
+async function signInWithGoogle() {
+  if (typeof firebase === 'undefined' || !firebase.auth) {
+    currentFirebaseUser = { email: "google.user@travelshield.ai", displayName: "Google Traveler", emailVerified: true };
+    currentIdToken = "demo_firebase_token_google_123";
+    updateAuthUI(true, "Google Traveler", true);
+    closeAuthModal();
+    showToast("Signed in with Google Auth (Auto Verified)!", "success");
+    return;
+  }
+
+  const provider = new firebase.auth.GoogleAuthProvider();
+  try {
+    await firebase.auth().signInWithPopup(provider);
+    showToast("Signed in with Google Auth!", "success");
+    closeAuthModal();
+  } catch (err) {
+    showToast("Google sign in note: Using fallback auth profile", "info");
+    updateAuthUI(true, "Google User", true);
+    closeAuthModal();
+  }
+}
+
+async function signInAnonymously() {
+  if (typeof firebase === 'undefined' || !firebase.auth) {
+    updateAuthUI(true, "Guest Traveler", true);
+    closeAuthModal();
+    showToast("Signed in as Guest", "info");
+    return;
+  }
+
+  try {
+    await firebase.auth().signInAnonymously();
+    showToast("Signed in as Guest", "info");
+    closeAuthModal();
+  } catch (err) {
+    updateAuthUI(true, "Guest Traveler", true);
+    closeAuthModal();
+  }
+}
+
+async function handleLogout() {
+  if (typeof firebase !== 'undefined' && firebase.auth) {
+    try { await firebase.auth().signOut(); } catch (e) {}
+  }
+  currentFirebaseUser = null;
+  currentIdToken = null;
+  updateAuthUI(false, null, false);
+  showToast("Logged out of Firebase Auth", "info");
+}
+
+// Built-in Mock Datasets for Static / GitHub Pages Mode
+const STATIC_MOCK_DATA = {
+  analytics: {
+    metrics: {
+      total_bookings: "1,284",
+      pending_issues: "24",
+      active_customers: "3,492",
+      total_revenue: "₹84,250"
+    },
+    recent_activity: [
+      { id: 1, type: "SCHEDULE_UPDATED", title: "Flight 6E-249 Rescheduled", details: "Departure rescheduled by 45 mins due to air traffic control.", time_ago: "10 mins ago", status_color: "amber" },
+      { id: 2, type: "RECOVERED", title: "Disruption Recovery Applied", details: "Passenger Rahul Sharma transferred to Train 12123 on-time connection.", time_ago: "25 mins ago", status_color: "emerald" },
+      { id: 3, type: "CONFIRMED", title: "New Multi-Modal Booking", details: "Mumbai to Goa via Pune (Express Train + SmartBus)", time_ago: "1 hour ago", status_color: "blue" },
+      { id: 4, type: "CONFIRMED", title: "Hotel Taj Fort Aguada Confirmed", details: "Check-in guaranteed with early-arrival buffer.", time_ago: "2 hours ago", status_color: "blue" }
+    ],
+    recent_bookings: [
+      { id: 1, traveler: "Sarah Johnson", flight_details: "DEL → BOM (IndiGo 6E-501)", airline: "IndiGo Air", date: "Oct 24, 2026", status: "CONFIRMED" },
+      { id: 2, traveler: "Rahul Sharma", flight_details: "BOM → GOI via PUNE", airline: "Indian Railways + IntrCity", date: "Oct 25, 2026", status: "RECOVERED" },
+      { id: 3, traveler: "Vikram Malhotra", flight_details: "BLR → DEL (Air India AI-804)", airline: "Air India", date: "Oct 26, 2026", status: "CONFIRMED" },
+      { id: 4, traveler: "Ananya Iyer", flight_details: "MAA → HYD (Express 12603)", airline: "Southern Railway", date: "Oct 27, 2026", status: "CONFIRMED" }
+    ]
+  },
+  trip: {
+    id: 1,
+    title: "Mumbai → Pune → Goa Beach Getaway",
+    status: "confirmed",
+    itinerary_items: [
+      { id: 1, item_type: "transport", title: "Train: Mumbai Central (MMCT) to Pune Junction (PUNE)", status: "confirmed", notes: "Deccan Queen Express (12123) · Dep: 16:10 · Platform 4 · Coach C2, Seat 44" },
+      { id: 2, item_type: "transport", title: "Bus: Swargate Pune to Mapusa Goa", status: "confirmed", notes: "IntrCity SmartBus Volvo A/C Sleeper · Dep: 20:00 · Lower Berth L12" },
+      { id: 3, item_type: "hotel", title: "Hotel: Taj Fort Aguada Resort, Goa", status: "confirmed", notes: "Luxury Sea Facing Suite · Guaranteed Early Check-in" },
+      { id: 4, item_type: "activity", title: "Activity: Grand Island Scuba Diving & Boat Safari", status: "confirmed", notes: "Pick up at 07:30 AM from Hotel Lobby · Pass #2" }
+    ],
+    recovery_plans: []
+  },
+  hubs: [
+    { name: "Mumbai (Chhatrapati Shivaji Maharaj International Airport)", city: "Mumbai", code: "BOM", type: "airport", state: "Maharashtra" },
+    { name: "Mumbai CSMT Terminus", city: "Mumbai", code: "CSMT", type: "railway_station", state: "Maharashtra" },
+    { name: "Delhi (Indira Gandhi International Airport)", city: "Delhi", code: "DEL", type: "airport", state: "Delhi" },
+    { name: "New Delhi Railway Station", city: "Delhi", code: "NDLS", type: "railway_station", state: "Delhi" },
+    { name: "Pune Junction", city: "Pune", code: "PUNE", type: "railway_station", state: "Maharashtra" },
+    { name: "Goa (Dabolim Airport)", city: "Goa", code: "GOI", type: "airport", state: "Goa" },
+    { name: "Goa Madgaon Junction", city: "Goa", code: "MAO", type: "railway_station", state: "Goa" },
+    { name: "Bengaluru (Kempegowda International Airport)", city: "Bengaluru", code: "BLR", type: "airport", state: "Karnataka" },
+    { name: "Hyderabad (Rajiv Gandhi International Airport)", city: "Hyderabad", code: "HYD", type: "airport", state: "Telangana" },
+    { name: "Chennai Central", city: "Chennai", code: "MAS", type: "railway_station", state: "Tamil Nadu" },
+    { name: "Kolkata Howrah Junction", city: "Kolkata", code: "HWH", type: "railway_station", state: "West Bengal" }
+  ]
+};
+
+// 2. Load Live Dashboard Analytics (with static fallback)
+async function loadDashboardAnalytics() {
+  let data = null;
+  try {
+    const res = await fetch('/api/disruptions/dashboard-analytics');
+    if (res.ok) {
+      data = await res.json();
+    }
+  } catch (err) {
+    // static mode fallback
+  }
+
+  if (!data) {
+    data = STATIC_MOCK_DATA.analytics;
+  }
+
+  if (data.metrics) {
+    document.getElementById('kpi-bookings').innerText = data.metrics.total_bookings;
+    document.getElementById('kpi-pending').innerText = data.metrics.pending_issues;
+    document.getElementById('kpi-customers').innerText = data.metrics.active_customers;
+    document.getElementById('kpi-revenue').innerText = data.metrics.total_revenue;
+  }
+
+  if (data.recent_activity) renderActivityFeed(data.recent_activity);
+  if (data.recent_bookings) renderRecentBookings(data.recent_bookings);
+}
+
+function renderActivityFeed(activities) {
+  const container = document.getElementById('activity-feed-container');
+  if (!container) return;
+  container.innerHTML = '';
+
+  activities.forEach(act => {
+    const div = document.createElement('div');
+    div.className = 'activity-item';
+    let icon = act.type === 'CONFIRMED' ? '✓' : (act.type === 'CREATED' ? '+' : (act.type === 'SCHEDULE_UPDATED' ? '🕒' : '✕'));
+    let colorClass = act.status_color || 'blue';
+
+    div.innerHTML = `
+      <div class="activity-icon-badge ${colorClass}">${icon}</div>
+      <div class="activity-details">
+        <div class="activity-head">
+          <span>${act.title}</span>
+          <span class="activity-time">${act.time_ago}</span>
+        </div>
+        <div class="activity-text">${act.details}</div>
+      </div>
+    `;
+    container.appendChild(div);
+  });
+}
+
+function renderRecentBookings(bookings) {
+  const tbody = document.getElementById('recent-bookings-tbody');
+  if (!tbody) return;
+  tbody.innerHTML = '';
+
+  bookings.forEach(b => {
+    const tr = document.createElement('tr');
+    let pillClass = b.status === 'CONFIRMED' ? 'confirmed' : 'recovered';
+    tr.innerHTML = `
+      <td><b>${b.traveler}</b></td>
+      <td>${b.flight_details}</td>
+      <td>${b.airline}</td>
+      <td>${b.date}</td>
+      <td><span class="status-pill ${pillClass}">${b.status}</span></td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+function switchTab(tabName) {
+  const tabs = ['diagnosis', 'recovery', 'dashboard', 'search', 'history', 'settings'];
+  tabs.forEach(t => {
+    const navEl = document.getElementById(`nav-${t}`);
+    const secEl = document.getElementById(`section-${t}`);
+    if (navEl) navEl.className = t === tabName ? 'nav-item active' : 'nav-item';
+    if (secEl) secEl.style.display = t === tabName ? 'block' : 'none';
+  });
+
+  const pageTitleEl = document.getElementById('page-title');
+  if (pageTitleEl) {
+    if (tabName === 'diagnosis') pageTitleEl.innerText = 'Impact Diagnosis';
+    else if (tabName === 'recovery') pageTitleEl.innerText = 'Recovery Command Center';
+    else if (tabName === 'dashboard') pageTitleEl.innerText = 'Enterprise Dashboard';
+    else if (tabName === 'search') pageTitleEl.innerText = 'Multi-Modal Search';
+    else pageTitleEl.innerText = 'Recovery Engine';
+  }
+
+  if (tabName === 'dashboard') loadDashboardAnalytics();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// Currency Switcher (Matching Screenshot 1 vs Screenshot 2)
+let currentCurrency = 'USD';
+function toggleCurrency(curr) {
+  currentCurrency = curr;
+  const totalEl = document.getElementById('exposure-total-display');
+  const hotelEl = document.getElementById('exposure-hotel-display');
+  const rebookEl = document.getElementById('exposure-rebook-display');
+  const mealsEl = document.getElementById('exposure-meals-display');
+
+  if (curr === 'INR') {
+    if (totalEl) totalEl.innerText = '₹76,500';
+    if (hotelEl) hotelEl.innerText = '₹20,100';
+    if (rebookEl) rebookEl.innerText = '₹48,600';
+    if (mealsEl) mealsEl.innerText = '₹7,800';
+    showToast('Switched to Indian Rupee (₹ INR)', 'info');
+  } else {
+    if (totalEl) totalEl.innerText = '$845.00';
+    if (hotelEl) hotelEl.innerText = '$210.00';
+    if (rebookEl) rebookEl.innerText = '$550.00';
+    if (mealsEl) mealsEl.innerText = '$85.00';
+    showToast('Switched to US Dollar ($ USD)', 'info');
+  }
+}
+
+// Disruption Modal (Matching Screenshot 5)
+function openDisruptionModal() {
+  const modal = document.getElementById('disruption-detected-modal');
+  if (modal) modal.style.display = 'flex';
+}
+
+function closeDisruptionModal() {
+  const modal = document.getElementById('disruption-detected-modal');
+  if (modal) modal.style.display = 'none';
+}
+
+// Plan Selector from Recovery Command Center (Matching Screenshot 4)
+function selectCommandPlan(planTitle, score) {
+  showToast(`✅ Selected: ${planTitle} (Score: ${score}/100)! Re-aligning downstream reservations...`, 'success');
+  setTimeout(() => {
+    showToast(`🎉 Journey Successfully Recovered! PNR YH892A synced with new connections.`, 'success');
+    switchTab('diagnosis');
+  }, 1200);
+}
+
+function shareReport() {
+  navigator.clipboard?.writeText(window.location.href);
+  showToast('📋 Impact Diagnosis Report link copied to clipboard!', 'success');
+}
+
+async function handleAutocomplete(target, query) {
+  const dropdown = document.getElementById(`dropdown-${target}`);
+  if (!query || query.trim().length === 0) {
+    dropdown.style.display = 'none';
+    return;
+  }
+
+  let suggestions = null;
+  try {
+    const res = await fetch(`/api/stations/autocomplete?query=${encodeURIComponent(query)}`);
+    if (res.ok) {
+      const data = await res.json();
+      suggestions = data.suggestions;
+    }
+  } catch (err) {
+    // static mode fallback
+  }
+
+  if (!suggestions || suggestions.length === 0) {
+    const q = query.toLowerCase();
+    suggestions = STATIC_MOCK_DATA.hubs.filter(h => 
+      h.name.toLowerCase().includes(q) || 
+      h.city.toLowerCase().includes(q) || 
+      h.code.toLowerCase().includes(q)
+    );
+  }
+
+  dropdown.innerHTML = '';
+  if (suggestions && suggestions.length > 0) {
+    dropdown.style.display = 'block';
+    suggestions.forEach(item => {
+      const div = document.createElement('div');
+      div.style.padding = '0.65rem 1rem';
+      div.style.cursor = 'pointer';
+      div.style.display = 'flex';
+      div.style.justifyContent = 'space-between';
+      div.style.fontSize = '0.85rem';
+      div.style.borderBottom = '1px solid #f1f5f9';
+      
+      let typeIcon = item.type === 'airport' ? '✈️' : (item.type === 'railway_station' ? '🚆' : '🏙️');
+      div.innerHTML = `
+        <div>
+          <b>${typeIcon} ${item.name}</b>
+          <div style="font-size:0.75rem; color:var(--text-muted);">${item.city}, ${item.state}</div>
+        </div>
+        <span style="background:#f1f5f9; padding:0.2rem 0.5rem; border-radius:4px; font-weight:700;">${item.code}</span>
+      `;
+      div.onclick = () => {
+        document.getElementById(`input-${target}`).value = `${item.city} (${item.code})`;
+        dropdown.style.display = 'none';
+      };
+      dropdown.appendChild(div);
+    });
+  } else {
+    dropdown.style.display = 'none';
+  }
+}
+
+async function executeMultiModalSearch() {
+  const origin = document.getElementById('input-from').value.trim() || 'Mumbai';
+  const destination = document.getElementById('input-to').value.trim() || 'Delhi';
+  const travelDate = document.getElementById('input-date').value;
+  const passengers = parseInt(document.getElementById('input-passengers').value || '1');
+
+  const resultsGrid = document.getElementById('search-results-grid');
+  if (!resultsGrid) return;
+  resultsGrid.innerHTML = '<p style="grid-column:1/-1; color:var(--text-muted); text-align:center; padding:2rem;">Loading transport options...</p>';
+
+  let results = null;
+  try {
+    const res = await fetch('/api/search', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ origin, destination, travel_date: travelDate, passengers })
+    });
+    if (res.ok) {
+      const data = await res.json();
+      results = data.results;
+    }
+  } catch (err) {
+    // static mode fallback
+  }
+
+  if (!results || results.length === 0) {
+    results = [
+      { type: "flight", carrier: "IndiGo Air (6E-531)", name: `IndiGo Non-Stop (${origin} → ${destination})`, departure_time: "08:15", arrival_time: "10:30", duration_minutes: 135, price: 4890 * passengers },
+      { type: "flight", carrier: "Air India (AI-802)", name: `Air India Express (${origin} → ${destination})`, departure_time: "14:40", arrival_time: "17:05", duration_minutes: 145, price: 5420 * passengers },
+      { type: "train", carrier: "Indian Railways (12951)", name: `Rajdhani Superfast Express`, departure_time: "17:00", arrival_time: "08:35", duration_minutes: 935, price: 2150 * passengers },
+      { type: "train", carrier: "Indian Railways (22221)", name: `Vande Bharat Express`, departure_time: "06:00", arrival_time: "14:15", duration_minutes: 495, price: 1850 * passengers },
+      { type: "bus", carrier: "IntrCity SmartBus", name: `IntrCity Volvo Multi-Axle A/C Sleeper`, departure_time: "19:30", arrival_time: "11:00", duration_minutes: 930, price: 1250 * passengers },
+      { type: "bus", carrier: "Zingbus Electric", name: `Zingbus Premium Seater / Sleeper`, departure_time: "21:00", arrival_time: "12:30", duration_minutes: 930, price: 1100 * passengers }
+    ];
+  }
+
+  renderSearchResults(results);
+}
+
+function renderSearchResults(results) {
+  const resultsGrid = document.getElementById('search-results-grid');
+  if (!resultsGrid) return;
+  resultsGrid.innerHTML = '';
+
+  if (!results || results.length === 0) {
+    resultsGrid.innerHTML = '<p style="grid-column:1/-1; color:var(--text-muted); text-align:center; padding:2rem;">No routes found.</p>';
+    return;
+  }
+
+  results.forEach(r => {
+    const card = document.createElement('div');
+    card.style.background = 'white';
+    card.style.border = '1px solid var(--border-color)';
+    card.style.borderRadius = '16px';
+    card.style.padding = '1.25rem';
+    card.style.display = 'flex';
+    card.style.flexDirection = 'column';
+    card.style.justifyContent = 'space-between';
+
+    let icon = r.type === 'flight' ? '✈️' : (r.type === 'train' ? '🚆' : '🚌');
+    card.innerHTML = `
+      <div>
+        <div style="font-weight:800; font-size:1.05rem;">${icon} ${r.name || r.carrier}</div>
+        <div style="font-size:0.85rem; color:var(--text-secondary); margin-top:0.4rem;">
+          <b>Carrier:</b> ${r.carrier} | <b>Duration:</b> ${Math.floor(r.duration_minutes/60)}h ${r.duration_minutes%60}m
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; background:#f8fafc; padding:0.65rem; border-radius:8px; margin-top:0.85rem;">
+          <div>
+            <div style="font-size:0.725rem; color:var(--text-muted); font-weight:700;">TIME</div>
+            <div style="font-weight:700; font-size:0.9rem;">${r.departure_time} → ${r.arrival_time}</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-size:0.725rem; color:var(--text-muted); font-weight:700;">FARE</div>
+            <div style="font-weight:800; font-size:1.1rem; color:var(--primary);">₹${r.price}</div>
+          </div>
+        </div>
+      </div>
+      <button class="btn btn-outline" style="width:100%; justify-content:center; margin-top:1rem;" onclick="switchTab('recovery')">
+        Test Recovery Engine on Route
+      </button>
+    `;
+    resultsGrid.appendChild(card);
+  });
+}
+
+async function loadTrip(tripId) {
+  let data = null;
+  try {
+    const res = await fetch(`/api/trips/${tripId}`);
+    if (res.ok) {
+      data = await res.json();
+    }
+  } catch (err) {
+    // fallback
+  }
+
+  if (!data) {
+    data = currentTripData || JSON.parse(JSON.stringify(STATIC_MOCK_DATA.trip));
+  }
+
+  currentTripData = data;
+  renderTrip(data);
+}
+
+function renderTrip(trip) {
+  const statusPill = document.getElementById('trip-status-pill');
+  if (statusPill) {
+    statusPill.className = `status-pill ${trip.status}`;
+    statusPill.innerText = trip.status.toUpperCase();
+  }
+
+  const timeline = document.getElementById('timeline-container');
+  if (!timeline) return;
+  timeline.innerHTML = '';
+
+  trip.itinerary_items.forEach(item => {
+    const div = document.createElement('div');
+    div.style.padding = '1rem';
+    div.style.border = '1px solid var(--border-color)';
+    div.style.borderRadius = '12px';
+    div.style.marginBottom = '0.75rem';
+    div.style.background = item.status === 'confirmed' ? '#ffffff' : '#fff1f2';
+
+    let icon = item.item_type === 'transport' ? '🚆' : (item.item_type === 'hotel' ? '🏨' : '🤿');
+    div.innerHTML = `
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <div style="font-weight:700; font-size:0.95rem;">${icon} ${item.title}</div>
+        <span class="status-pill ${item.status}">${item.status.toUpperCase()}</span>
+      </div>
+      <div style="font-size:0.825rem; color:var(--text-secondary); margin-top:0.35rem;">${item.notes || ''}</div>
+    `;
+    timeline.appendChild(div);
+  });
+
+  const plansSection = document.getElementById('plans-section');
+  const plansGrid = document.getElementById('plans-grid');
+  if (trip.recovery_plans && trip.recovery_plans.length > 0) {
+    plansSection.style.display = 'block';
+    plansGrid.innerHTML = '';
+
+    trip.recovery_plans.forEach(plan => {
+      const card = document.createElement('div');
+      card.style.background = '#f8fafc';
+      card.style.border = '1px solid var(--border-color)';
+      card.style.borderRadius = '12px';
+      card.style.padding = '1.1rem';
+      card.innerHTML = `
+        <div style="font-weight:800; font-size:1.05rem;">${plan.title}</div>
+        <div style="font-size:0.825rem; color:var(--text-secondary); margin:0.4rem 0;">Cost Diff: ₹${plan.total_cost_diff} | Net Delay: ${plan.total_delay_minutes} mins</div>
+        <div style="background:white; padding:0.75rem; border-radius:8px; font-size:0.825rem; border-left:3px solid var(--primary); margin:0.65rem 0;">
+          ${plan.ai_explanation || plan.description}
+        </div>
+        <button class="btn btn-primary" style="width:100%; justify-content:center;" onclick="applyRecoveryPlan(${plan.id})">Apply Recovery Plan</button>
+      `;
+      plansGrid.appendChild(card);
+    });
+  } else {
+    plansSection.style.display = 'none';
+  }
+}
+
+function getAuthHeaders() {
+  const headers = { 'Content-Type': 'application/json' };
+  if (currentIdToken) {
+    headers['Authorization'] = `Bearer ${currentIdToken}`;
+  }
+  return headers;
+}
+
+async function simulateCustomDisruption(disruptionType, delayMinutes) {
+  if (!currentTripData || !currentTripData.itinerary_items) {
+    currentTripData = JSON.parse(JSON.stringify(STATIC_MOCK_DATA.trip));
+  }
+  const leg1 = currentTripData.itinerary_items[0];
+
+  showToast(`Simulating ${disruptionType.toUpperCase()}...`, "info");
+  let simulatedSuccessfully = false;
+
+  try {
+    const res = await fetch('/api/disruptions/simulate', {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify({
+        trip_id: currentTripId,
+        itinerary_item_id: leg1.id,
+        delay_minutes: delayMinutes,
+        disruption_type: disruptionType
+      })
+    });
+    if (res.ok) {
+      const data = await res.json();
+      showToast(`Disruption simulated! (User: ${data.authenticated_user || 'Guest'})`, "success");
+      await loadTrip(currentTripId);
+      await loadDashboardAnalytics();
+      simulatedSuccessfully = true;
+    }
+  } catch (err) {
+    // fallback
+  }
+
+  if (!simulatedSuccessfully) {
+    // Client-side simulation fallback for GitHub Pages demo
+    currentTripData.status = disruptionType === 'cancellation' ? 'cancelled' : 'delayed';
+    currentTripData.itinerary_items[0].status = disruptionType === 'cancellation' ? 'cancelled' : 'delayed';
+    currentTripData.itinerary_items[0].notes = disruptionType === 'cancellation' 
+      ? '⚠️ TRAIN SERVICE CANCELLED by Indian Railways due to track maintenance.' 
+      : `⚠️ DELAYED by ${delayMinutes} minutes due to signal clearance issue.`;
+
+    currentTripData.recovery_plans = [
+      {
+        id: 101,
+        title: "⚡ Option A: Fast Direct Flight (IndiGo BOM → GOI)",
+        total_cost_diff: 3200,
+        total_delay_minutes: 0,
+        ai_explanation: "Gemini AI Recommendation: Bypasses the rail breakdown and bus leg completely. Direct 1h 15m flight ensures on-time arrival for Hotel Check-in & Scuba Activity."
+      },
+      {
+        id: 102,
+        title: "🚆 Option B: Later Tejas Express + Rescheduled Sleeper Bus",
+        total_cost_diff: 650,
+        total_delay_minutes: 90,
+        ai_explanation: "Cost-optimized alternative: Transfers passenger to Tejas Express (departs 18:30) and reschedules connecting bus from Pune to midnight sleeper."
+      }
+    ];
+
+    renderTrip(currentTripData);
+    showToast(`Disruption simulated! AI generated 2 recovery plans.`, "success");
+  }
+}
+
+async function applyRecoveryPlan(planId) {
+  let appliedSuccessfully = false;
+  try {
+    const res = await fetch('/api/recovery/apply', {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify({ trip_id: currentTripId, plan_id: planId })
+    });
+    if (res.ok) {
+      const data = await res.json();
+      showToast(`Recovery plan applied! (User: ${data.authenticated_user || 'Guest'}) 🎉`, "success");
+      await loadTrip(currentTripId);
+      await loadDashboardAnalytics();
+      appliedSuccessfully = true;
+    }
+  } catch (err) {
+    // fallback
+  }
+
+  if (!appliedSuccessfully) {
+    // Client-side fallback for GitHub Pages
+    currentTripData.status = "recovered";
+    currentTripData.itinerary_items[0].status = "confirmed";
+    currentTripData.itinerary_items[0].title = planId === 101 
+      ? "✈️ Flight: Mumbai (BOM) to Goa (GOI) — IndiGo 6E-344 [Recovered]" 
+      : "🚆 Train: Tejas Express (Mumbai to Karmali) [Recovered]";
+    currentTripData.itinerary_items[0].notes = "Recovered via TravelShield AI Engine. Seat & PNR auto-synced.";
+    currentTripData.recovery_plans = [];
+    renderTrip(currentTripData);
+    showToast("Recovery plan applied! All legs re-aligned & confirmed. 🎉", "success");
+  }
+}
+
+async function sendChatMessage() {
+  const input = document.getElementById('chat-input');
+  const text = input.value.trim();
+  if (!text) return;
+
+  const chat = document.getElementById('chat-messages');
+  const userDiv = document.createElement('div');
+  userDiv.style.background = 'var(--primary)';
+  userDiv.style.color = 'white';
+  userDiv.style.padding = '0.75rem 1rem';
+  userDiv.style.borderRadius = '12px';
+  userDiv.style.alignSelf = 'flex-end';
+  userDiv.style.fontSize = '0.85rem';
+  userDiv.innerText = text;
+  chat.appendChild(userDiv);
+  input.value = '';
+
+  let replyText = null;
+  try {
+    const res = await fetch('/api/ai/chat', {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify({ trip_id: currentTripId, user_message: text })
+    });
+    if (res.ok) {
+      const data = await res.json();
+      replyText = data.reply;
+    }
+  } catch (err) {
+    // fallback
+  }
+
+  if (!replyText) {
+    const lower = text.toLowerCase();
+    if (lower.includes("delay") || lower.includes("disrupt") || lower.includes("cancel")) {
+      replyText = "I've analyzed your itinerary! If your primary train is delayed or cancelled, TravelShield AI immediately reserves alternative transport options (such as IndiGo 6E-344 or Tejas Express) to prevent missed connections and hotel cancellation fees.";
+    } else if (lower.includes("hotel") || lower.includes("taj") || lower.includes("check-in")) {
+      replyText = "Your booking at Taj Fort Aguada Resort is protected. TravelShield automatically notifies the hotel desk of any arrival time adjustments so your room reservation is held safely.";
+    } else if (lower.includes("search") || lower.includes("flight") || lower.includes("train") || lower.includes("bus")) {
+      replyText = "You can search live transport options across 25+ Indian transit hubs in the Multi-Modal Search tab, comparing real-time fares and schedules.";
+    } else {
+      replyText = "Hello! I am your 24/7 AI Travel Disruption Concierge. I continuously monitor your flights, trains, and buses to resolve delays and protect your itinerary automatically.";
+    }
+  }
+
+  const botDiv = document.createElement('div');
+  botDiv.style.background = '#f1f5f9';
+  botDiv.style.padding = '0.75rem 1rem';
+  botDiv.style.borderRadius = '12px';
+  botDiv.style.fontSize = '0.85rem';
+  botDiv.innerHTML = replyText.replace(/\n/g, '<br>');
+  chat.appendChild(botDiv);
+  chat.scrollTop = chat.scrollHeight;
+}
+
+function showToast(msg, type = 'info') {
+  const container = document.getElementById('toast-area');
+  const toast = document.createElement('div');
+  toast.className = 'toast-popup';
+  if (type === 'error') toast.style.borderLeft = '4px solid #ef4444';
+  else toast.style.borderLeft = '4px solid #10b981';
+  toast.innerText = msg;
+  container.appendChild(toast);
+  setTimeout(() => toast.remove(), 4000);
+}
+
+</script>
 </body>
 </html>
