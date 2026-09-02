@@ -1,0 +1,38 @@
+# Secrets and Environment Variables (Strictly Excluded)
+.env
+.env.*
+*.env
+
+# SQLite and Local Databases
+*.db
+*.sqlite
+*.sqlite3
+travelshield.db
+
+# Python bytecode & virtual environments
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+env/
+ENV/
+
+# Testing & Coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# OS and IDE Files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Node / Logs
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

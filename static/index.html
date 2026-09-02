@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TravelShield AI — Dashboard & Recovery Center</title>
+  <meta name="description" content="AI Multimodal Disruption Recovery Engine with Firebase Email Verification.">
+  <link rel="stylesheet" href="/css/styles.css">
+  
+  <!-- Firebase JS SDK (v10 compat mode) -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+</head>
+<body>
+
+  <!-- Left Sidebar (Matching Reference UI Design) -->
+  <aside class="sidebar">
+    <div>
+      <div class="brand-logo">
+        <div class="brand-icon-box">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+          </svg>
+        </div>
+        <span>TravelShield</span>
+      </div>
+
+      <ul class="nav-menu">
+        <li class="nav-item active" id="nav-dashboard" onclick="switchTab('dashboard')">
+          <a href="#">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+            Dashboard
+          </a>
+        </li>
+        <li class="nav-item" id="nav-search" onclick="switchTab('search')">
+          <a href="#">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            Multi-Modal Search
+          </a>
+        </li>
+        <li class="nav-item" id="nav-recovery" onclick="switchTab('recovery')">
+          <a href="#">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+            Recovery Center
+          </a>
+        </li>
+        <li class="nav-item" id="nav-history" onclick="switchTab('history')">
+          <a href="#">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+            History
+          </a>
+        </li>
+        <li class="nav-item" id="nav-settings" onclick="switchTab('settings')">
+          <a href="#">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+            Settings
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Contact Support Sidebar Widget -->
+    <div class="sidebar-contact-card">
+      <div style="font-size:1.2rem; margin-bottom:0.25rem;">🎧</div>
+      <p>Need help with a booking?</p>
+      <button onclick="showToast('Connecting to 24/7 AI Concierge...', 'info')">Contact Support</button>
+    </div>
+  </aside>
+
+  <!-- Main Wrapper -->
+  <div class="main-wrapper">
+
+    <!-- Topbar Header -->
+    <header class="topbar">
+      <h1 style="font-size:1.4rem; font-weight:800; color:var(--text-primary);">Dashboard</h1>
+
+      <div class="search-input-topbar">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <input type="text" placeholder="Search bookings...">
+      </div>
+
+      <div class="user-profile">
+        <div id="auth-user-container" style="display:flex; align-items:center; gap:0.75rem;">
+          <div class="avatar" id="user-avatar">JW</div>
+          <div style="display:flex; flex-direction:column;">
+            <span style="font-weight:700; font-size:0.875rem;" id="user-display-name">Jenny Wilson</span>
+            <span style="font-size:0.725rem; font-weight:700;" id="user-auth-status">● Firebase Authenticated</span>
+          </div>
+          <button class="btn btn-outline" style="padding:0.35rem 0.75rem; font-size:0.775rem;" id="btn-auth-action" onclick="handleAuthAction()">Logout</button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Email Verification Alert Banner (Hidden by default, shown when user's email is unverified) -->
+    <div id="email-verification-banner" style="display:none; background:#fef3c7; border-bottom:1px solid #fde68a; padding:0.75rem 2rem; color:#b45309; font-size:0.85rem; font-weight:600; justify-content:space-between; align-items:center;">
+      <div style="display:flex; align-items:center; gap:0.5rem;">
+        <span>⚠️ Your email is unverified. Please check your inbox to complete registration.</span>
+      </div>
+      <button class="btn btn-primary" style="padding:0.35rem 0.85rem; font-size:0.775rem;" onclick="resendVerificationEmail()">Resend Verification Link</button>
+    </div>
+
+    <!-- Content Body -->
+    <main class="content-body">
+
+      <!-- DASHBOARD TAB -->
+      <div id="section-dashboard">
+        <div class="kpi-cards-grid">
+          <div class="kpi-card">
+            <div>
+              <div class="kpi-title">Total Bookings</div>
+              <div class="kpi-value" id="kpi-bookings">1,284</div>
+              <div class="kpi-tag positive">↗ 12% this month</div>
+            </div>
+            <div class="kpi-icon-box blue">📱</div>
+          </div>
+
+          <div class="kpi-card">
+            <div>
+              <div class="kpi-title">Pending Issues</div>
+              <div class="kpi-value" id="kpi-pending">24</div>
+              <div class="kpi-tag warning">↘ 12 resolved</div>
+            </div>
+            <div class="kpi-icon-box rose">⚠️</div>
+          </div>
+
+          <div class="kpi-card">
+            <div>
+              <div class="kpi-title">Active Customers</div>
+              <div class="kpi-value" id="kpi-customers">3,492</div>
+              <div class="kpi-tag positive">↗ 16% this month</div>
+            </div>
+            <div class="kpi-icon-box emerald">👥</div>
+          </div>
+
+          <div class="kpi-card">
+            <div>
+              <div class="kpi-title">Total Revenue</div>
+              <div class="kpi-value" id="kpi-revenue">$84,250</div>
+              <div class="kpi-tag positive">↗ 9.4% this month</div>
+            </div>
+            <div class="kpi-icon-box cyan">💵</div>
+          </div>
+        </div>
+
+        <div class="dashboard-main-grid">
+          <div>
+            <div class="card">
+              <div class="card-header">
+                <div class="card-title">Monthly Revenue Trend</div>
+                <select style="padding:0.35rem 0.75rem; border:1px solid var(--border-color); border-radius:8px; font-size:0.8rem; font-weight:600; outline:none;">
+                  <option>Last 6 Months</option>
+                  <option>Year 2026</option>
+                </select>
+              </div>
+
+              <div class="chart-bars-container">
+                <div class="bar-col"><div class="bar-fill" style="height:45%;"></div><span class="bar-label">Jul</span></div>
+                <div class="bar-col"><div class="bar-fill" style="height:60%;"></div><span class="bar-label">Aug</span></div>
+                <div class="bar-col"><div class="bar-fill" style="height:72%;"></div><span class="bar-label">Sep</span></div>
+                <div class="bar-col"><div class="bar-fill" style="height:55%;"></div><span class="bar-label">Oct</span></div>
+                <div class="bar-col"><div class="bar-fill" style="height:85%;"></div><span class="bar-label">Nov</span></div>
+                <div class="bar-col"><div class="bar-fill" style="height:95%;"></div><span class="bar-label">Dec</span></div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-header">
+                <div class="card-title">Recent Bookings</div>
+                <a href="#" style="font-size:0.825rem; font-weight:700; color:var(--primary); text-decoration:none;">View All</a>
+              </div>
+
+              <table class="custom-table">
+                <thead>
+                  <tr>
+                    <th>Traveler Name</th>
+                    <th>Flight Details</th>
+                    <th>Airlines</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="recent-bookings-tbody">
+                  <tr>
+                    <td><b>Sarah Johnson</b></td>
+                    <td>JFK → LHR</td>
+                    <td>British Airways</td>
+                    <td>Oct 24, 2026</td>
+                    <td><span class="status-pill confirmed">CONFIRMED</span></td>
+                  </tr>
+                  <tr>
+                    <td><b>Rahul Sharma</b></td>
+                    <td>BOM → GOI</td>
+                    <td>IndiGo Air</td>
+                    <td>Oct 25, 2026</td>
+                    <td><span class="status-pill recovered">RECOVERED</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div>
+            <div class="card">
+              <div class="card-header">
+                <div class="card-title">Recent Activity</div>
+              </div>
+
+              <div class="activity-feed-list" id="activity-feed-container"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RECOVERY CENTER TAB -->
+      <div id="section-recovery" style="display: none;">
+        <div style="background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%); border-radius:var(--radius-lg); padding:1.5rem 2rem; color:white; display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+          <div>
+            <h2 style="font-size:1.35rem; font-weight:800; font-family:'Outfit', sans-serif;">⚡ Disruption Recovery Center</h2>
+            <p style="font-size:0.85rem; opacity:0.9; margin-top:0.25rem;">Simulate delays, cancellations, or missed connections and let TravelShield AI rebuild your itinerary.</p>
+          </div>
+
+          <div style="display:flex; gap:0.5rem;">
+            <button class="btn btn-danger" onclick="simulateCustomDisruption('cancellation', 0)">Simulate Cancellation</button>
+            <button class="btn btn-primary" style="background:#ffffff; color:var(--primary);" onclick="simulateCustomDisruption('delay', 240)">Simulate 4h Delay</button>
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns: 2fr 1fr; gap:1.5rem;">
+          <div>
+            <div class="card">
+              <div class="card-header">
+                <div class="card-title">Reconstructed Journey Timeline</div>
+                <span class="status-pill confirmed" id="trip-status-pill">ON TIME</span>
+              </div>
+              <div class="itinerary-list" id="timeline-container"></div>
+            </div>
+
+            <div class="card" id="plans-section" style="display: none;">
+              <div class="card-header">
+                <div class="card-title">AI Generated Recovery Plans</div>
+              </div>
+              <div class="plans-grid" id="plans-grid" style="display:grid; grid-template-columns:1fr; gap:1rem;"></div>
+            </div>
+          </div>
+
+          <div>
+            <div class="card" style="height:550px; display:flex; flex-direction:column; justify-content:space-between;">
+              <div class="card-header">
+                <div class="card-title">TravelShield AI Assistant</div>
+              </div>
+              <div style="flex:1; overflow-y:auto; padding:0.5rem; display:flex; flex-direction:column; gap:0.75rem;" id="chat-messages">
+                <div style="background:#f1f5f9; padding:0.75rem 1rem; border-radius:12px; font-size:0.85rem;">👋 Hello! Ask me anything about your trip recovery options!</div>
+              </div>
+              <div style="display:flex; gap:0.5rem; margin-top:1rem;">
+                <input type="text" id="chat-input" style="flex:1; padding:0.65rem 1rem; border:1px solid var(--border-color); border-radius:8px; outline:none; font-size:0.85rem;" placeholder="Ask AI..." onkeydown="if(event.key==='Enter') sendChatMessage()">
+                <button class="btn btn-primary" onclick="sendChatMessage()">Send</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MULTI-MODAL SEARCH TAB -->
+      <div id="section-search" style="display: none;">
+        <div class="card">
+          <h2 style="font-size:1.25rem; font-weight:800; margin-bottom:1rem;">Search Flights, Trains & Buses for ANY Indian City</h2>
+          
+          <div style="display:grid; grid-template-columns: 2fr 2fr 1.2fr 1fr auto; gap:1rem; align-items:flex-end;">
+            <div style="position:relative;">
+              <label style="font-size:0.75rem; font-weight:700; color:var(--text-secondary); text-transform:uppercase;">From (City / Airport / Station)</label>
+              <input type="text" id="input-from" value="Mumbai" placeholder="e.g. Mumbai, BOM, CSMT..." style="width:100%; padding:0.7rem 1rem; border:1px solid var(--border-color); border-radius:8px; outline:none; font-weight:600;" autocomplete="off" oninput="handleAutocomplete('from', this.value)">
+              <div class="autocomplete-dropdown" id="dropdown-from" style="position:absolute; top:100%; left:0; right:0; background:white; border:1px solid var(--border-color); border-radius:8px; box-shadow:var(--shadow-elevated); z-index:100; display:none;"></div>
+            </div>
+
+            <div style="position:relative;">
+              <label style="font-size:0.75rem; font-weight:700; color:var(--text-secondary); text-transform:uppercase;">To (City / Airport / Station)</label>
+              <input type="text" id="input-to" value="Delhi" placeholder="e.g. Delhi, DEL, NDLS..." style="width:100%; padding:0.7rem 1rem; border:1px solid var(--border-color); border-radius:8px; outline:none; font-weight:600;" autocomplete="off" oninput="handleAutocomplete('to', this.value)">
+              <div class="autocomplete-dropdown" id="dropdown-to" style="position:absolute; top:100%; left:0; right:0; background:white; border:1px solid var(--border-color); border-radius:8px; box-shadow:var(--shadow-elevated); z-index:100; display:none;"></div>
+            </div>
+
+            <div>
+              <label style="font-size:0.75rem; font-weight:700; color:var(--text-secondary); text-transform:uppercase;">Travel Date</label>
+              <input type="date" id="input-date" style="width:100%; padding:0.7rem 1rem; border:1px solid var(--border-color); border-radius:8px; outline:none; font-weight:600;">
+            </div>
+
+            <div>
+              <label style="font-size:0.75rem; font-weight:700; color:var(--text-secondary); text-transform:uppercase;">Passengers</label>
+              <select id="input-passengers" style="width:100%; padding:0.7rem 1rem; border:1px solid var(--border-color); border-radius:8px; outline:none; font-weight:600;">
+                <option value="1">1 Passenger</option>
+                <option value="2">2 Passengers</option>
+              </select>
+            </div>
+
+            <button class="btn btn-primary" style="height:42px;" onclick="executeMultiModalSearch()">🔍 Search All</button>
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap:1.25rem;" id="search-results-grid"></div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- FIREBASE AUTH LOGIN / REGISTRATION MODAL -->
+  <div class="modal-overlay" id="auth-modal">
+    <div class="modal-content">
+      <button class="modal-close-btn" onclick="closeAuthModal()">✕</button>
+      
+      <div style="text-align:center; margin-bottom:1.25rem;">
+        <h3 style="font-size:1.3rem; font-weight:800;" id="auth-modal-title">Sign In to TravelShield</h3>
+        <p style="font-size:0.8rem; color:var(--text-secondary); margin-top:0.25rem;">Access AI disruption recovery & travel management</p>
+      </div>
+
+      <div class="auth-tabs">
+        <button class="auth-tab-btn active" id="tab-login" onclick="setAuthTab('login')">Sign In</button>
+        <button class="auth-tab-btn" id="tab-register" onclick="setAuthTab('register')">Register</button>
+      </div>
+
+      <form id="auth-form" onsubmit="handleAuthSubmit(event)">
+        <div style="display:flex; flex-direction:column; gap:0.85rem;">
+          <div>
+            <label style="font-size:0.75rem; font-weight:700; color:var(--text-secondary);">EMAIL ADDRESS</label>
+            <input type="email" id="auth-email" required placeholder="name@example.com" style="width:100%; padding:0.65rem 0.85rem; border:1px solid var(--border-color); border-radius:8px; outline:none; font-size:0.85rem;">
+          </div>
+          <div>
+            <label style="font-size:0.75rem; font-weight:700; color:var(--text-secondary);">PASSWORD</label>
+            <input type="password" id="auth-password" required placeholder="••••••••" style="width:100%; padding:0.65rem 0.85rem; border:1px solid var(--border-color); border-radius:8px; outline:none; font-size:0.85rem;">
+          </div>
+
+          <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center; padding:0.75rem; margin-top:0.5rem;" id="auth-submit-btn">
+            Sign In with Email
+          </button>
+        </div>
+      </form>
+
+      <div style="display:flex; align-items:center; gap:0.5rem; margin:1.25rem 0; color:var(--text-muted); font-size:0.75rem;">
+        <div style="flex:1; height:1px; background:var(--border-color);"></div>
+        <span>OR</span>
+        <div style="flex:1; height:1px; background:var(--border-color);"></div>
+      </div>
+
+      <button class="btn btn-google" onclick="signInWithGoogle()">
+        <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.29v3.15C3.26 21.3 7.37 24 12 24z"/><path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.29C.47 8.2.01 10.04.01 12c0 1.96.46 3.8 1.28 5.42l3.99-3.15z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.37 0 3.26 2.7 1.29 6.58l3.99 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/></svg>
+        Sign In with Google
+      </button>
+
+      <button class="btn btn-outline" style="width:100%; justify-content:center; margin-top:0.5rem; font-size:0.8rem;" onclick="signInAnonymously()">
+        👤 Continue as Guest
+      </button>
+    </div>
+  </div>
+
+  <div id="toast-area"></div>
+
+  <script src="/js/app.js"></script>
+</body>
+</html>
