@@ -4,8 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>TravelShield AI — Enterprise Multimodal Disruption Recovery Engine</title>
-  <meta name="description" content="AI Multimodal Disruption Recovery Engine with Impact Diagnosis, Connection Recovery, and Financial Exposure calculation.">
   <link rel="stylesheet" href="static/css/styles.css">
+  <link rel="stylesheet" href="styles.css">
   
   <!-- Firebase JS SDK (v10 compat mode) -->
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
@@ -749,5 +749,12 @@
   <div id="toast-area"></div>
 
   <script src="static/js/app.js"></script>
+  <script>
+    if (typeof loadDashboardAnalytics === 'undefined') {
+      var s = document.createElement('script');
+      s.src = 'app.js';
+      document.body.appendChild(s);
+    }
+  </script>
 </body>
 </html>
