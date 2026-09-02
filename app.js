@@ -750,6 +750,13 @@ async function applyRecoveryPlan(planId) {
   }
 }
 
+// ==============================================================
+// CHATBOT WIDGET API KEYS & CONFIGURATION
+// ==============================================================
+const GEMINI_API_KEY = "PASTE_YOUR_KEY_HERE";
+const AVIATIONSTACK_API_KEY = "66ffbf6a7c0fc63a1a593ed8cf28df31";
+const AOPAY_BUS_API_URL = "https://api.aopay.in/v2/bus/search";
+
 async function sendChatMessage() {
   const input = document.getElementById('chat-input');
   const text = input.value.trim();
@@ -768,28 +775,65 @@ async function sendChatMessage() {
   input.value = '';
 
   let replyText = null;
-  try {
-    const res = await fetch('/api/ai/chat', {
-      method: 'POST',
-      headers: getAuthHeaders(),
-      body: JSON.stringify({ trip_id: currentTripId, user_message: text })
-    });
-    if (res.ok) {
-      const data = await res.json();
-      replyText = data.reply;
+
+  // 1. If Gemini API Key is configured, query Google Gemini API directly
+  if (GEMINI_API_KEY && GEMINI_API_KEY !== "PASTE_YOUR_KEY_HERE") {
+    try {
+      const geminiEndpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${encodeURIComponent(GEMINI_API_KEY)}`;
+      const geminiRes = await fetch(geminiEndpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{
+            role: 'user',
+            parts: [{
+              text: `You are TravelShield AI Disruption Concierge. Assist the traveler with their journey (Booking PNR: YH892A, DEL to GOI via BOM).
+Disruption: Inbound flight AI 812 / train delayed 6h 30m, connecting flight AI 492 missed.
+Downstream: Radisson Blu GOI check-in at risk, Hertz rental car pending.
+Recovery plans: 'The Sprinter' (Fastest flight reroute, Score 95), 'The Optimal' (High-speed rail + flight, Score 82), 'The Economical' (Overnight sleeper bus, Score 68).
+Keep your answer concise, helpful, reassuring, and under 3 sentences.
+User query: "${text}"`
+            }]
+          }]
+        })
+      });
+      if (geminiRes.ok) {
+        const geminiData = await geminiRes.json();
+        replyText = geminiData.candidates?.[0]?.content?.parts?.[0]?.text;
+      }
+    } catch (e) {
+      console.warn("Client-side Gemini API note:", e);
     }
-  } catch (err) {
-    // fallback
   }
 
+  // 2. Fallback to backend AI chat API (/api/ai/chat)
+  if (!replyText) {
+    try {
+      const res = await fetch('/api/ai/chat', {
+        method: 'POST',
+        headers: getAuthHeaders(),
+        body: JSON.stringify({ trip_id: currentTripId, user_message: text })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        replyText = data.reply;
+      }
+    } catch (err) {
+      // fallback
+    }
+  }
+
+  // 3. Fallback to smart local concierge rules
   if (!replyText) {
     const lower = text.toLowerCase();
     if (lower.includes("delay") || lower.includes("disrupt") || lower.includes("cancel")) {
-      replyText = "I've analyzed your itinerary! If your primary train is delayed or cancelled, TravelShield AI immediately reserves alternative transport options (such as IndiGo 6E-344 or Tejas Express) to prevent missed connections and hotel cancellation fees.";
-    } else if (lower.includes("hotel") || lower.includes("taj") || lower.includes("check-in")) {
-      replyText = "Your booking at Taj Fort Aguada Resort is protected. TravelShield automatically notifies the hotel desk of any arrival time adjustments so your room reservation is held safely.";
+      replyText = "I've analyzed your itinerary! If your primary flight or train is delayed, TravelShield AI immediately generates recovery plans (such as 'The Sprinter' score 95 or 'The Optimal' score 82) to prevent missed connections and hotel cancellation fees.";
+    } else if (lower.includes("hotel") || lower.includes("radisson") || lower.includes("check-in")) {
+      replyText = "Your booking at Radisson Blu GOI is protected. TravelShield automatically notifies the hotel desk of any arrival time adjustments so your room reservation is held safely.";
     } else if (lower.includes("search") || lower.includes("flight") || lower.includes("train") || lower.includes("bus")) {
       replyText = "You can search live transport options across 25+ Indian transit hubs in the Multi-Modal Search tab, comparing real-time fares and schedules.";
+    } else if (lower.includes("price") || lower.includes("cost") || lower.includes("exposure")) {
+      replyText = "Your current estimated financial exposure is $845.00 (₹76,500). Selecting 'The Sprinter' minimizes your hotel loss, while 'The Economical' provides travel credit.";
     } else {
       replyText = "Hello! I am your 24/7 AI Travel Disruption Concierge. I continuously monitor your flights, trains, and buses to resolve delays and protect your itinerary automatically.";
     }

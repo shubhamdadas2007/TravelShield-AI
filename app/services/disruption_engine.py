@@ -187,8 +187,10 @@ class DisruptionRecoveryEngine:
             
             orig_missed_price = items[1].price if len(items) > 1 else 0
             cost_diff_1 = best_bus_mid["price"] - orig_missed_price
-            bus_arr_dt = datetime.datetime.fromisoformat(best_bus_mid["arrival_datetime"])
+            bus_arr_dt = datetime.datetime.fromisoformat(best_bus_mid["arrival_datetime"]).replace(tzinfo=None)
             orig_final_arr = items[1].scheduled_arrival if len(items) > 1 and items[1].scheduled_arrival else bus_arr_dt
+            if orig_final_arr.tzinfo is not None:
+                orig_final_arr = orig_final_arr.replace(tzinfo=None)
             delay_net_1 = max(0, int((bus_arr_dt - orig_final_arr).total_seconds() / 60.0))
 
             scores_1 = self._calculate_scores(cost_diff_1, delay_net_1, transfers=1, feasibility=95.0, preservation=90.0, pref_tier=pref_tier)
@@ -235,8 +237,10 @@ class DisruptionRecoveryEngine:
 
             orig_total_transport_price = sum(i.price for i in items if i.item_type == ItemType.TRANSPORT.value)
             cost_diff_2 = best_flight["price"] - orig_total_transport_price
-            fl_arr_dt = datetime.datetime.fromisoformat(best_flight["arrival_datetime"])
+            fl_arr_dt = datetime.datetime.fromisoformat(best_flight["arrival_datetime"]).replace(tzinfo=None)
             orig_final_arr = items[1].scheduled_arrival if len(items) > 1 and items[1].scheduled_arrival else fl_arr_dt
+            if orig_final_arr.tzinfo is not None:
+                orig_final_arr = orig_final_arr.replace(tzinfo=None)
             delay_net_2 = max(0, int((fl_arr_dt - orig_final_arr).total_seconds() / 60.0))
 
             scores_2 = self._calculate_scores(cost_diff_2, delay_net_2, transfers=0, feasibility=98.0, preservation=100.0, pref_tier=pref_tier)
