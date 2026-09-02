@@ -359,14 +359,74 @@ function renderRecentBookings(bookings) {
 }
 
 function switchTab(tabName) {
-  ['dashboard', 'search', 'recovery', 'history', 'settings'].forEach(t => {
+  const tabs = ['diagnosis', 'recovery', 'dashboard', 'search', 'history', 'settings'];
+  tabs.forEach(t => {
     const navEl = document.getElementById(`nav-${t}`);
     const secEl = document.getElementById(`section-${t}`);
     if (navEl) navEl.className = t === tabName ? 'nav-item active' : 'nav-item';
     if (secEl) secEl.style.display = t === tabName ? 'block' : 'none';
   });
 
+  const pageTitleEl = document.getElementById('page-title');
+  if (pageTitleEl) {
+    if (tabName === 'diagnosis') pageTitleEl.innerText = 'Impact Diagnosis';
+    else if (tabName === 'recovery') pageTitleEl.innerText = 'Recovery Command Center';
+    else if (tabName === 'dashboard') pageTitleEl.innerText = 'Enterprise Dashboard';
+    else if (tabName === 'search') pageTitleEl.innerText = 'Multi-Modal Search';
+    else pageTitleEl.innerText = 'Recovery Engine';
+  }
+
   if (tabName === 'dashboard') loadDashboardAnalytics();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// Currency Switcher (Matching Screenshot 1 vs Screenshot 2)
+let currentCurrency = 'USD';
+function toggleCurrency(curr) {
+  currentCurrency = curr;
+  const totalEl = document.getElementById('exposure-total-display');
+  const hotelEl = document.getElementById('exposure-hotel-display');
+  const rebookEl = document.getElementById('exposure-rebook-display');
+  const mealsEl = document.getElementById('exposure-meals-display');
+
+  if (curr === 'INR') {
+    if (totalEl) totalEl.innerText = '₹76,500';
+    if (hotelEl) hotelEl.innerText = '₹20,100';
+    if (rebookEl) rebookEl.innerText = '₹48,600';
+    if (mealsEl) mealsEl.innerText = '₹7,800';
+    showToast('Switched to Indian Rupee (₹ INR)', 'info');
+  } else {
+    if (totalEl) totalEl.innerText = '$845.00';
+    if (hotelEl) hotelEl.innerText = '$210.00';
+    if (rebookEl) rebookEl.innerText = '$550.00';
+    if (mealsEl) mealsEl.innerText = '$85.00';
+    showToast('Switched to US Dollar ($ USD)', 'info');
+  }
+}
+
+// Disruption Modal (Matching Screenshot 5)
+function openDisruptionModal() {
+  const modal = document.getElementById('disruption-detected-modal');
+  if (modal) modal.style.display = 'flex';
+}
+
+function closeDisruptionModal() {
+  const modal = document.getElementById('disruption-detected-modal');
+  if (modal) modal.style.display = 'none';
+}
+
+// Plan Selector from Recovery Command Center (Matching Screenshot 4)
+function selectCommandPlan(planTitle, score) {
+  showToast(`✅ Selected: ${planTitle} (Score: ${score}/100)! Re-aligning downstream reservations...`, 'success');
+  setTimeout(() => {
+    showToast(`🎉 Journey Successfully Recovered! PNR YH892A synced with new connections.`, 'success');
+    switchTab('diagnosis');
+  }, 1200);
+}
+
+function shareReport() {
+  navigator.clipboard?.writeText(window.location.href);
+  showToast('📋 Impact Diagnosis Report link copied to clipboard!', 'success');
 }
 
 async function handleAutocomplete(target, query) {

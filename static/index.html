@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TravelShield AI — Dashboard & Recovery Center</title>
-  <meta name="description" content="AI Multimodal Disruption Recovery Engine with Firebase Email Verification.">
+  <title>TravelShield AI — Enterprise Multimodal Disruption Recovery Engine</title>
+  <meta name="description" content="AI Multimodal Disruption Recovery Engine with Impact Diagnosis, Connection Recovery, and Financial Exposure calculation.">
   <link rel="stylesheet" href="./css/styles.css">
   
   <!-- Firebase JS SDK (v10 compat mode) -->
@@ -22,7 +22,10 @@
             <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
           </svg>
         </div>
-        <span>TravelShield</span>
+        <div>
+          <span>TravelShield</span>
+          <div style="font-size:0.65rem; color:#94a3b8; font-weight:700; letter-spacing:0.06em; text-transform:uppercase;">Enterprise Tier</div>
+        </div>
       </div>
 
       <ul class="nav-menu">
@@ -32,16 +35,22 @@
             Dashboard
           </a>
         </li>
-        <li class="nav-item" id="nav-search" onclick="switchTab('search')">
+        <li class="nav-item" id="nav-diagnosis" onclick="switchTab('diagnosis')">
           <a href="#">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-            Multi-Modal Search
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+            Impact Diagnosis
           </a>
         </li>
         <li class="nav-item" id="nav-recovery" onclick="switchTab('recovery')">
           <a href="#">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
-            Recovery Center
+            Recovery Command
+          </a>
+        </li>
+        <li class="nav-item" id="nav-search" onclick="switchTab('search')">
+          <a href="#">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            Multi-Modal Search
           </a>
         </li>
         <li class="nav-item" id="nav-history" onclick="switchTab('history')">
@@ -59,11 +68,17 @@
       </ul>
     </div>
 
-    <!-- Contact Support Sidebar Widget -->
-    <div class="sidebar-contact-card">
-      <div style="font-size:1.2rem; margin-bottom:0.25rem;">🎧</div>
-      <p>Need help with a booking?</p>
-      <button onclick="showToast('Connecting to 24/7 AI Concierge...', 'info')">Contact Support</button>
+    <!-- Bottom Sidebar Action -->
+    <div style="margin-top:auto; padding-top:1.5rem;">
+      <button class="btn btn-primary" style="width:100%; justify-content:center; padding:0.8rem; background:#3b82f6; border-radius:12px; font-weight:700;" onclick="openDisruptionModal()">
+        + New Analysis / Report
+      </button>
+      
+      <div class="sidebar-contact-card" style="margin-top:1rem;">
+        <div style="font-size:1.1rem; margin-bottom:0.25rem;">🎧</div>
+        <p>24/7 AI Travel Concierge</p>
+        <button onclick="showToast('Connecting to 24/7 Concierge Support...', 'info')">Contact Support</button>
+      </div>
     </div>
   </aside>
 
@@ -72,38 +87,394 @@
 
     <!-- Topbar Header -->
     <header class="topbar">
-      <h1 style="font-size:1.4rem; font-weight:800; color:var(--text-primary);">Dashboard</h1>
+      <div style="display:flex; align-items:center; gap:1.25rem;">
+        <h1 style="font-size:1.4rem; font-weight:800; color:var(--text-primary);" id="page-title">Recovery Engine</h1>
+        <span style="font-size:0.75rem; background:#eff6ff; color:#2563eb; border:1px solid #bfdbfe; font-weight:700; padding:0.2rem 0.6rem; border-radius:9999px; display:inline-flex; align-items:center; gap:0.35rem;">
+          <span style="width:6px; height:6px; background:#2563eb; border-radius:50%; display:inline-block;"></span>
+          Live Data: Active
+        </span>
+      </div>
 
       <div class="search-input-topbar">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-        <input type="text" placeholder="Search bookings...">
+        <input type="text" placeholder="Search booking reference (e.g. YH892A)...">
       </div>
 
-      <div class="user-profile">
-        <div id="auth-user-container" style="display:flex; align-items:center; gap:0.75rem;">
-          <div class="avatar" id="user-avatar">JW</div>
-          <div style="display:flex; flex-direction:column;">
-            <span style="font-weight:700; font-size:0.875rem;" id="user-display-name">Jenny Wilson</span>
-            <span style="font-size:0.725rem; font-weight:700;" id="user-auth-status">● Firebase Authenticated</span>
+      <div style="display:flex; align-items:center; gap:1rem;">
+        <!-- Integrated Glassmorphism CTA Button -->
+        <a href="#recovery" onclick="switchTab('recovery')" class="glassmorphism-cta-btn" title="AI Multimodal Disruption Recovery">
+          <div class="glassmorphism-cta-inner">
+            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80" alt="Advisor" style="width:24px; height:24px; border-radius:50%; object-fit:cover; border:1px solid rgba(255,255,255,0.4);">
+            <span>Recover Journey</span>
+            <span style="background:rgba(255,255,255,0.2); width:20px; height:20px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-size:0.7rem;">✨</span>
           </div>
-          <button class="btn btn-outline" style="padding:0.35rem 0.75rem; font-size:0.775rem;" id="btn-auth-action" onclick="handleAuthAction()">Logout</button>
+        </a>
+
+        <div class="user-profile">
+          <div id="auth-user-container" style="display:flex; align-items:center; gap:0.75rem;">
+            <div class="avatar" id="user-avatar">JW</div>
+            <div style="display:flex; flex-direction:column;">
+              <span style="font-weight:700; font-size:0.875rem;" id="user-display-name">Jenny Wilson</span>
+              <span style="font-size:0.725rem; font-weight:700;" id="user-auth-status">● Firebase Authenticated</span>
+            </div>
+            <button class="btn btn-outline" style="padding:0.35rem 0.75rem; font-size:0.775rem;" id="btn-auth-action" onclick="handleAuthAction()">Logout</button>
+          </div>
         </div>
       </div>
     </header>
 
-    <!-- Email Verification Alert Banner (Hidden by default, shown when user's email is unverified) -->
-    <div id="email-verification-banner" style="display:none; background:#fef3c7; border-bottom:1px solid #fde68a; padding:0.75rem 2rem; color:#b45309; font-size:0.85rem; font-weight:600; justify-content:space-between; align-items:center;">
-      <div style="display:flex; align-items:center; gap:0.5rem;">
-        <span>⚠️ Your email is unverified. Please check your inbox to complete registration.</span>
-      </div>
-      <button class="btn btn-primary" style="padding:0.35rem 0.85rem; font-size:0.775rem;" onclick="resendVerificationEmail()">Resend Verification Link</button>
-    </div>
-
     <!-- Content Body -->
     <main class="content-body">
 
-      <!-- DASHBOARD TAB -->
-      <div id="section-dashboard">
+      <!-- SCREEN 1: IMPACT DIAGNOSIS VIEW -->
+      <div id="section-diagnosis" style="display: block;">
+        <div class="disruption-alert-banner">
+          <div style="display:flex; align-items:center; gap:0.85rem;">
+            <span class="badge-active-disruption">⚠️ ACTIVE DISRUPTION</span>
+            <span style="font-size:0.875rem; font-weight:700; color:#475569;">Booking PNR: <b style="color:#0f172a;">YH892A</b></span>
+          </div>
+          <button class="btn btn-outline" style="padding:0.4rem 0.85rem; font-size:0.8rem;" onclick="shareReport()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+            Share Report
+          </button>
+        </div>
+
+        <div style="margin-bottom:1.5rem;">
+          <h2 style="font-size:1.75rem; font-weight:800; font-family:'Outfit',sans-serif; color:#0f172a;">Impact Diagnosis</h2>
+          <p style="font-size:0.9rem; color:#64748b; margin-top:0.25rem;">Analyzing downstream effects of delayed inbound flight AI 492 / Train 12123.</p>
+        </div>
+
+        <div class="impact-grid-container">
+          <!-- Left Column -->
+          <div>
+            <div class="delay-impact-card">
+              <div style="display:flex; align-items:center; gap:0.5rem; color:#64748b; font-size:0.85rem; font-weight:700; margin-bottom:0.85rem;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                Total Delay Impact
+              </div>
+              <div style="display:flex; align-items:baseline; gap:2rem;">
+                <div>
+                  <div class="big-delay-number">6h 30m</div>
+                  <div style="font-size:0.75rem; font-weight:800; color:#94a3b8; text-transform:uppercase; letter-spacing:0.06em; margin-top:0.35rem;">Estimated Net Delay</div>
+                </div>
+                <div>
+                  <div style="display:flex; align-items:center; gap:0.5rem; color:#dc2626; font-weight:800; font-size:1.15rem;">
+                    <span style="width:10px; height:10px; background:#dc2626; border-radius:50%; display:inline-block;"></span>
+                    Arriving Late
+                  </div>
+                  <div style="font-size:0.85rem; color:#64748b; margin-top:0.25rem;">Revised ETA: 23:45 IST (+1 Day)</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="route-graph-box">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+                <div style="font-weight:800; font-size:1.05rem; display:flex; align-items:center; gap:0.5rem;">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                  Route & Connection Status
+                </div>
+                <span style="background:#fee2e2; color:#b91c1c; font-size:0.725rem; font-weight:800; padding:0.25rem 0.6rem; border-radius:9999px; border:1px solid #fca5a5;">
+                  ✕ Connection Missed
+                </span>
+              </div>
+
+              <div style="position:relative;">
+                <div class="graph-track-line"></div>
+
+                <div class="graph-station-row">
+                  <div class="graph-bullet completed"></div>
+                  <div class="station-card-inner">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                      <div>
+                        <span style="font-size:0.725rem; font-weight:700; color:#64748b; text-transform:uppercase;">Origin (Completed)</span>
+                        <div style="font-size:1.25rem; font-weight:900; color:#0f172a;">DEL (Delhi)</div>
+                      </div>
+                      <span style="font-size:0.8rem; font-weight:700; color:#10b981; background:#ecfdf5; padding:0.2rem 0.5rem; border-radius:6px;">On Time</span>
+                    </div>
+                    <div style="font-size:0.825rem; color:#64748b; margin-top:0.25rem;">Flight AI 812 · Dep: 14:00 · Arr: 16:15</div>
+                  </div>
+                </div>
+
+                <div class="graph-station-row">
+                  <div class="graph-bullet disrupted"></div>
+                  <div class="station-card-inner disrupted-node">
+                    <div style="display:flex; align-items:center; gap:0.4rem; color:#dc2626; font-size:0.75rem; font-weight:800;">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                      Disruption Point
+                    </div>
+                    <div style="font-size:1.35rem; font-weight:900; color:#0f172a; margin-top:0.15rem;">BOM (Mumbai)</div>
+                    <div style="font-size:0.825rem; color:#b91c1c; font-weight:600; margin-top:0.35rem;">
+                      Inbound arrival delayed by 3h 15m due to severe weather & runway maintenance.
+                    </div>
+                  </div>
+                </div>
+
+                <div class="graph-station-row" style="margin-bottom:0;">
+                  <div class="graph-bullet unreachable"></div>
+                  <div class="station-card-inner unreachable-node">
+                    <span style="font-size:0.725rem; font-weight:700; color:#94a3b8; text-transform:uppercase;">Destination (Unreachable)</span>
+                    <div style="font-size:1.25rem; font-weight:900; color:#64748b;">GOI (Goa)</div>
+                    <div style="font-size:0.825rem; color:#ef4444; font-weight:700; margin-top:0.35rem; display:flex; align-items:center; gap:0.35rem;">
+                      <span>✈</span> Flight AI 492 Missed (Departed 18:30)
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Column -->
+          <div>
+            <div class="financial-exposure-card">
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <div style="font-size:0.85rem; font-weight:800; color:#64748b; text-transform:uppercase; letter-spacing:0.04em;">Financial Exposure</div>
+                <div style="display:flex; gap:0.25rem;">
+                  <button class="btn btn-outline" style="padding:0.2rem 0.5rem; font-size:0.7rem; font-weight:700;" onclick="toggleCurrency('USD')">$ USD</button>
+                  <button class="btn btn-outline" style="padding:0.2rem 0.5rem; font-size:0.7rem; font-weight:700;" onclick="toggleCurrency('INR')">₹ INR</button>
+                </div>
+              </div>
+              <div style="font-size:0.75rem; color:#94a3b8; font-weight:700; margin-top:0.2rem;">ESTIMATED OUT-OF-POCKET</div>
+              <div class="exposure-amount-header" id="exposure-total-display">$845.00</div>
+
+              <div class="exposure-row">
+                <span style="color:#64748b;">Lost Hotel Night</span>
+                <b id="exposure-hotel-display">$210.00</b>
+              </div>
+              <div class="exposure-row">
+                <span style="color:#64748b;">Last-Minute Rebooking</span>
+                <b id="exposure-rebook-display">$550.00</b>
+              </div>
+              <div class="exposure-row">
+                <span style="color:#64748b;">Incidentals / Meals</span>
+                <b id="exposure-meals-display">$85.00</b>
+              </div>
+            </div>
+
+            <div class="card">
+              <div style="font-weight:800; font-size:1.05rem; margin-bottom:1rem; display:flex; align-items:center; gap:0.5rem;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+                Downstream Bookings
+              </div>
+
+              <div class="downstream-booking-item">
+                <div style="display:flex; align-items:center; gap:0.75rem;">
+                  <div style="font-size:1.25rem;">🏨</div>
+                  <div>
+                    <b style="font-size:0.875rem;">Radisson Blu GOI</b>
+                    <div style="font-size:0.75rem; color:#64748b;">Check-in: Today, 15:00</div>
+                    <div style="font-size:0.725rem; color:#dc2626; font-weight:700;">⚠ Missed Check-in window</div>
+                  </div>
+                </div>
+                <span class="badge-risk">AT RISK</span>
+              </div>
+
+              <div class="downstream-booking-item">
+                <div style="display:flex; align-items:center; gap:0.75rem;">
+                  <div style="font-size:1.25rem;">🚗</div>
+                  <div>
+                    <b style="font-size:0.875rem;">Hertz Rental · GOI Apt</b>
+                    <div style="font-size:0.75rem; color:#64748b;">Pickup: Today, 18:30</div>
+                    <div style="font-size:0.725rem; color:#64748b;">Reservation holds until 23:59</div>
+                  </div>
+                </div>
+                <span class="badge-pending-status">PENDING</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="diagnosis-bottom-bar">
+          <div>
+            <span style="font-weight:700; color:#0f172a; font-size:0.95rem;">Diagnosis complete. 3 recovery options generated.</span>
+            <div style="font-size:0.775rem; color:#64748b;">All options ranked by cost, delay minimization, and itinerary feasibility.</div>
+          </div>
+          <div style="display:flex; gap:0.75rem;">
+            <button class="btn btn-outline" onclick="showToast('Disruption diagnosis acknowledged.', 'info')">Acknowledge Only</button>
+            <button class="btn btn-primary" style="background:#4f46e5; padding:0.75rem 1.5rem;" onclick="switchTab('recovery')">
+              Compare Recovery Plans →
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- SCREEN 2: RECOVERY COMMAND CENTER -->
+      <div id="section-recovery" style="display: none;">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:1.5rem;">
+          <div>
+            <div style="display:flex; align-items:center; gap:0.6rem; margin-bottom:0.4rem;">
+              <span style="background:#fee2e2; color:#dc2626; font-size:0.75rem; font-weight:800; padding:0.25rem 0.55rem; border-radius:6px; letter-spacing:0.04em;">
+                FLIGHT CANCELLED
+              </span>
+              <span style="font-size:0.8rem; color:#64748b; font-weight:600;">• Action Required</span>
+            </div>
+            <h2 style="font-size:1.85rem; font-weight:900; font-family:'Outfit',sans-serif; color:#0f172a;">Recovering Mumbai to Goa Trip</h2>
+            <p style="font-size:0.9rem; color:#64748b; margin-top:0.25rem;">Flight SG-142 / Train 12123 cancelled due to severe weather conditions.</p>
+          </div>
+
+          <div style="background:white; border:1px solid var(--border-color); border-radius:14px; padding:0.85rem 1.25rem; text-align:right;">
+            <div style="font-size:0.75rem; font-weight:700; color:#64748b;">AI Recommendation Confidence</div>
+            <div style="display:flex; align-items:center; gap:0.75rem; margin-top:0.35rem;">
+              <div class="confidence-bar-wrap">
+                <div class="confidence-bar-fill" style="width: 92%;"></div>
+              </div>
+              <span style="font-weight:900; font-size:1.15rem; color:#4f46e5;">92%</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="plans-comparison-grid">
+          <!-- Plan 1: The Sprinter -->
+          <div class="comparison-col-card recommended-plan">
+            <div style="position:absolute; top:-12px; left:20px; background:#4f46e5; color:white; font-size:0.7rem; font-weight:800; padding:0.2rem 0.75rem; border-radius:9999px;">
+              Recommended
+            </div>
+
+            <div>
+              <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-top:0.5rem;">
+                <div>
+                  <h3 style="font-size:1.3rem; font-weight:900; font-family:'Outfit',sans-serif;">The Sprinter</h3>
+                  <div style="font-size:0.75rem; font-weight:800; color:#64748b; text-transform:uppercase; letter-spacing:0.04em;">FASTEST RECOVERY</div>
+                </div>
+                <div class="plan-score-badge top-score">
+                  <div style="font-size:1.25rem; font-weight:900; line-height:1;">95</div>
+                  <div style="font-size:0.65rem; font-weight:700; text-transform:uppercase;">Score</div>
+                </div>
+              </div>
+
+              <div style="margin:1.25rem 0; display:flex; flex-direction:column; gap:0.85rem;">
+                <div style="display:flex; justify-content:space-between;">
+                  <span style="font-size:0.85rem; color:#64748b;">Arrives</span>
+                  <div style="text-align:right;">
+                    <b style="font-size:0.875rem;">ETA: 14:30 Today</b>
+                    <div style="font-size:0.725rem; color:#dc2626;">+2h Delay</div>
+                  </div>
+                </div>
+                <div style="display:flex; justify-content:space-between;">
+                  <span style="font-size:0.85rem; color:#64748b;">Cost Impact</span>
+                  <b style="font-size:0.875rem; color:#0f172a;">+$250</b>
+                </div>
+                <div style="display:flex; justify-content:space-between;">
+                  <span style="font-size:0.85rem; color:#64748b;">Flexibility</span>
+                  <b style="font-size:0.875rem; color:#0f172a;">Low</b>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                  <span style="font-size:0.85rem; color:#64748b;">Mode</span>
+                  <span style="font-size:1.25rem;">✈</span>
+                </div>
+              </div>
+
+              <div class="why-this-plan-box">
+                <div style="font-weight:700; color:#0f172a; margin-bottom:0.25rem;">💡 Why this plan?</div>
+                Best for business travel. Direct flight reroute on partner airline avoids further weather risks and preserves your Radisson hotel check-in.
+              </div>
+            </div>
+
+            <button class="btn btn-primary" style="width:100%; justify-content:center; background:#4f46e5; padding:0.85rem;" onclick="selectCommandPlan('The Sprinter', 95)">
+              Select This Plan
+            </button>
+          </div>
+
+          <!-- Plan 2: The Optimal -->
+          <div class="comparison-col-card">
+            <div>
+              <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                <div>
+                  <h3 style="font-size:1.3rem; font-weight:900; font-family:'Outfit',sans-serif;">The Optimal</h3>
+                  <div style="font-size:0.75rem; font-weight:800; color:#64748b; text-transform:uppercase; letter-spacing:0.04em;">BALANCED APPROACH</div>
+                </div>
+                <div class="plan-score-badge">
+                  <div style="font-size:1.25rem; font-weight:900; line-height:1;">82</div>
+                  <div style="font-size:0.65rem; font-weight:700; text-transform:uppercase;">Score</div>
+                </div>
+              </div>
+
+              <div style="margin:1.25rem 0; display:flex; flex-direction:column; gap:0.85rem;">
+                <div style="display:flex; justify-content:space-between;">
+                  <span style="font-size:0.85rem; color:#64748b;">Arrives</span>
+                  <div style="text-align:right;">
+                    <b style="font-size:0.875rem;">ETA: 17:45 Today</b>
+                    <div style="font-size:0.725rem; color:#eab308;">+5h Delay</div>
+                  </div>
+                </div>
+                <div style="display:flex; justify-content:space-between;">
+                  <span style="font-size:0.85rem; color:#64748b;">Investment</span>
+                  <b style="font-size:0.875rem; color:#0f172a;">$150 (Upgrade)</b>
+                </div>
+                <div style="display:flex; justify-content:space-between;">
+                  <span style="font-size:0.85rem; color:#64748b;">Comfort</span>
+                  <b style="font-size:0.875rem; color:#0f172a;">Premium</b>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                  <span style="font-size:0.85rem; color:#64748b;">Mode</span>
+                  <span style="font-size:1.1rem;">🚆 → ✈</span>
+                </div>
+              </div>
+
+              <div class="why-this-plan-box">
+                <div style="font-weight:700; color:#0f172a; margin-bottom:0.25rem;">ℹ Why this plan?</div>
+                Mix of high-speed rail to Pune and short connecting flight. Zero out-of-pocket cancellation fees with guaranteed connection.
+              </div>
+            </div>
+
+            <button class="btn btn-outline" style="width:100%; justify-content:center; padding:0.85rem;" onclick="selectCommandPlan('The Optimal', 82)">
+              Select This Plan
+            </button>
+          </div>
+
+          <!-- Plan 3: The Economical -->
+          <div class="comparison-col-card">
+            <div>
+              <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                <div>
+                  <h3 style="font-size:1.3rem; font-weight:900; font-family:'Outfit',sans-serif;">The Economical</h3>
+                  <div style="font-size:0.75rem; font-weight:800; color:#64748b; text-transform:uppercase; letter-spacing:0.04em;">BUDGET SAVER</div>
+                </div>
+                <div class="plan-score-badge">
+                  <div style="font-size:1.25rem; font-weight:900; line-height:1;">68</div>
+                  <div style="font-size:0.65rem; font-weight:700; text-transform:uppercase;">Score</div>
+                </div>
+              </div>
+
+              <div style="margin:1.25rem 0; display:flex; flex-direction:column; gap:0.85rem;">
+                <div style="display:flex; justify-content:space-between;">
+                  <span style="font-size:0.85rem; color:#64748b;">Arrives</span>
+                  <div style="text-align:right;">
+                    <b style="font-size:0.875rem;">ETA: 08:00 Tomorrow</b>
+                    <div style="font-size:0.725rem; color:#64748b;">Next Morning</div>
+                  </div>
+                </div>
+                <div style="display:flex; justify-content:space-between;">
+                  <span style="font-size:0.85rem; color:#64748b;">Reimbursement</span>
+                  <b style="font-size:0.875rem; color:#10b981;">+$50 Credit</b>
+                </div>
+                <div style="display:flex; justify-content:space-between;">
+                  <span style="font-size:0.85rem; color:#64748b;">Stress Level</span>
+                  <b style="font-size:0.875rem; color:#0f172a;">High</b>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                  <span style="font-size:0.85rem; color:#64748b;">Mode</span>
+                  <span style="font-size:1.25rem;">🚌</span>
+                </div>
+              </div>
+
+              <div class="why-this-plan-box">
+                <div style="font-weight:700; color:#0f172a; margin-bottom:0.25rem;">ℹ Why this plan?</div>
+                Overnight premium sleeper coach. Receive a wallet credit for the inconvenience and hotel is auto-rescheduled for next morning check-in.
+              </div>
+            </div>
+
+            <button class="btn btn-outline" style="width:100%; justify-content:center; padding:0.85rem;" onclick="selectCommandPlan('The Economical', 68)">
+              Select This Plan
+            </button>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- SCREEN 3: DASHBOARD TAB -->
+      <div id="section-dashboard" style="display: none;">
         <div class="kpi-cards-grid">
           <div class="kpi-card">
             <div>
@@ -135,7 +506,7 @@
           <div class="kpi-card">
             <div>
               <div class="kpi-title">Total Revenue</div>
-              <div class="kpi-value" id="kpi-revenue">$84,250</div>
+              <div class="kpi-value" id="kpi-revenue">₹84,250</div>
               <div class="kpi-tag positive">↗ 9.4% this month</div>
             </div>
             <div class="kpi-icon-box cyan">💵</div>
@@ -173,8 +544,8 @@
                 <thead>
                   <tr>
                     <th>Traveler Name</th>
-                    <th>Flight Details</th>
-                    <th>Airlines</th>
+                    <th>Flight / Route</th>
+                    <th>Carrier</th>
                     <th>Date</th>
                     <th>Status</th>
                   </tr>
@@ -189,8 +560,8 @@
                   </tr>
                   <tr>
                     <td><b>Rahul Sharma</b></td>
-                    <td>BOM → GOI</td>
-                    <td>IndiGo Air</td>
+                    <td>BOM → GOI via PUNE</td>
+                    <td>Deccan Queen + IntrCity</td>
                     <td>Oct 25, 2026</td>
                     <td><span class="status-pill recovered">RECOVERED</span></td>
                   </tr>
@@ -204,76 +575,26 @@
               <div class="card-header">
                 <div class="card-title">Recent Activity</div>
               </div>
-
               <div class="activity-feed-list" id="activity-feed-container"></div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- RECOVERY CENTER TAB -->
-      <div id="section-recovery" style="display: none;">
-        <div style="background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%); border-radius:var(--radius-lg); padding:1.5rem 2rem; color:white; display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
-          <div>
-            <h2 style="font-size:1.35rem; font-weight:800; font-family:'Outfit', sans-serif;">⚡ Disruption Recovery Center</h2>
-            <p style="font-size:0.85rem; opacity:0.9; margin-top:0.25rem;">Simulate delays, cancellations, or missed connections and let TravelShield AI rebuild your itinerary.</p>
-          </div>
-
-          <div style="display:flex; gap:0.5rem;">
-            <button class="btn btn-danger" onclick="simulateCustomDisruption('cancellation', 0)">Simulate Cancellation</button>
-            <button class="btn btn-primary" style="background:#ffffff; color:var(--primary);" onclick="simulateCustomDisruption('delay', 240)">Simulate 4h Delay</button>
-          </div>
-        </div>
-
-        <div style="display:grid; grid-template-columns: 2fr 1fr; gap:1.5rem;">
-          <div>
-            <div class="card">
-              <div class="card-header">
-                <div class="card-title">Reconstructed Journey Timeline</div>
-                <span class="status-pill confirmed" id="trip-status-pill">ON TIME</span>
-              </div>
-              <div class="itinerary-list" id="timeline-container"></div>
-            </div>
-
-            <div class="card" id="plans-section" style="display: none;">
-              <div class="card-header">
-                <div class="card-title">AI Generated Recovery Plans</div>
-              </div>
-              <div class="plans-grid" id="plans-grid" style="display:grid; grid-template-columns:1fr; gap:1rem;"></div>
-            </div>
-          </div>
-
-          <div>
-            <div class="card" style="height:550px; display:flex; flex-direction:column; justify-content:space-between;">
-              <div class="card-header">
-                <div class="card-title">TravelShield AI Assistant</div>
-              </div>
-              <div style="flex:1; overflow-y:auto; padding:0.5rem; display:flex; flex-direction:column; gap:0.75rem;" id="chat-messages">
-                <div style="background:#f1f5f9; padding:0.75rem 1rem; border-radius:12px; font-size:0.85rem;">👋 Hello! Ask me anything about your trip recovery options!</div>
-              </div>
-              <div style="display:flex; gap:0.5rem; margin-top:1rem;">
-                <input type="text" id="chat-input" style="flex:1; padding:0.65rem 1rem; border:1px solid var(--border-color); border-radius:8px; outline:none; font-size:0.85rem;" placeholder="Ask AI..." onkeydown="if(event.key==='Enter') sendChatMessage()">
-                <button class="btn btn-primary" onclick="sendChatMessage()">Send</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- MULTI-MODAL SEARCH TAB -->
+      <!-- SCREEN 4: MULTI-MODAL SEARCH TAB -->
       <div id="section-search" style="display: none;">
         <div class="card">
           <h2 style="font-size:1.25rem; font-weight:800; margin-bottom:1rem;">Search Flights, Trains & Buses for ANY Indian City</h2>
           
           <div style="display:grid; grid-template-columns: 2fr 2fr 1.2fr 1fr auto; gap:1rem; align-items:flex-end;">
             <div style="position:relative;">
-              <label style="font-size:0.75rem; font-weight:700; color:var(--text-secondary); text-transform:uppercase;">From (City / Airport / Station)</label>
+              <label style="font-size:0.75rem; font-weight:700; color:var(--text-secondary); text-transform:uppercase;">From (City / Station)</label>
               <input type="text" id="input-from" value="Mumbai" placeholder="e.g. Mumbai, BOM, CSMT..." style="width:100%; padding:0.7rem 1rem; border:1px solid var(--border-color); border-radius:8px; outline:none; font-weight:600;" autocomplete="off" oninput="handleAutocomplete('from', this.value)">
               <div class="autocomplete-dropdown" id="dropdown-from" style="position:absolute; top:100%; left:0; right:0; background:white; border:1px solid var(--border-color); border-radius:8px; box-shadow:var(--shadow-elevated); z-index:100; display:none;"></div>
             </div>
 
             <div style="position:relative;">
-              <label style="font-size:0.75rem; font-weight:700; color:var(--text-secondary); text-transform:uppercase;">To (City / Airport / Station)</label>
+              <label style="font-size:0.75rem; font-weight:700; color:var(--text-secondary); text-transform:uppercase;">To (City / Station)</label>
               <input type="text" id="input-to" value="Delhi" placeholder="e.g. Delhi, DEL, NDLS..." style="width:100%; padding:0.7rem 1rem; border:1px solid var(--border-color); border-radius:8px; outline:none; font-weight:600;" autocomplete="off" oninput="handleAutocomplete('to', this.value)">
               <div class="autocomplete-dropdown" id="dropdown-to" style="position:absolute; top:100%; left:0; right:0; background:white; border:1px solid var(--border-color); border-radius:8px; box-shadow:var(--shadow-elevated); z-index:100; display:none;"></div>
             </div>
@@ -301,7 +622,65 @@
     </main>
   </div>
 
-  <!-- FIREBASE AUTH LOGIN / REGISTRATION MODAL -->
+  <!-- SCREEN 5: DISRUPTION DETECTED MODAL -->
+  <div class="modal-overlay" id="disruption-detected-modal" style="display:none;">
+    <div class="modal-content" style="max-width:540px; padding:2rem;">
+      <button class="modal-close-btn" onclick="closeDisruptionModal()">✕</button>
+      
+      <div style="display:flex; align-items:center; gap:0.6rem; margin-bottom:1rem;">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        <span style="font-weight:900; font-size:1.15rem; font-family:'Outfit',sans-serif;">TravelShield</span>
+      </div>
+
+      <div style="margin-bottom:1rem;">
+        <span style="background:#fef3c7; color:#b45309; font-size:0.725rem; font-weight:800; padding:0.25rem 0.55rem; border-radius:6px; letter-spacing:0.04em;">
+          ⚠ FLIGHT / TRIP DISRUPTED
+        </span>
+      </div>
+
+      <h3 style="font-size:1.4rem; font-weight:900; line-height:1.25; color:#0f172a; font-family:'Outfit',sans-serif;">
+        Disruption Detected: Your BOM to GOI trip is affected.
+      </h3>
+      <p style="font-size:0.875rem; color:#64748b; margin-top:0.5rem; line-height:1.45;">
+        We've identified a significant delay with your upcoming connection. Don't worry—our recovery engine is already working on alternative plans.
+      </p>
+
+      <div style="background:#fffafa; border:1px solid #fee2e2; border-radius:12px; padding:1.1rem; margin:1.25rem 0; display:flex; justify-content:space-between; align-items:center;">
+        <div>
+          <div style="font-size:0.7rem; font-weight:800; color:#94a3b8; text-transform:uppercase;">Original Route</div>
+          <div style="font-size:1.05rem; font-weight:800; color:#0f172a; margin-top:0.2rem;">Air India AI 492 / Train 12123</div>
+          <div style="font-size:0.8rem; color:#64748b; margin-top:0.15rem;">Mumbai (BOM) → Goa (GOI)</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-size:0.7rem; font-weight:800; color:#94a3b8; text-transform:uppercase;">Status</div>
+          <div style="font-size:1.05rem; font-weight:900; color:#dc2626; margin-top:0.2rem;">Delayed: 6h 30m</div>
+        </div>
+      </div>
+
+      <div style="background:#f8fafc; border-radius:12px; padding:1rem; margin-bottom:1.25rem; display:flex; align-items:flex-start; gap:0.75rem;">
+        <div style="background:#fef3c7; color:#b45309; width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:0.85rem;">🕒</div>
+        <div>
+          <div style="font-weight:800; font-size:0.85rem; color:#0f172a;">Arriving Late</div>
+          <div style="font-size:0.8rem; color:#64748b; margin-top:0.2rem;">
+            Due to this delay, you are expected to arrive in Goa 6 hours and 30 minutes later than originally scheduled.
+          </div>
+        </div>
+      </div>
+
+      <button class="btn btn-primary" style="width:100%; justify-content:center; padding:0.85rem; background:#4f46e5; border-radius:10px; font-weight:700;" onclick="closeDisruptionModal(); switchTab('diagnosis');">
+        View Recovery Options →
+      </button>
+
+      <div style="border:1px dashed #e2e8f0; border-radius:12px; padding:1rem; margin-top:1.25rem; text-align:center;">
+        <div style="font-size:1.1rem;">🎁</div>
+        <div style="font-weight:800; font-size:0.85rem; margin-top:0.25rem;">Refer a Friend, Get Rewarded</div>
+        <div style="font-size:0.75rem; color:#64748b; margin-top:0.2rem;">Help your friends travel stress-free. You both get $25 in credits.</div>
+        <a href="#" style="font-size:0.75rem; font-weight:800; color:#4f46e5; display:inline-block; margin-top:0.5rem; text-decoration:none;" onclick="showToast('Referral link copied to clipboard!', 'success'); return false;">GET INVITE LINK</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- AUTH MODAL -->
   <div class="modal-overlay" id="auth-modal">
     <div class="modal-content">
       <button class="modal-close-btn" onclick="closeAuthModal()">✕</button>
@@ -332,21 +711,6 @@
           </button>
         </div>
       </form>
-
-      <div style="display:flex; align-items:center; gap:0.5rem; margin:1.25rem 0; color:var(--text-muted); font-size:0.75rem;">
-        <div style="flex:1; height:1px; background:var(--border-color);"></div>
-        <span>OR</span>
-        <div style="flex:1; height:1px; background:var(--border-color);"></div>
-      </div>
-
-      <button class="btn btn-google" onclick="signInWithGoogle()">
-        <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.29v3.15C3.26 21.3 7.37 24 12 24z"/><path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.29C.47 8.2.01 10.04.01 12c0 1.96.46 3.8 1.28 5.42l3.99-3.15z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.37 0 3.26 2.7 1.29 6.58l3.99 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/></svg>
-        Sign In with Google
-      </button>
-
-      <button class="btn btn-outline" style="width:100%; justify-content:center; margin-top:0.5rem; font-size:0.8rem;" onclick="signInAnonymously()">
-        👤 Continue as Guest
-      </button>
     </div>
   </div>
 

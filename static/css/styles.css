@@ -523,12 +523,14 @@ h1, h2, h3, h4, .font-heading {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
+  transition: all 0.2s ease;
 }
 
 .btn-primary { background: var(--primary); color: white; }
 .btn-primary:hover { background: var(--primary-hover); }
 .btn-danger { background: #dc2626; color: white; }
 .btn-outline { background: white; border: 1px solid var(--border-color); color: var(--text-primary); }
+.btn-outline:hover { background: #f8fafc; }
 
 .toast-popup {
   position: fixed;
@@ -542,3 +544,299 @@ h1, h2, h3, h4, .font-heading {
   z-index: 300;
   font-size: 0.875rem;
 }
+
+/* =========================================================
+   Glassmorphism CTA Keyframes & Styles (shadcn & Tailwind)
+   ========================================================= */
+@keyframes rotate-gradient {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes borderBeamRotation {
+  0% { transform: translate(-50%, -50%) rotate(0deg); }
+  100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+.glassmorphism-cta-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  overflow: hidden;
+  border-radius: 9999px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 40px rgba(79, 70, 229, 0.25);
+}
+
+.glassmorphism-cta-btn:hover {
+  transform: scale(1.04);
+  box-shadow: 0 0 40px 8px rgba(99, 102, 241, 0.35);
+}
+
+.glassmorphism-cta-inner {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.7rem 1.25rem;
+  background: rgba(10, 15, 30, 0.85);
+  border-radius: 9999px;
+  backdrop-filter: blur(12px);
+  position: relative;
+  z-index: 10;
+  color: white;
+  font-weight: 600;
+  font-size: 0.9rem;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+/* =========================================================
+   Enterprise Impact Diagnosis UI (Matching Screenshots 1-3)
+   ========================================================= */
+.disruption-alert-banner {
+  background: #fff1f2;
+  border: 1px solid #ffe4e6;
+  border-radius: 12px;
+  padding: 0.85rem 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+
+.badge-active-disruption {
+  background: #ffe4e6;
+  color: #e11d48;
+  font-weight: 800;
+  font-size: 0.75rem;
+  padding: 0.25rem 0.6rem;
+  border-radius: 6px;
+  letter-spacing: 0.04em;
+}
+
+.impact-grid-container {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+  gap: 1.5rem;
+  margin-bottom: 5rem;
+}
+
+.delay-impact-card {
+  background: linear-gradient(135deg, #ffffff 0%, #fffbfb 100%);
+  border: 1px solid #fee2e2;
+  border-radius: 16px;
+  padding: 1.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.big-delay-number {
+  font-size: 3rem;
+  font-weight: 900;
+  color: #dc2626;
+  line-height: 1;
+  font-family: 'Outfit', sans-serif;
+  letter-spacing: -0.02em;
+}
+
+/* Route Graph Visualizer */
+.route-graph-box {
+  background: white;
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 1.5rem;
+  position: relative;
+}
+
+.graph-track-line {
+  position: absolute;
+  left: 2.5rem;
+  top: 4.5rem;
+  bottom: 4.5rem;
+  width: 2px;
+  background: repeating-linear-gradient(to bottom, #cbd5e1 0, #cbd5e1 6px, transparent 6px, transparent 12px);
+  z-index: 1;
+}
+
+.graph-station-row {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: flex-start;
+  gap: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.graph-bullet {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: white;
+  border: 4px solid #94a3b8;
+  flex-shrink: 0;
+  margin-top: 0.75rem;
+}
+
+.graph-bullet.completed { border-color: #10b981; }
+.graph-bullet.disrupted { border-color: #ef4444; background: #fee2e2; }
+.graph-bullet.unreachable { border-color: #cbd5e1; }
+
+.station-card-inner {
+  flex: 1;
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  border: 1px solid var(--border-color);
+  background: #ffffff;
+}
+
+.station-card-inner.disrupted-node {
+  border: 2px solid #ef4444;
+  background: #fffafa;
+}
+
+.station-card-inner.unreachable-node {
+  border: 1px dashed #cbd5e1;
+  background: #f8fafc;
+}
+
+/* Financial Exposure Card */
+.financial-exposure-card {
+  background: white;
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.exposure-amount-header {
+  font-size: 2.25rem;
+  font-weight: 900;
+  color: #0f172a;
+  font-family: 'Outfit', sans-serif;
+  margin: 0.5rem 0 1.25rem 0;
+}
+
+.exposure-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.65rem 0;
+  border-top: 1px solid #f1f5f9;
+  font-size: 0.875rem;
+}
+
+/* Downstream Bookings */
+.downstream-booking-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.85rem 1rem;
+  background: #f8fafc;
+  border: 1px solid #f1f5f9;
+  border-radius: 10px;
+  margin-bottom: 0.75rem;
+}
+
+.badge-risk {
+  background: #fee2e2;
+  color: #b91c1c;
+  font-size: 0.725rem;
+  font-weight: 800;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+}
+
+.badge-pending-status {
+  background: #f1f5f9;
+  color: #475569;
+  font-size: 0.725rem;
+  font-weight: 800;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+}
+
+/* Sticky Bottom Diagnosis Bar */
+.diagnosis-bottom-bar {
+  position: fixed;
+  bottom: 0;
+  left: 250px;
+  right: 0;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(12px);
+  border-top: 1px solid var(--border-color);
+  padding: 1rem 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.05);
+  z-index: 100;
+}
+
+/* =========================================================
+   Recovery Command Center UI (Matching Screenshot 4)
+   ========================================================= */
+.plans-comparison-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.comparison-col-card {
+  background: white;
+  border: 1px solid var(--border-color);
+  border-radius: 18px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.comparison-col-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-elevated);
+}
+
+.comparison-col-card.recommended-plan {
+  border: 2px solid var(--primary);
+  box-shadow: 0 8px 30px rgba(37, 99, 235, 0.12);
+}
+
+.plan-score-badge {
+  background: #f1f5f9;
+  border-radius: 10px;
+  padding: 0.35rem 0.65rem;
+  text-align: center;
+}
+
+.plan-score-badge.top-score {
+  background: #eff6ff;
+  color: var(--primary);
+}
+
+.why-this-plan-box {
+  background: #f8fafc;
+  border-radius: 10px;
+  padding: 0.85rem;
+  margin: 1rem 0;
+  font-size: 0.825rem;
+  line-height: 1.45;
+  color: var(--text-secondary);
+}
+
+.confidence-bar-wrap {
+  width: 130px;
+  height: 8px;
+  background: #e2e8f0;
+  border-radius: 9999px;
+  overflow: hidden;
+  margin-top: 0.3rem;
+}
+
+.confidence-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #4f46e5, #3b82f6);
+  border-radius: 9999px;
+}
+
