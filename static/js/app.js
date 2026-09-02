@@ -238,25 +238,80 @@ async function handleLogout() {
   showToast("Logged out of Firebase Auth", "info");
 }
 
-// 2. Load Live Dashboard Analytics
+// Built-in Mock Datasets for Static / GitHub Pages Mode
+const STATIC_MOCK_DATA = {
+  analytics: {
+    metrics: {
+      total_bookings: "1,284",
+      pending_issues: "24",
+      active_customers: "3,492",
+      total_revenue: "₹84,250"
+    },
+    recent_activity: [
+      { id: 1, type: "SCHEDULE_UPDATED", title: "Flight 6E-249 Rescheduled", details: "Departure rescheduled by 45 mins due to air traffic control.", time_ago: "10 mins ago", status_color: "amber" },
+      { id: 2, type: "RECOVERED", title: "Disruption Recovery Applied", details: "Passenger Rahul Sharma transferred to Train 12123 on-time connection.", time_ago: "25 mins ago", status_color: "emerald" },
+      { id: 3, type: "CONFIRMED", title: "New Multi-Modal Booking", details: "Mumbai to Goa via Pune (Express Train + SmartBus)", time_ago: "1 hour ago", status_color: "blue" },
+      { id: 4, type: "CONFIRMED", title: "Hotel Taj Fort Aguada Confirmed", details: "Check-in guaranteed with early-arrival buffer.", time_ago: "2 hours ago", status_color: "blue" }
+    ],
+    recent_bookings: [
+      { id: 1, traveler: "Sarah Johnson", flight_details: "DEL → BOM (IndiGo 6E-501)", airline: "IndiGo Air", date: "Oct 24, 2026", status: "CONFIRMED" },
+      { id: 2, traveler: "Rahul Sharma", flight_details: "BOM → GOI via PUNE", airline: "Indian Railways + IntrCity", date: "Oct 25, 2026", status: "RECOVERED" },
+      { id: 3, traveler: "Vikram Malhotra", flight_details: "BLR → DEL (Air India AI-804)", airline: "Air India", date: "Oct 26, 2026", status: "CONFIRMED" },
+      { id: 4, traveler: "Ananya Iyer", flight_details: "MAA → HYD (Express 12603)", airline: "Southern Railway", date: "Oct 27, 2026", status: "CONFIRMED" }
+    ]
+  },
+  trip: {
+    id: 1,
+    title: "Mumbai → Pune → Goa Beach Getaway",
+    status: "confirmed",
+    itinerary_items: [
+      { id: 1, item_type: "transport", title: "Train: Mumbai Central (MMCT) to Pune Junction (PUNE)", status: "confirmed", notes: "Deccan Queen Express (12123) · Dep: 16:10 · Platform 4 · Coach C2, Seat 44" },
+      { id: 2, item_type: "transport", title: "Bus: Swargate Pune to Mapusa Goa", status: "confirmed", notes: "IntrCity SmartBus Volvo A/C Sleeper · Dep: 20:00 · Lower Berth L12" },
+      { id: 3, item_type: "hotel", title: "Hotel: Taj Fort Aguada Resort, Goa", status: "confirmed", notes: "Luxury Sea Facing Suite · Guaranteed Early Check-in" },
+      { id: 4, item_type: "activity", title: "Activity: Grand Island Scuba Diving & Boat Safari", status: "confirmed", notes: "Pick up at 07:30 AM from Hotel Lobby · Pass #2" }
+    ],
+    recovery_plans: []
+  },
+  hubs: [
+    { name: "Mumbai (Chhatrapati Shivaji Maharaj International Airport)", city: "Mumbai", code: "BOM", type: "airport", state: "Maharashtra" },
+    { name: "Mumbai CSMT Terminus", city: "Mumbai", code: "CSMT", type: "railway_station", state: "Maharashtra" },
+    { name: "Delhi (Indira Gandhi International Airport)", city: "Delhi", code: "DEL", type: "airport", state: "Delhi" },
+    { name: "New Delhi Railway Station", city: "Delhi", code: "NDLS", type: "railway_station", state: "Delhi" },
+    { name: "Pune Junction", city: "Pune", code: "PUNE", type: "railway_station", state: "Maharashtra" },
+    { name: "Goa (Dabolim Airport)", city: "Goa", code: "GOI", type: "airport", state: "Goa" },
+    { name: "Goa Madgaon Junction", city: "Goa", code: "MAO", type: "railway_station", state: "Goa" },
+    { name: "Bengaluru (Kempegowda International Airport)", city: "Bengaluru", code: "BLR", type: "airport", state: "Karnataka" },
+    { name: "Hyderabad (Rajiv Gandhi International Airport)", city: "Hyderabad", code: "HYD", type: "airport", state: "Telangana" },
+    { name: "Chennai Central", city: "Chennai", code: "MAS", type: "railway_station", state: "Tamil Nadu" },
+    { name: "Kolkata Howrah Junction", city: "Kolkata", code: "HWH", type: "railway_station", state: "West Bengal" }
+  ]
+};
+
+// 2. Load Live Dashboard Analytics (with static fallback)
 async function loadDashboardAnalytics() {
+  let data = null;
   try {
     const res = await fetch('/api/disruptions/dashboard-analytics');
-    if (!res.ok) return;
-    const data = await res.json();
-
-    if (data.metrics) {
-      document.getElementById('kpi-bookings').innerText = data.metrics.total_bookings;
-      document.getElementById('kpi-pending').innerText = data.metrics.pending_issues;
-      document.getElementById('kpi-customers').innerText = data.metrics.active_customers;
-      document.getElementById('kpi-revenue').innerText = data.metrics.total_revenue;
+    if (res.ok) {
+      data = await res.json();
     }
-
-    if (data.recent_activity) renderActivityFeed(data.recent_activity);
-    if (data.recent_bookings) renderRecentBookings(data.recent_bookings);
   } catch (err) {
-    console.error("Dashboard analytics error:", err);
+    // static mode fallback
   }
+
+  if (!data) {
+    data = STATIC_MOCK_DATA.analytics;
+  }
+
+  if (data.metrics) {
+    document.getElementById('kpi-bookings').innerText = data.metrics.total_bookings;
+    document.getElementById('kpi-pending').innerText = data.metrics.pending_issues;
+    document.getElementById('kpi-customers').innerText = data.metrics.active_customers;
+    document.getElementById('kpi-revenue').innerText = data.metrics.total_revenue;
+  }
+
+  if (data.recent_activity) renderActivityFeed(data.recent_activity);
+  if (data.recent_bookings) renderRecentBookings(data.recent_bookings);
 }
 
 function renderActivityFeed(activities) {
@@ -321,41 +376,54 @@ async function handleAutocomplete(target, query) {
     return;
   }
 
+  let suggestions = null;
   try {
     const res = await fetch(`/api/stations/autocomplete?query=${encodeURIComponent(query)}`);
-    const data = await res.json();
-
-    dropdown.innerHTML = '';
-    if (data.suggestions && data.suggestions.length > 0) {
-      dropdown.style.display = 'block';
-      data.suggestions.forEach(item => {
-        const div = document.createElement('div');
-        div.style.padding = '0.65rem 1rem';
-        div.style.cursor = 'pointer';
-        div.style.display = 'flex';
-        div.style.justifyContent = 'space-between';
-        div.style.fontSize = '0.85rem';
-        div.style.borderBottom = '1px solid #f1f5f9';
-        
-        let typeIcon = item.type === 'airport' ? '✈️' : (item.type === 'railway_station' ? '🚆' : '🏙️');
-        div.innerHTML = `
-          <div>
-            <b>${typeIcon} ${item.name}</b>
-            <div style="font-size:0.75rem; color:var(--text-muted);">${item.city}, ${item.state}</div>
-          </div>
-          <span style="background:#f1f5f9; padding:0.2rem 0.5rem; border-radius:4px; font-weight:700;">${item.code}</span>
-        `;
-        div.onclick = () => {
-          document.getElementById(`input-${target}`).value = `${item.city} (${item.code})`;
-          dropdown.style.display = 'none';
-        };
-        dropdown.appendChild(div);
-      });
-    } else {
-      dropdown.style.display = 'none';
+    if (res.ok) {
+      const data = await res.json();
+      suggestions = data.suggestions;
     }
   } catch (err) {
-    console.error("Autocomplete error:", err);
+    // static mode fallback
+  }
+
+  if (!suggestions || suggestions.length === 0) {
+    const q = query.toLowerCase();
+    suggestions = STATIC_MOCK_DATA.hubs.filter(h => 
+      h.name.toLowerCase().includes(q) || 
+      h.city.toLowerCase().includes(q) || 
+      h.code.toLowerCase().includes(q)
+    );
+  }
+
+  dropdown.innerHTML = '';
+  if (suggestions && suggestions.length > 0) {
+    dropdown.style.display = 'block';
+    suggestions.forEach(item => {
+      const div = document.createElement('div');
+      div.style.padding = '0.65rem 1rem';
+      div.style.cursor = 'pointer';
+      div.style.display = 'flex';
+      div.style.justifyContent = 'space-between';
+      div.style.fontSize = '0.85rem';
+      div.style.borderBottom = '1px solid #f1f5f9';
+      
+      let typeIcon = item.type === 'airport' ? '✈️' : (item.type === 'railway_station' ? '🚆' : '🏙️');
+      div.innerHTML = `
+        <div>
+          <b>${typeIcon} ${item.name}</b>
+          <div style="font-size:0.75rem; color:var(--text-muted);">${item.city}, ${item.state}</div>
+        </div>
+        <span style="background:#f1f5f9; padding:0.2rem 0.5rem; border-radius:4px; font-weight:700;">${item.code}</span>
+      `;
+      div.onclick = () => {
+        document.getElementById(`input-${target}`).value = `${item.city} (${item.code})`;
+        dropdown.style.display = 'none';
+      };
+      dropdown.appendChild(div);
+    });
+  } else {
+    dropdown.style.display = 'none';
   }
 }
 
@@ -369,18 +437,33 @@ async function executeMultiModalSearch() {
   if (!resultsGrid) return;
   resultsGrid.innerHTML = '<p style="grid-column:1/-1; color:var(--text-muted); text-align:center; padding:2rem;">Loading transport options...</p>';
 
+  let results = null;
   try {
     const res = await fetch('/api/search', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ origin, destination, travel_date: travelDate, passengers })
     });
-    const data = await res.json();
-    renderSearchResults(data.results);
+    if (res.ok) {
+      const data = await res.json();
+      results = data.results;
+    }
   } catch (err) {
-    console.error("Search error:", err);
-    resultsGrid.innerHTML = '<p style="grid-column:1/-1; color:var(--accent-rose); text-align:center; padding:2rem;">Failed to fetch search results.</p>';
+    // static mode fallback
   }
+
+  if (!results || results.length === 0) {
+    results = [
+      { type: "flight", carrier: "IndiGo Air (6E-531)", name: `IndiGo Non-Stop (${origin} → ${destination})`, departure_time: "08:15", arrival_time: "10:30", duration_minutes: 135, price: 4890 * passengers },
+      { type: "flight", carrier: "Air India (AI-802)", name: `Air India Express (${origin} → ${destination})`, departure_time: "14:40", arrival_time: "17:05", duration_minutes: 145, price: 5420 * passengers },
+      { type: "train", carrier: "Indian Railways (12951)", name: `Rajdhani Superfast Express`, departure_time: "17:00", arrival_time: "08:35", duration_minutes: 935, price: 2150 * passengers },
+      { type: "train", carrier: "Indian Railways (22221)", name: `Vande Bharat Express`, departure_time: "06:00", arrival_time: "14:15", duration_minutes: 495, price: 1850 * passengers },
+      { type: "bus", carrier: "IntrCity SmartBus", name: `IntrCity Volvo Multi-Axle A/C Sleeper`, departure_time: "19:30", arrival_time: "11:00", duration_minutes: 930, price: 1250 * passengers },
+      { type: "bus", carrier: "Zingbus Electric", name: `Zingbus Premium Seater / Sleeper`, departure_time: "21:00", arrival_time: "12:30", duration_minutes: 930, price: 1100 * passengers }
+    ];
+  }
+
+  renderSearchResults(results);
 }
 
 function renderSearchResults(results) {
@@ -430,15 +513,22 @@ function renderSearchResults(results) {
 }
 
 async function loadTrip(tripId) {
+  let data = null;
   try {
     const res = await fetch(`/api/trips/${tripId}`);
-    if (!res.ok) return;
-    const data = await res.json();
-    currentTripData = data;
-    renderTrip(data);
+    if (res.ok) {
+      data = await res.json();
+    }
   } catch (err) {
-    console.error("Trip error:", err);
+    // fallback
   }
+
+  if (!data) {
+    data = currentTripData || JSON.parse(JSON.stringify(STATIC_MOCK_DATA.trip));
+  }
+
+  currentTripData = data;
+  renderTrip(data);
 }
 
 function renderTrip(trip) {
@@ -507,10 +597,14 @@ function getAuthHeaders() {
 }
 
 async function simulateCustomDisruption(disruptionType, delayMinutes) {
-  if (!currentTripData || !currentTripData.itinerary_items) return;
+  if (!currentTripData || !currentTripData.itinerary_items) {
+    currentTripData = JSON.parse(JSON.stringify(STATIC_MOCK_DATA.trip));
+  }
   const leg1 = currentTripData.itinerary_items[0];
 
   showToast(`Simulating ${disruptionType.toUpperCase()}...`, "info");
+  let simulatedSuccessfully = false;
+
   try {
     const res = await fetch('/api/disruptions/simulate', {
       method: 'POST',
@@ -522,28 +616,77 @@ async function simulateCustomDisruption(disruptionType, delayMinutes) {
         disruption_type: disruptionType
       })
     });
-    const data = await res.json();
-    showToast(`Disruption simulated! (User: ${data.authenticated_user || 'Guest'})`, "success");
-    await loadTrip(currentTripId);
-    await loadDashboardAnalytics();
+    if (res.ok) {
+      const data = await res.json();
+      showToast(`Disruption simulated! (User: ${data.authenticated_user || 'Guest'})`, "success");
+      await loadTrip(currentTripId);
+      await loadDashboardAnalytics();
+      simulatedSuccessfully = true;
+    }
   } catch (err) {
-    showToast("Simulation failed", "error");
+    // fallback
+  }
+
+  if (!simulatedSuccessfully) {
+    // Client-side simulation fallback for GitHub Pages demo
+    currentTripData.status = disruptionType === 'cancellation' ? 'cancelled' : 'delayed';
+    currentTripData.itinerary_items[0].status = disruptionType === 'cancellation' ? 'cancelled' : 'delayed';
+    currentTripData.itinerary_items[0].notes = disruptionType === 'cancellation' 
+      ? '⚠️ TRAIN SERVICE CANCELLED by Indian Railways due to track maintenance.' 
+      : `⚠️ DELAYED by ${delayMinutes} minutes due to signal clearance issue.`;
+
+    currentTripData.recovery_plans = [
+      {
+        id: 101,
+        title: "⚡ Option A: Fast Direct Flight (IndiGo BOM → GOI)",
+        total_cost_diff: 3200,
+        total_delay_minutes: 0,
+        ai_explanation: "Gemini AI Recommendation: Bypasses the rail breakdown and bus leg completely. Direct 1h 15m flight ensures on-time arrival for Hotel Check-in & Scuba Activity."
+      },
+      {
+        id: 102,
+        title: "🚆 Option B: Later Tejas Express + Rescheduled Sleeper Bus",
+        total_cost_diff: 650,
+        total_delay_minutes: 90,
+        ai_explanation: "Cost-optimized alternative: Transfers passenger to Tejas Express (departs 18:30) and reschedules connecting bus from Pune to midnight sleeper."
+      }
+    ];
+
+    renderTrip(currentTripData);
+    showToast(`Disruption simulated! AI generated 2 recovery plans.`, "success");
   }
 }
 
 async function applyRecoveryPlan(planId) {
+  let appliedSuccessfully = false;
   try {
     const res = await fetch('/api/recovery/apply', {
       method: 'POST',
       headers: getAuthHeaders(),
       body: JSON.stringify({ trip_id: currentTripId, plan_id: planId })
     });
-    const data = await res.json();
-    showToast(`Recovery plan applied! (User: ${data.authenticated_user || 'Guest'}) 🎉`, "success");
-    await loadTrip(currentTripId);
-    await loadDashboardAnalytics();
+    if (res.ok) {
+      const data = await res.json();
+      showToast(`Recovery plan applied! (User: ${data.authenticated_user || 'Guest'}) 🎉`, "success");
+      await loadTrip(currentTripId);
+      await loadDashboardAnalytics();
+      appliedSuccessfully = true;
+    }
   } catch (err) {
-    showToast("Failed to apply plan", "error");
+    // fallback
+  }
+
+  if (!appliedSuccessfully) {
+    // Client-side fallback for GitHub Pages
+    currentTripData.status = "recovered";
+    currentTripData.itinerary_items[0].status = "confirmed";
+    currentTripData.itinerary_items[0].title = planId === 101 
+      ? "✈️ Flight: Mumbai (BOM) to Goa (GOI) — IndiGo 6E-344 [Recovered]" 
+      : "🚆 Train: Tejas Express (Mumbai to Karmali) [Recovered]";
+    currentTripData.itinerary_items[0].notes = "Recovered via TravelShield AI Engine. Seat & PNR auto-synced.";
+    currentTripData.recovery_plans = [];
+    renderTrip(currentTripData);
+    showToast("Recovery plan applied! All legs re-aligned & confirmed. 🎉", "success");
   }
 }
 
@@ -564,24 +707,42 @@ async function sendChatMessage() {
   chat.appendChild(userDiv);
   input.value = '';
 
+  let replyText = null;
   try {
     const res = await fetch('/api/ai/chat', {
       method: 'POST',
       headers: getAuthHeaders(),
       body: JSON.stringify({ trip_id: currentTripId, user_message: text })
     });
-    const data = await res.json();
-    const botDiv = document.createElement('div');
-    botDiv.style.background = '#f1f5f9';
-    botDiv.style.padding = '0.75rem 1rem';
-    botDiv.style.borderRadius = '12px';
-    botDiv.style.fontSize = '0.85rem';
-    botDiv.innerHTML = data.reply.replace(/\n/g, '<br>');
-    chat.appendChild(botDiv);
-    chat.scrollTop = chat.scrollHeight;
+    if (res.ok) {
+      const data = await res.json();
+      replyText = data.reply;
+    }
   } catch (err) {
-    console.error("Chat error:", err);
+    // fallback
   }
+
+  if (!replyText) {
+    const lower = text.toLowerCase();
+    if (lower.includes("delay") || lower.includes("disrupt") || lower.includes("cancel")) {
+      replyText = "I've analyzed your itinerary! If your primary train is delayed or cancelled, TravelShield AI immediately reserves alternative transport options (such as IndiGo 6E-344 or Tejas Express) to prevent missed connections and hotel cancellation fees.";
+    } else if (lower.includes("hotel") || lower.includes("taj") || lower.includes("check-in")) {
+      replyText = "Your booking at Taj Fort Aguada Resort is protected. TravelShield automatically notifies the hotel desk of any arrival time adjustments so your room reservation is held safely.";
+    } else if (lower.includes("search") || lower.includes("flight") || lower.includes("train") || lower.includes("bus")) {
+      replyText = "You can search live transport options across 25+ Indian transit hubs in the Multi-Modal Search tab, comparing real-time fares and schedules.";
+    } else {
+      replyText = "Hello! I am your 24/7 AI Travel Disruption Concierge. I continuously monitor your flights, trains, and buses to resolve delays and protect your itinerary automatically.";
+    }
+  }
+
+  const botDiv = document.createElement('div');
+  botDiv.style.background = '#f1f5f9';
+  botDiv.style.padding = '0.75rem 1rem';
+  botDiv.style.borderRadius = '12px';
+  botDiv.style.fontSize = '0.85rem';
+  botDiv.innerHTML = replyText.replace(/\n/g, '<br>');
+  chat.appendChild(botDiv);
+  chat.scrollTop = chat.scrollHeight;
 }
 
 function showToast(msg, type = 'info') {
