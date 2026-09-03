@@ -24,9 +24,9 @@
       --text-sub: #64748b;
 
       /* Glassmorphic Surfaces */
-      --glass-bg: rgba(255, 255, 255, 0.75);
+      --glass-bg: rgba(255, 255, 255, 0.78);
       --glass-bg-subtle: rgba(255, 255, 255, 0.60);
-      --glass-bg-elevated: rgba(255, 255, 255, 0.88);
+      --glass-bg-elevated: rgba(255, 255, 255, 0.90);
       --glass-border: rgba(255, 255, 255, 0.85);
       --glass-border-subtle: rgba(226, 232, 240, 0.65);
       
@@ -68,7 +68,7 @@
       padding: 0;
     }
 
-    /* Vibrant Mesh Gradient with Frosted Ambient Orbs for Glass Effect */
+    /* Vibrant Mesh Gradient with Frosted Ambient Orbs */
     body {
       min-height: 100vh;
       background-color: #f1f5f9;
@@ -152,6 +152,7 @@
       padding: 1.5rem 1rem;
       z-index: 50;
       box-shadow: 4px 0 28px rgba(31, 38, 135, 0.04);
+      transition: transform 0.3s ease;
     }
 
     .brand-box {
@@ -202,7 +203,7 @@
       position: relative;
     }
     .nav-btn:hover {
-      background: rgba(255, 255, 255, 0.8);
+      background: rgba(255, 255, 255, 0.85);
       color: var(--primary);
       transform: translateX(2px);
     }
@@ -296,10 +297,10 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 1.75rem;
+      margin-bottom: 1.5rem;
       padding: 0.75rem 1.25rem;
       border-radius: var(--radius-lg);
-      background: rgba(255, 255, 255, 0.70);
+      background: rgba(255, 255, 255, 0.75);
       backdrop-filter: var(--glass-blur);
       -webkit-backdrop-filter: var(--glass-blur);
       border: 1px solid var(--glass-border);
@@ -342,6 +343,19 @@
       border-radius: 50%;
       background: var(--success-solid);
       box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.25);
+    }
+
+    /* Mobile Menu Toggle */
+    .mobile-menu-toggle {
+      display: none;
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      background: #ffffff;
+      border: 1px solid var(--glass-border);
+      align-items: center;
+      justify-content: center;
+      color: var(--primary);
     }
 
     .avatar-wrap {
@@ -418,7 +432,7 @@
       transform: translateY(-1px);
     }
     .btn-outline {
-      background: rgba(255, 255, 255, 0.8);
+      background: rgba(255, 255, 255, 0.85);
       backdrop-filter: blur(10px);
       border: 1px solid var(--glass-border);
       color: var(--text-main);
@@ -723,8 +737,122 @@
     }
 
     /* =============================================================
-       7. SCREEN 3: RECOVERY CENTER (COMPARABLE CARDS & AI PANEL)
+       7. SCREEN 3: RECOVERY CENTER (WITH MODE TABS & AI THINKING)
     ============================================================= */
+    /* Mode Tabs Filter Bar */
+    .mode-tabs-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      background: rgba(255, 255, 255, 0.70);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-lg);
+      padding: 0.75rem 1rem;
+      box-shadow: var(--glass-shadow);
+      margin-bottom: 1.25rem;
+    }
+    .mode-tabs-wrap {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      overflow-x: auto;
+      max-width: 100%;
+      padding: 0.15rem;
+      scrollbar-width: none;
+    }
+    .mode-tabs-wrap::-webkit-scrollbar {
+      display: none;
+    }
+    .mode-tab-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.6rem 1.15rem;
+      border-radius: var(--radius-md);
+      font-size: 0.875rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      background: rgba(255, 255, 255, 0.6);
+      border: 1px solid rgba(226, 232, 240, 0.8);
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      white-space: nowrap;
+      cursor: pointer;
+    }
+    .mode-tab-btn:hover {
+      background: #ffffff;
+      color: var(--primary);
+      transform: translateY(-1px);
+    }
+    .mode-tab-btn.active {
+      background: var(--primary-indigo);
+      color: #ffffff;
+      border-color: var(--primary-indigo);
+      box-shadow: 0 4px 14px rgba(79, 70, 229, 0.3);
+    }
+    .mode-count-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 20px;
+      height: 20px;
+      padding: 0 0.35rem;
+      border-radius: var(--radius-pill);
+      font-size: 0.725rem;
+      font-weight: 800;
+      background: rgba(15, 23, 42, 0.08);
+      color: inherit;
+    }
+    .mode-tab-btn.active .mode-count-badge {
+      background: rgba(255, 255, 255, 0.25);
+      color: #ffffff;
+    }
+    .mode-filter-meta {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+    .mode-filter-meta b {
+      color: var(--primary);
+    }
+
+    /* AI Thinking State Bar */
+    .ai-thinking-bar {
+      display: none;
+      align-items: center;
+      gap: 0.75rem;
+      background: rgba(238, 242, 255, 0.95);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(199, 210, 254, 0.9);
+      border-radius: var(--radius-md);
+      padding: 0.85rem 1.25rem;
+      margin-bottom: 1.25rem;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--primary-indigo);
+      box-shadow: 0 4px 16px rgba(79, 70, 229, 0.12);
+      animation: pulseGlow 1.5s infinite alternate ease-in-out;
+    }
+    @keyframes pulseGlow {
+      from { box-shadow: 0 4px 12px rgba(79, 70, 229, 0.1); }
+      to { box-shadow: 0 6px 22px rgba(79, 70, 229, 0.25); }
+    }
+    .ai-thinking-spinner {
+      width: 18px;
+      height: 18px;
+      border: 2px solid rgba(79, 70, 229, 0.25);
+      border-top-color: var(--primary-indigo);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Recovery Cards Grid */
     .recovery-plans-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -742,8 +870,9 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      transition: all 0.25s ease;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
       position: relative;
+      animation: fadeIn 0.3s ease;
     }
     .recovery-card:hover {
       box-shadow: var(--glass-shadow-hover);
@@ -753,6 +882,9 @@
       border-color: rgba(79, 70, 229, 0.9);
       background: rgba(245, 247, 255, 0.92);
       box-shadow: 0 14px 40px 0 rgba(79, 70, 229, 0.15);
+    }
+    .recovery-card.hidden {
+      display: none !important;
     }
 
     .recommended-flag {
@@ -770,6 +902,23 @@
       box-shadow: 0 4px 12px rgba(79, 70, 229, 0.35);
     }
 
+    .plan-mode-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      font-size: 0.7rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      padding: 0.2rem 0.55rem;
+      border-radius: var(--radius-sm);
+      margin-bottom: 0.5rem;
+    }
+    .pill-mode-flight { background: #fee2e2; color: #991b1b; }
+    .pill-mode-train { background: #e0e7ff; color: #3730a3; }
+    .pill-mode-bus { background: #dcfce7; color: #166534; }
+    .pill-mode-multi { background: #fef3c7; color: #92400e; }
+
     .plan-name-header {
       font-size: 1.2rem;
       font-weight: 800;
@@ -780,10 +929,11 @@
       font-size: 0.8rem;
       font-weight: 700;
       color: var(--text-sub);
-      margin-bottom: 1.25rem;
+      margin-bottom: 1.15rem;
       display: flex;
       align-items: center;
       gap: 0.4rem;
+      flex-wrap: wrap;
     }
 
     .plan-metrics-table {
@@ -814,6 +964,17 @@
       color: var(--text-muted);
       line-height: 1.45;
       margin-bottom: 1.25rem;
+    }
+
+    /* Empty Filter State */
+    .empty-filter-state {
+      display: none;
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 3rem 1.5rem;
+      background: var(--glass-bg);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--glass-border);
     }
 
     /* AI Explanation Compact Panel */
@@ -895,15 +1056,48 @@
       opacity: 1;
     }
 
-    /* Responsive */
+    /* =============================================================
+       9. RESPONSIVE DESIGN (TABLET & MOBILE)
+    ============================================================= */
+    @media (max-width: 1200px) {
+      .recovery-plans-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
     @media (max-width: 1024px) {
-      .recovery-plans-grid { grid-template-columns: 1fr; }
       .metrics-grid { grid-template-columns: 1fr; }
       .ai-explanation-list { grid-template-columns: 1fr; }
     }
     @media (max-width: 768px) {
-      #sidebar { transform: translateX(-100%); }
-      #main-wrap { margin-left: 0; padding: 1rem; }
+      .mobile-menu-toggle { display: flex; }
+      #sidebar { 
+        transform: translateX(-100%); 
+        box-shadow: 10px 0 30px rgba(0, 0, 0, 0.15);
+      }
+      #sidebar.mobile-open {
+        transform: translateX(0);
+      }
+      #main-wrap { 
+        margin-left: 0; 
+        padding: 1rem 1rem 2.5rem 1rem; 
+      }
+      .recovery-plans-grid {
+        grid-template-columns: 1fr;
+      }
+      .disruption-alert-card {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .mode-tabs-container {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .mode-tabs-wrap {
+        width: 100%;
+      }
+      .ai-explanation-panel {
+        flex-direction: column;
+      }
     }
   </style>
 </head>
@@ -928,6 +1122,8 @@
         <div class="brand-title">AeroRoute AI</div>
         <div style="font-size: 0.725rem; color: var(--text-sub); font-weight: 600;">TravelShield Engine</div>
       </div>
+      <!-- Close button on mobile -->
+      <button onclick="toggleSidebarMobile()" style="margin-left: auto; display: none;" class="mobile-menu-close">✕</button>
     </div>
 
     <ul class="nav-menu">
@@ -959,7 +1155,7 @@
             <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
           </svg>
           <span>Recovery Center</span>
-          <span class="badge-alert-count">3</span>
+          <span class="badge-alert-count" id="sidebar-recovery-badge">5</span>
         </button>
       </li>
       <li>
@@ -1011,10 +1207,19 @@
   <main id="main-wrap">
     <!-- Frosted Topbar -->
     <header class="top-header">
-      <div class="header-breadcrumb">
-        <span>AeroRoute Command</span>
-        <span>/</span>
-        <span class="breadcrumb-active" id="breadcrumb-current">Dashboard</span>
+      <div style="display: flex; align-items: center; gap: 0.75rem;">
+        <button class="mobile-menu-toggle" onclick="toggleSidebarMobile()" aria-label="Toggle Navigation">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+        </button>
+        <div class="header-breadcrumb">
+          <span>AeroRoute Command</span>
+          <span>/</span>
+          <span class="breadcrumb-active" id="breadcrumb-current">Dashboard</span>
+        </div>
       </div>
 
       <div class="header-right-tools">
@@ -1107,8 +1312,8 @@
                 <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
               </svg>
             </div>
-            <div class="metric-value" style="color: var(--primary-indigo);">3 Alternatives Found</div>
-            <div class="metric-caption">Optimized for cost, speed, and preserving Radisson Blu resort stay.</div>
+            <div class="metric-value" style="color: var(--primary-indigo);">5 Alternatives Found</div>
+            <div class="metric-caption">Multi-modal options across Flights, Trains, and Sleeper Buses.</div>
           </div>
           <a class="metric-link" onclick="showScreen('recovery')">
             <span>Review AI suggestions</span>
@@ -1171,7 +1376,7 @@
          SCREEN 2: CHRONOLOGICAL TRIP DETAILS (MUMBAI -> GOA)
     =========================================================== -->
     <section id="screen-trip-details" class="screen-view">
-      <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
         <div>
           <h1 style="font-size: 1.6rem; font-weight: 800; color: var(--primary);">Trip Details: Mumbai to Goa</h1>
           <p style="font-size: 0.9rem; color: var(--text-muted); margin-top: 0.2rem;">
@@ -1179,7 +1384,7 @@
           </p>
         </div>
         <button class="btn btn-recovery" onclick="showScreen('recovery')">
-          ⚡ Review 3 Recovery Plans
+          ⚡ Review 5 Recovery Plans
         </button>
       </div>
 
@@ -1279,28 +1484,61 @@
     </section>
 
     <!-- ===========================================================
-         SCREEN 3: RECOVERY CENTER (COMPARABLE CARDS & AI PANEL)
+         SCREEN 3: RECOVERY CENTER (WITH MODE FILTER TABS)
     =========================================================== -->
     <section id="screen-recovery" class="screen-view">
-      <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
         <div>
           <h1 style="font-size: 1.6rem; font-weight: 800; color: var(--primary);">Recovery Command Center</h1>
           <p style="font-size: 0.9rem; color: var(--text-muted); margin-top: 0.2rem;">
             Comparable recovery alternatives generated by TravelShield AI engine.
           </p>
         </div>
-        <div style="display: flex; gap: 0.5rem;">
-          <span class="badge badge-recovery">3 Alternatives Evaluated</span>
+        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+          <span class="badge badge-recovery" id="recovery-eval-badge">5 Alternatives Evaluated</span>
           <span class="badge badge-success">Radisson Hold Staged</span>
         </div>
       </div>
 
-      <!-- 3 Comparable Plan Cards -->
-      <div class="recovery-plans-grid">
-        <!-- Card 1: Recommended The Sprinter -->
-        <div class="recovery-card recommended" id="plan-card-1">
+      <!-- MODE FILTER TABS BAR -->
+      <div class="mode-tabs-container">
+        <div class="mode-tabs-wrap">
+          <button class="mode-tab-btn active" data-filter="all" onclick="filterRecoveryMode('all', this)">
+            <span>All</span>
+            <span class="mode-count-badge" id="count-badge-all">5</span>
+          </button>
+          <button class="mode-tab-btn" data-filter="flight" onclick="filterRecoveryMode('flight', this)">
+            <span>✈ Flights</span>
+            <span class="mode-count-badge" id="count-badge-flight">2</span>
+          </button>
+          <button class="mode-tab-btn" data-filter="train" onclick="filterRecoveryMode('train', this)">
+            <span>🚆 Trains</span>
+            <span class="mode-count-badge" id="count-badge-train">2</span>
+          </button>
+          <button class="mode-tab-btn" data-filter="bus" onclick="filterRecoveryMode('bus', this)">
+            <span>🚌 Buses</span>
+            <span class="mode-count-badge" id="count-badge-bus">2</span>
+          </button>
+        </div>
+        <div class="mode-filter-meta">
+          <span id="active-filter-summary">Showing <b>5</b> total multimodal alternatives</span>
+        </div>
+      </div>
+
+      <!-- AI Thinking State Bar -->
+      <div id="ai-thinking-state" class="ai-thinking-bar">
+        <div class="ai-thinking-spinner"></div>
+        <span id="ai-thinking-text">TravelShield AI filtering optimal alternatives...</span>
+      </div>
+
+      <!-- 5 Comparable Plan Cards with data-mode attributes -->
+      <div class="recovery-plans-grid" id="plans-container">
+        
+        <!-- Plan 1: Recommended The Sprinter (Flight) -->
+        <div class="recovery-card recommended" data-mode="flight" id="plan-card-1">
           <div class="recommended-flag">★ AI Recommended</div>
           <div>
+            <div class="plan-mode-pill pill-mode-flight">✈ Flight + Cab Express</div>
             <div class="plan-name-header">The Sprinter</div>
             <div class="plan-sequence-tag">
               <span>🚕 Private Cab</span>
@@ -1345,14 +1583,109 @@
           </button>
         </div>
 
-        <!-- Card 2: The Optimal -->
-        <div class="recovery-card" id="plan-card-2">
+        <!-- Plan 2: Direct Air Shuttle (Flight) -->
+        <div class="recovery-card" data-mode="flight" id="plan-card-2">
           <div>
+            <div class="plan-mode-pill pill-mode-flight">✈ Direct Flight Standby</div>
+            <div class="plan-name-header">Direct Air Shuttle</div>
+            <div class="plan-sequence-tag">
+              <span>🚕 Station Cab</span>
+              <span>&rarr;</span>
+              <span>✈️ Flight 6E-409 (IndiGo)</span>
+            </div>
+
+            <div class="plan-metrics-table">
+              <div>
+                <div class="metric-unit-label">Total Delay</div>
+                <div class="metric-unit-val" style="color: var(--success-solid);">+75 mins</div>
+              </div>
+              <div>
+                <div class="metric-unit-label">Recovery Score</div>
+                <div class="metric-unit-val">91 / 100</div>
+              </div>
+              <div>
+                <div class="metric-unit-label">Departure</div>
+                <div class="metric-unit-val">03:45 PM</div>
+              </div>
+              <div>
+                <div class="metric-unit-label">Goa Arrival</div>
+                <div class="metric-unit-val">05:10 PM</div>
+              </div>
+              <div>
+                <div class="metric-unit-label">Cost / Fare</div>
+                <div class="metric-unit-val">$96 / ₹7,999</div>
+              </div>
+              <div>
+                <div class="metric-unit-label">Transfers</div>
+                <div class="metric-unit-val">1 Transfer</div>
+              </div>
+            </div>
+
+            <p class="plan-impact-summary">
+              <b>Itinerary Impact:</b> Direct connection from Pune Airport to MOPA Goa. Generous 1h 45m transit buffer at Pune Station.
+            </p>
+          </div>
+
+          <button class="btn btn-outline" style="width: 100%;" onclick="applyPlan('Direct Air Shuttle')">
+            Select This Plan
+          </button>
+        </div>
+
+        <!-- Plan 3: The Rail Express (Train) -->
+        <div class="recovery-card" data-mode="train" id="plan-card-3">
+          <div>
+            <div class="plan-mode-pill pill-mode-train">🚆 Direct High-Speed Rail</div>
+            <div class="plan-name-header">The Rail Express</div>
+            <div class="plan-sequence-tag">
+              <span>🚆 Tejas Express 22119</span>
+            </div>
+
+            <div class="plan-metrics-table">
+              <div>
+                <div class="metric-unit-label">Total Delay</div>
+                <div class="metric-unit-val" style="color: var(--warning-solid);">+130 mins</div>
+              </div>
+              <div>
+                <div class="metric-unit-label">Recovery Score</div>
+                <div class="metric-unit-val">90 / 100</div>
+              </div>
+              <div>
+                <div class="metric-unit-label">Departure</div>
+                <div class="metric-unit-val">02:10 PM</div>
+              </div>
+              <div>
+                <div class="metric-unit-label">Goa Arrival</div>
+                <div class="metric-unit-val">07:45 PM</div>
+              </div>
+              <div>
+                <div class="metric-unit-label">Cost / Fare</div>
+                <div class="metric-unit-val">$42 / ₹3,450</div>
+              </div>
+              <div>
+                <div class="metric-unit-label">Transfers</div>
+                <div class="metric-unit-val">0 (Direct Train)</div>
+              </div>
+            </div>
+
+            <p class="plan-impact-summary">
+              <b>Itinerary Impact:</b> Zero mode transfers. Tejas Executive Chair Car boarded right at Pune Junction Platform 1. Arrives in time for dinner.
+            </p>
+          </div>
+
+          <button class="btn btn-outline" style="width: 100%;" onclick="applyPlan('The Rail Express')">
+            Select This Plan
+          </button>
+        </div>
+
+        <!-- Plan 4: The Optimal (Train + Bus) -->
+        <div class="recovery-card" data-mode="train,bus" id="plan-card-4">
+          <div>
+            <div class="plan-mode-pill pill-mode-multi">🚆+🚌 Rail &amp; Sleeper Bus</div>
             <div class="plan-name-header">The Optimal</div>
             <div class="plan-sequence-tag">
               <span>🚆 Vande Bharat</span>
               <span>&rarr;</span>
-              <span>🚌 Overnight Sleeper</span>
+              <span>🚌 Luxury Sleeper Bus</span>
             </div>
 
             <div class="plan-metrics-table">
@@ -1392,12 +1725,13 @@
           </button>
         </div>
 
-        <!-- Card 3: The Economical -->
-        <div class="recovery-card" id="plan-card-3">
+        <!-- Plan 5: The Economical (Bus) -->
+        <div class="recovery-card" data-mode="bus" id="plan-card-5">
           <div>
+            <div class="plan-mode-pill pill-mode-bus">🚌 Direct AC Bus</div>
             <div class="plan-name-header">The Economical</div>
             <div class="plan-sequence-tag">
-              <span>🚌 Direct Sleeper Bus</span>
+              <span>🚌 Direct Sleeper SmartBus</span>
             </div>
 
             <div class="plan-metrics-table">
@@ -1436,6 +1770,19 @@
             Select This Plan
           </button>
         </div>
+
+        <!-- Empty Filter State Fallback -->
+        <div class="empty-filter-state" id="empty-state">
+          <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">🔍</div>
+          <h3 style="font-size: 1.15rem; font-weight: 800; color: var(--text-main);">No Alternatives Found</h3>
+          <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0.35rem 0 1rem 0;">
+            No recovery routes match the selected filter.
+          </p>
+          <button class="btn btn-recovery" onclick="filterRecoveryMode('all', document.querySelector('.mode-tab-btn[data-filter=\"all\"]'))">
+            Show All Alternatives
+          </button>
+        </div>
+
       </div>
 
       <!-- AI Explanation Compact Panel -->
@@ -1474,7 +1821,7 @@
          SCREEN 4: UPDATED ITINERARY (POST-RECOVERY RESOLVED)
     =========================================================== -->
     <section id="screen-updated-itinerary" class="screen-view">
-      <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
         <div>
           <div style="display: flex; align-items: center; gap: 0.65rem;">
             <h1 style="font-size: 1.6rem; font-weight: 800; color: var(--primary);">Updated Journey: Mumbai to Goa</h1>
@@ -1662,7 +2009,76 @@
       const breadcrumb = document.getElementById('breadcrumb-current');
       if (breadcrumb) breadcrumb.innerText = screenTitles[screenId] || 'Dashboard';
 
+      // Close mobile drawer if open
+      const sidebar = document.getElementById('sidebar');
+      if (sidebar && sidebar.classList.contains('mobile-open')) {
+        sidebar.classList.remove('mobile-open');
+      }
+
       window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function toggleSidebarMobile() {
+      const sidebar = document.getElementById('sidebar');
+      sidebar.classList.toggle('mobile-open');
+    }
+
+    // =============================================================
+    // MODE TABS FILTERING LOGIC
+    // =============================================================
+    let filterDebounce = null;
+    function filterRecoveryMode(mode, tabBtn) {
+      // Set active tab visually
+      document.querySelectorAll('.mode-tab-btn').forEach(btn => btn.classList.remove('active'));
+      if (tabBtn) tabBtn.classList.add('active');
+
+      // AI Thinking state simulation
+      const thinkingBar = document.getElementById('ai-thinking-state');
+      const thinkingText = document.getElementById('ai-thinking-text');
+      const modeNames = { 'all': 'all multimodal', 'flight': 'flight & air transfer', 'train': 'rail & express train', 'bus': 'intercity sleeper bus' };
+      
+      thinkingText.innerText = `TravelShield AI filtering optimal ${modeNames[mode] || mode} alternatives...`;
+      thinkingBar.style.display = 'flex';
+
+      clearTimeout(filterDebounce);
+      filterDebounce = setTimeout(() => {
+        thinkingBar.style.display = 'none';
+        
+        const cards = document.querySelectorAll('.recovery-card');
+        let visibleCount = 0;
+
+        cards.forEach(card => {
+          const cardModes = (card.getAttribute('data-mode') || '').split(',');
+          if (mode === 'all' || cardModes.includes(mode)) {
+            card.classList.remove('hidden');
+            visibleCount++;
+          } else {
+            card.classList.add('hidden');
+          }
+        });
+
+        // Show/hide empty state
+        const emptyState = document.getElementById('empty-state');
+        if (visibleCount === 0) {
+          emptyState.style.display = 'block';
+        } else {
+          emptyState.style.display = 'none';
+        }
+
+        // Update Summary Meta & Badges
+        const modeLabels = { 'all': 'total multimodal', 'flight': 'flight', 'train': 'train', 'bus': 'bus' };
+        const summaryEl = document.getElementById('active-filter-summary');
+        if (summaryEl) {
+          summaryEl.innerHTML = `Showing <b>${visibleCount}</b> ${modeLabels[mode]} alternative${visibleCount === 1 ? '' : 's'}`;
+        }
+
+        const evalBadge = document.getElementById('recovery-eval-badge');
+        if (evalBadge) {
+          evalBadge.innerText = `${visibleCount} Alternative${visibleCount === 1 ? '' : 's'} Evaluated`;
+        }
+
+        triggerToast(`Filtered to ${visibleCount} ${modeLabels[mode]} option${visibleCount === 1 ? '' : 's'}.`);
+      }, 250);
     }
 
     // Interactive Demo Flow for Judges
@@ -1679,7 +2095,8 @@
         triggerToast('Step 2: Train delay (+240m) causes missed bus connection.');
       } else if (stepNumber === 3) {
         showScreen('recovery');
-        triggerToast('Step 3: AI evaluates 3 comparable recovery plans.');
+        filterRecoveryMode('all', document.querySelector('.mode-tab-btn[data-filter="all"]'));
+        triggerToast('Step 3: AI evaluates 5 comparable recovery plans with mode filters.');
       } else if (stepNumber === 4) {
         showScreen('updated-itinerary');
         triggerToast('Step 4: Reroute applied! Net delay reduced to 45m.');
