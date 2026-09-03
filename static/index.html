@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AeroRoute AI — Travel Disruption Recovery Dashboard</title>
+  <title>TravelShield AI — Intelligent Travel Disruption Recovery Engine</title>
   
   <!-- Google Fonts: Plus Jakarta Sans & Inter -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -58,195 +58,180 @@
       --sidebar-width: 260px;
       --radius-sm: 10px;
       --radius-md: 14px;
-      --radius-lg: 20px;
+      --radius-lg: 18px;
       --radius-pill: 9999px;
     }
 
-    *, *::before, *::after {
+    * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
     }
 
-    /* Vibrant Mesh Gradient with Frosted Ambient Orbs */
     body {
-      min-height: 100vh;
-      background-color: #f1f5f9;
-      background-image: 
-        radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.16) 0px, transparent 50%),
-        radial-gradient(at 100% 0%, rgba(56, 189, 248, 0.18) 0px, transparent 50%),
-        radial-gradient(at 100% 100%, rgba(129, 140, 248, 0.14) 0px, transparent 50%),
-        radial-gradient(at 0% 100%, rgba(14, 165, 233, 0.15) 0px, transparent 50%),
-        radial-gradient(at 50% 50%, rgba(248, 250, 252, 0.7) 0px, transparent 65%);
-      background-attachment: fixed;
-      background-size: cover;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
       color: var(--text-main);
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
       display: flex;
+      background-color: #f8fafc;
       overflow-x: hidden;
       position: relative;
     }
 
-    /* Ambient Floating Light Orbs behind glass */
-    .ambient-glow {
+    /* Ambient Dynamic Mesh Gradient */
+    body::before {
+      content: '';
       position: fixed;
+      top: -150px;
+      left: -150px;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(99, 102, 241, 0.18) 0%, rgba(238, 242, 255, 0) 70%);
       border-radius: 50%;
-      filter: blur(90px);
+      z-index: -2;
       pointer-events: none;
-      z-index: 0;
+      filter: blur(40px);
     }
-    .glow-1 {
-      width: 450px;
-      height: 450px;
-      background: radial-gradient(circle, rgba(99, 102, 241, 0.22) 0%, rgba(99, 102, 241, 0) 70%);
-      top: -100px;
-      left: 15%;
-    }
-    .glow-2 {
-      width: 500px;
-      height: 500px;
-      background: radial-gradient(circle, rgba(56, 189, 248, 0.20) 0%, rgba(56, 189, 248, 0) 70%);
-      bottom: -100px;
-      right: 5%;
-    }
-    .glow-3 {
-      width: 350px;
-      height: 350px;
-      background: radial-gradient(circle, rgba(236, 72, 153, 0.12) 0%, rgba(236, 72, 153, 0) 70%);
-      top: 40%;
-      left: 45%;
+    body::after {
+      content: '';
+      position: fixed;
+      bottom: -150px;
+      right: -100px;
+      width: 700px;
+      height: 700px;
+      background: radial-gradient(circle, rgba(56, 189, 248, 0.15) 0%, rgba(224, 242, 254, 0) 70%);
+      border-radius: 50%;
+      z-index: -2;
+      pointer-events: none;
+      filter: blur(50px);
     }
 
-    h1, h2, h3, h4, .brand-title {
+    h1, h2, h3, h4, .font-heading {
       font-family: 'Plus Jakarta Sans', sans-serif;
       letter-spacing: -0.02em;
     }
 
-    button {
-      font-family: inherit;
-      cursor: pointer;
-      border: none;
-      background: none;
-    }
-    a {
-      color: inherit;
-      text-decoration: none;
-    }
-
     /* =============================================================
-       2. GLASSMORPHIC SIDEBAR
+       2. SIDEBAR NAVIGATION
     ============================================================= */
     #sidebar {
       width: var(--sidebar-width);
-      background: rgba(255, 255, 255, 0.78);
-      backdrop-filter: blur(24px) saturate(180%);
-      -webkit-backdrop-filter: blur(24px) saturate(180%);
+      background: rgba(255, 255, 255, 0.75);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
       border-right: 1px solid var(--glass-border);
-      height: 100vh;
-      position: fixed;
-      left: 0;
-      top: 0;
       display: flex;
       flex-direction: column;
-      padding: 1.5rem 1rem;
-      z-index: 50;
-      box-shadow: 4px 0 28px rgba(31, 38, 135, 0.04);
-      transition: transform 0.3s ease;
+      justify-content: space-between;
+      padding: 1.5rem 1.15rem;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      z-index: 100;
+      box-shadow: 4px 0 24px 0 rgba(31, 38, 135, 0.04);
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     .brand-box {
       display: flex;
       align-items: center;
-      gap: 0.75rem;
-      padding: 0.5rem 0.75rem 1.75rem 0.75rem;
-      border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+      gap: 0.85rem;
+      padding: 0.5rem 0.65rem 1.5rem 0.65rem;
+      border-bottom: 1px solid var(--glass-border-subtle);
       margin-bottom: 1.25rem;
     }
     .brand-icon {
       width: 38px;
       height: 38px;
-      border-radius: var(--radius-sm);
-      background: var(--primary);
-      color: #ffffff;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #1e1b4b 0%, #4338ca 100%);
       display: flex;
       align-items: center;
       justify-content: center;
-      flex-shrink: 0;
-      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
+      color: #ffffff;
+      box-shadow: 0 4px 12px rgba(67, 56, 202, 0.3);
     }
     .brand-title {
       font-size: 1.15rem;
       font-weight: 800;
       color: var(--primary);
+      letter-spacing: -0.02em;
+      line-height: 1.2;
     }
 
     .nav-menu {
       list-style: none;
       display: flex;
       flex-direction: column;
-      gap: 0.4rem;
-      flex: 1;
+      gap: 0.35rem;
+      flex-grow: 1;
     }
     .nav-btn {
       width: 100%;
       display: flex;
       align-items: center;
       gap: 0.85rem;
-      padding: 0.8rem 1rem;
+      padding: 0.75rem 1rem;
       border-radius: var(--radius-md);
-      font-size: 0.9rem;
+      font-size: 0.875rem;
       font-weight: 600;
       color: var(--text-muted);
-      transition: all 0.2s ease;
+      border: 1px solid transparent;
+      background: transparent;
+      cursor: pointer;
       text-align: left;
+      transition: all 0.2s ease;
       position: relative;
     }
+    .nav-btn svg {
+      width: 19px;
+      height: 19px;
+      stroke-width: 2;
+      opacity: 0.75;
+      transition: all 0.2s ease;
+    }
     .nav-btn:hover {
-      background: rgba(255, 255, 255, 0.85);
-      color: var(--primary);
+      background: rgba(255, 255, 255, 0.8);
+      color: var(--text-main);
       transform: translateX(2px);
     }
     .nav-btn.active {
-      background: #ffffff;
+      background: rgba(255, 255, 255, 0.95);
       color: var(--primary-indigo);
       font-weight: 700;
-      box-shadow: 0 4px 14px rgba(31, 38, 135, 0.08);
-      border: 1px solid rgba(226, 232, 240, 0.8);
+      border-color: rgba(199, 210, 254, 0.8);
+      box-shadow: 0 4px 12px rgba(67, 56, 202, 0.08);
     }
-    .nav-btn svg {
-      width: 20px;
-      height: 20px;
-      flex-shrink: 0;
+    .nav-btn.active svg {
+      stroke: var(--primary-indigo);
+      opacity: 1;
     }
     .badge-alert-count {
       margin-left: auto;
       background: var(--danger-solid);
-      color: #ffffff;
+      color: white;
       font-size: 0.7rem;
       font-weight: 800;
       padding: 0.15rem 0.5rem;
       border-radius: var(--radius-pill);
-      box-shadow: 0 2px 6px rgba(239, 68, 68, 0.3);
     }
 
-    /* Stepper Box in Sidebar */
+    /* Demo Stepper Widget */
     .demo-flow-box {
-      background: rgba(255, 255, 255, 0.7);
-      backdrop-filter: blur(14px);
+      background: rgba(255, 255, 255, 0.65);
       border: 1px solid var(--glass-border);
       border-radius: var(--radius-md);
       padding: 1rem;
-      margin-top: auto;
-      box-shadow: 0 4px 16px rgba(31, 38, 135, 0.04);
+      box-shadow: var(--glass-shadow);
+      margin-top: 1rem;
     }
     .demo-flow-title {
       font-size: 0.75rem;
       font-weight: 800;
-      color: var(--text-muted);
+      color: var(--text-sub);
       text-transform: uppercase;
       letter-spacing: 0.05em;
-      margin-bottom: 0.5rem;
+      margin-bottom: 0.65rem;
       display: flex;
       align-items: center;
       gap: 0.4rem;
@@ -257,140 +242,137 @@
       gap: 0.35rem;
     }
     .demo-step-btn {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      font-size: 0.8rem;
+      padding: 0.4rem 0.6rem;
+      font-size: 0.75rem;
       font-weight: 600;
+      border-radius: 6px;
+      border: 1px solid transparent;
+      background: transparent;
       color: var(--text-muted);
-      padding: 0.45rem 0.65rem;
-      border-radius: var(--radius-sm);
+      cursor: pointer;
       text-align: left;
       transition: all 0.15s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
     }
     .demo-step-btn:hover {
-      background: rgba(255, 255, 255, 0.9);
-      color: var(--primary);
+      background: rgba(255, 255, 255, 0.85);
+      color: var(--primary-indigo);
     }
     .demo-step-btn.current {
-      background: var(--primary);
-      color: #ffffff;
-      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.2);
+      background: var(--recovery-bg);
+      color: var(--primary-indigo);
+      border-color: var(--recovery-border);
+      font-weight: 700;
     }
 
     /* =============================================================
-       3. MAIN CONTENT CONTAINER
+       3. MAIN LAYOUT & TOPBAR
     ============================================================= */
     #main-wrap {
-      margin-left: var(--sidebar-width);
-      flex: 1;
-      min-height: 100vh;
+      flex-grow: 1;
+      min-width: 0;
       display: flex;
       flex-direction: column;
-      padding: 1.5rem 2.25rem 3rem 2.25rem;
-      position: relative;
-      z-index: 10;
+      padding: 1.5rem 2.25rem 3.5rem 2.25rem;
+      max-width: 1400px;
+      margin: 0 auto;
+      width: 100%;
     }
 
-    /* Frosted Topbar Header */
     .top-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 1.5rem;
-      padding: 0.75rem 1.25rem;
-      border-radius: var(--radius-lg);
-      background: rgba(255, 255, 255, 0.75);
+      margin-bottom: 2rem;
+      gap: 1.25rem;
+      background: rgba(255, 255, 255, 0.7);
       backdrop-filter: var(--glass-blur);
       -webkit-backdrop-filter: var(--glass-blur);
       border: 1px solid var(--glass-border);
+      border-radius: var(--radius-lg);
+      padding: 0.85rem 1.35rem;
       box-shadow: var(--glass-shadow);
+      position: sticky;
+      top: 1.25rem;
+      z-index: 90;
     }
     .header-breadcrumb {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
-      font-size: 0.85rem;
-      color: var(--text-muted);
+      gap: 0.6rem;
+      font-size: 0.875rem;
+      color: var(--text-sub);
       font-weight: 500;
     }
     .breadcrumb-active {
-      color: var(--primary);
+      color: var(--text-main);
       font-weight: 700;
     }
 
     .header-right-tools {
       display: flex;
       align-items: center;
-      gap: 1rem;
+      gap: 0.85rem;
     }
-    .live-status-pill {
+    .live-mode-toggle {
       display: inline-flex;
       align-items: center;
       gap: 0.45rem;
+      padding: 0.4rem 0.85rem;
+      border-radius: var(--radius-pill);
+      font-size: 0.75rem;
+      font-weight: 800;
+      cursor: pointer;
+      border: 1px solid;
+      transition: all 0.2s ease;
+    }
+    .live-mode-toggle.live {
+      background: #ecfdf5;
+      color: #065f46;
+      border-color: #a7f3d0;
+    }
+    .live-mode-toggle.demo {
+      background: #fffbeb;
+      color: #92400e;
+      border-color: #fde68a;
+    }
+    .refresh-btn {
       background: rgba(255, 255, 255, 0.85);
       border: 1px solid var(--glass-border);
-      padding: 0.45rem 1rem;
-      border-radius: var(--radius-pill);
-      font-size: 0.825rem;
-      font-weight: 600;
       color: var(--text-main);
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
-    }
-    .status-dot-green {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: var(--success-solid);
-      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.25);
-    }
-
-    /* Mobile Menu Toggle */
-    .mobile-menu-toggle {
-      display: none;
-      width: 38px;
-      height: 38px;
-      border-radius: 10px;
-      background: #ffffff;
-      border: 1px solid var(--glass-border);
+      padding: 0.45rem 0.85rem;
+      border-radius: var(--radius-md);
+      font-size: 0.775rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
       align-items: center;
-      justify-content: center;
-      color: var(--primary);
+      gap: 0.35rem;
+      transition: all 0.2s ease;
+    }
+    .refresh-btn:hover {
+      background: #ffffff;
+      transform: translateY(-1px);
     }
 
-    .avatar-wrap {
-      width: 38px;
-      height: 38px;
-      border-radius: 50%;
-      overflow: hidden;
-      border: 2px solid #ffffff;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
-    }
-    .avatar-wrap img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
-    /* Screen Visibility */
+    /* Screen Views */
     .screen-view {
       display: none;
       flex-direction: column;
-      gap: 1.5rem;
-      animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      gap: 1.75rem;
+      animation: fadeIn 0.25s ease forwards;
     }
     .screen-view.active {
       display: flex;
     }
-
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(6px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
-    /* =============================================================
-       4. GLASSMORPHIC CARDS, BUTTONS & BADGES
-    ============================================================= */
+    /* Generic Frosted Card */
     .card {
       background: var(--glass-bg);
       backdrop-filter: var(--glass-blur);
@@ -399,6 +381,7 @@
       border-radius: var(--radius-lg);
       padding: 1.65rem;
       box-shadow: var(--glass-shadow);
+      position: relative;
     }
 
     .btn {
@@ -412,6 +395,7 @@
       font-weight: 700;
       transition: all 0.2s ease;
       cursor: pointer;
+      border: none;
     }
     .btn-primary {
       background: var(--primary);
@@ -433,13 +417,11 @@
     }
     .btn-outline {
       background: rgba(255, 255, 255, 0.85);
-      backdrop-filter: blur(10px);
       border: 1px solid var(--glass-border);
       color: var(--text-main);
     }
     .btn-outline:hover {
       background: #ffffff;
-      border-color: rgba(203, 213, 225, 0.9);
       transform: translateY(-1px);
     }
 
@@ -477,7 +459,7 @@
     }
 
     /* =============================================================
-       5. SCREEN 1: DASHBOARD
+       4. DASHBOARD STYLING
     ============================================================= */
     .disruption-alert-card {
       background: rgba(255, 255, 255, 0.85);
@@ -522,7 +504,6 @@
       line-height: 1.45;
     }
 
-    /* 3 Summary Metric Cards */
     .metrics-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -577,11 +558,7 @@
       gap: 0.35rem;
       cursor: pointer;
     }
-    .metric-link:hover {
-      text-decoration: underline;
-    }
 
-    /* Quick Trips Preview */
     .trip-preview-row {
       display: flex;
       align-items: center;
@@ -594,121 +571,170 @@
       margin-top: 0.75rem;
       transition: all 0.2s ease;
     }
-    .trip-preview-row:hover {
-      background: rgba(255, 255, 255, 0.9);
-      transform: translateY(-1px);
-      box-shadow: 0 6px 18px rgba(31, 38, 135, 0.06);
+
+    /* =============================================================
+       5. UNIFIED SEARCH / PLAN JOURNEY
+    ============================================================= */
+    .search-form-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+      margin-bottom: 1.25rem;
+    }
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      position: relative;
+    }
+    .input-group label {
+      font-size: 0.775rem;
+      font-weight: 700;
+      color: var(--text-sub);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .input-field {
+      width: 100%;
+      padding: 0.75rem 0.95rem;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--glass-border-subtle);
+      background: rgba(255, 255, 255, 0.85);
+      font-family: inherit;
+      font-size: 0.9rem;
+      color: var(--text-main);
+      font-weight: 600;
+      outline: none;
+      transition: all 0.2s ease;
+    }
+    .input-field:focus {
+      border-color: var(--primary-indigo);
+      background: #ffffff;
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+    }
+    .autocomplete-dropdown {
+      position: absolute;
+      top: calc(100% + 4px);
+      left: 0;
+      right: 0;
+      background: #ffffff;
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-md);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+      max-height: 240px;
+      overflow-y: auto;
+      z-index: 200;
+      display: none;
+    }
+    .autocomplete-item {
+      padding: 0.65rem 1rem;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.85rem;
+      border-bottom: 1px solid #f1f5f9;
+    }
+    .autocomplete-item:hover {
+      background: #f8fafc;
+    }
+
+    .search-results-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 1.25rem;
+      margin-top: 1rem;
+    }
+    .search-card {
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-lg);
+      padding: 1.35rem;
+      box-shadow: var(--glass-shadow);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 1rem;
+      transition: all 0.2s ease;
+    }
+    .search-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--glass-shadow-hover);
     }
 
     /* =============================================================
-       6. SCREEN 2: CHRONOLOGICAL TRIP DETAILS (TIMELINE)
+       6. TIMELINE & RECOVERY
     ============================================================= */
     .timeline-container {
       position: relative;
       padding-left: 2rem;
-      margin-top: 1.5rem;
+      margin-top: 1rem;
     }
     .timeline-container::before {
-      content: "";
+      content: '';
       position: absolute;
-      left: 19px;
-      top: 15px;
-      bottom: 25px;
+      left: 17px;
+      top: 10px;
+      bottom: 10px;
       width: 2px;
       background: rgba(203, 213, 225, 0.8);
     }
-
     .timeline-step {
       position: relative;
-      margin-bottom: 2rem;
+      margin-bottom: 1.75rem;
     }
     .timeline-step:last-child {
       margin-bottom: 0;
     }
-
     .timeline-node-icon {
       position: absolute;
       left: -2rem;
       top: 0;
-      width: 42px;
-      height: 42px;
+      width: 36px;
+      height: 36px;
       border-radius: 50%;
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(8px);
-      border: 2px solid var(--glass-border);
+      background: #ffffff;
+      border: 2px solid var(--primary-indigo);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.15rem;
+      font-size: 1rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
       z-index: 2;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
     }
     .timeline-node-icon.danger {
       border-color: var(--danger-solid);
       background: var(--danger-bg);
-      color: var(--danger-solid);
     }
     .timeline-node-icon.warning {
       border-color: var(--warning-solid);
       background: var(--warning-bg);
-      color: var(--warning-solid);
     }
     .timeline-node-icon.success {
       border-color: var(--success-solid);
       background: var(--success-bg);
-      color: var(--success-solid);
     }
-    .timeline-node-icon.recovery {
-      border-color: var(--primary-indigo);
-      background: var(--recovery-bg);
-      color: var(--primary-indigo);
-    }
-
     .timeline-card {
-      background: rgba(255, 255, 255, 0.75);
-      backdrop-filter: var(--glass-blur);
-      -webkit-backdrop-filter: var(--glass-blur);
+      background: rgba(255, 255, 255, 0.85);
       border: 1px solid var(--glass-border);
       border-radius: var(--radius-md);
-      padding: 1.35rem 1.6rem;
-      margin-left: 1.25rem;
+      padding: 1.25rem 1.35rem;
       box-shadow: var(--glass-shadow);
     }
     .timeline-card.disrupted {
       border-color: var(--danger-border);
       background: rgba(254, 242, 242, 0.85);
     }
-    .timeline-card.missed-conn {
-      border-color: var(--warning-border);
-      background: rgba(255, 251, 235, 0.85);
-    }
     .timeline-card.recovered {
       border-color: var(--recovery-border);
       background: rgba(245, 247, 255, 0.9);
     }
-
     .timeline-card-header {
       display: flex;
-      align-items: center;
       justify-content: space-between;
+      align-items: center;
       margin-bottom: 0.5rem;
-    }
-    .timeline-time {
-      font-size: 0.8rem;
-      font-weight: 800;
-      color: var(--text-sub);
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-    }
-    .timeline-title {
-      font-size: 1.05rem;
-      font-weight: 800;
-      color: var(--text-main);
-    }
-    .timeline-meta {
-      font-size: 0.85rem;
-      color: var(--text-muted);
-      margin-top: 0.25rem;
     }
     .disruption-callout {
       margin-top: 0.85rem;
@@ -725,21 +751,8 @@
       color: var(--danger-text);
       border: 1px solid rgba(252, 165, 165, 0.8);
     }
-    .disruption-callout.amber {
-      background: rgba(254, 243, 199, 0.9);
-      color: var(--warning-text);
-      border: 1px solid rgba(253, 230, 138, 0.8);
-    }
-    .disruption-callout.blue {
-      background: rgba(224, 231, 255, 0.9);
-      color: var(--recovery-text);
-      border: 1px solid rgba(199, 210, 254, 0.8);
-    }
 
-    /* =============================================================
-       7. SCREEN 3: RECOVERY CENTER (WITH MODE TABS & AI THINKING)
-    ============================================================= */
-    /* Mode Tabs Filter Bar */
+    /* Mode Tabs Filter Bar in Recovery */
     .mode-tabs-container {
       display: flex;
       align-items: center;
@@ -748,7 +761,6 @@
       gap: 1rem;
       background: rgba(255, 255, 255, 0.70);
       backdrop-filter: var(--glass-blur);
-      -webkit-backdrop-filter: var(--glass-blur);
       border: 1px solid var(--glass-border);
       border-radius: var(--radius-lg);
       padding: 0.75rem 1rem;
@@ -759,478 +771,215 @@
       display: flex;
       align-items: center;
       gap: 0.5rem;
-      overflow-x: auto;
-      max-width: 100%;
-      padding: 0.15rem;
-      scrollbar-width: none;
-    }
-    .mode-tabs-wrap::-webkit-scrollbar {
-      display: none;
+      flex-wrap: wrap;
     }
     .mode-tab-btn {
       display: inline-flex;
       align-items: center;
-      gap: 0.5rem;
-      padding: 0.6rem 1.15rem;
-      border-radius: var(--radius-md);
-      font-size: 0.875rem;
+      gap: 0.45rem;
+      padding: 0.55rem 1.15rem;
+      border-radius: var(--radius-pill);
+      font-size: 0.825rem;
       font-weight: 700;
       color: var(--text-muted);
-      background: rgba(255, 255, 255, 0.6);
-      border: 1px solid rgba(226, 232, 240, 0.8);
-      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-      white-space: nowrap;
+      border: 1px solid rgba(203, 213, 225, 0.6);
+      background: rgba(255, 255, 255, 0.65);
       cursor: pointer;
+      transition: all 0.2s ease;
     }
     .mode-tab-btn:hover {
       background: #ffffff;
-      color: var(--primary);
+      color: var(--text-main);
       transform: translateY(-1px);
     }
     .mode-tab-btn.active {
       background: var(--primary-indigo);
       color: #ffffff;
       border-color: var(--primary-indigo);
-      box-shadow: 0 4px 14px rgba(79, 70, 229, 0.3);
-    }
-    .mode-count-badge {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-width: 20px;
-      height: 20px;
-      padding: 0 0.35rem;
-      border-radius: var(--radius-pill);
-      font-size: 0.725rem;
-      font-weight: 800;
-      background: rgba(15, 23, 42, 0.08);
-      color: inherit;
-    }
-    .mode-tab-btn.active .mode-count-badge {
-      background: rgba(255, 255, 255, 0.25);
-      color: #ffffff;
-    }
-    .mode-filter-meta {
-      font-size: 0.85rem;
-      color: var(--text-muted);
-      font-weight: 500;
-    }
-    .mode-filter-meta b {
-      color: var(--primary);
+      box-shadow: 0 4px 14px rgba(67, 56, 202, 0.25);
     }
 
-    /* AI Thinking State Bar */
-    .ai-thinking-bar {
-      display: none;
-      align-items: center;
-      gap: 0.75rem;
-      background: rgba(238, 242, 255, 0.95);
-      backdrop-filter: blur(12px);
-      border: 1px solid rgba(199, 210, 254, 0.9);
-      border-radius: var(--radius-md);
-      padding: 0.85rem 1.25rem;
-      margin-bottom: 1.25rem;
-      font-size: 0.875rem;
-      font-weight: 600;
-      color: var(--primary-indigo);
-      box-shadow: 0 4px 16px rgba(79, 70, 229, 0.12);
-      animation: pulseGlow 1.5s infinite alternate ease-in-out;
-    }
-    @keyframes pulseGlow {
-      from { box-shadow: 0 4px 12px rgba(79, 70, 229, 0.1); }
-      to { box-shadow: 0 6px 22px rgba(79, 70, 229, 0.25); }
-    }
-    .ai-thinking-spinner {
-      width: 18px;
-      height: 18px;
-      border: 2px solid rgba(79, 70, 229, 0.25);
-      border-top-color: var(--primary-indigo);
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-    }
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
-    /* Recovery Cards Grid */
-    .recovery-plans-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
+    .recovery-cards-grid {
+      display: flex;
+      flex-direction: column;
       gap: 1.25rem;
-      margin-bottom: 1.5rem;
     }
     .recovery-card {
       background: var(--glass-bg);
       backdrop-filter: var(--glass-blur);
-      -webkit-backdrop-filter: var(--glass-blur);
-      border: 2px solid var(--glass-border);
+      border: 1px solid var(--glass-border);
       border-radius: var(--radius-lg);
-      padding: 1.65rem;
+      padding: 1.5rem 1.75rem;
       box-shadow: var(--glass-shadow);
       display: flex;
-      flex-direction: column;
+      align-items: center;
       justify-content: space-between;
-      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-      position: relative;
-      animation: fadeIn 0.3s ease;
+      gap: 1.5rem;
+      transition: all 0.25s ease;
     }
     .recovery-card:hover {
-      box-shadow: var(--glass-shadow-hover);
       transform: translateY(-2px);
-    }
-    .recovery-card.recommended {
-      border-color: rgba(79, 70, 229, 0.9);
-      background: rgba(245, 247, 255, 0.92);
-      box-shadow: 0 14px 40px 0 rgba(79, 70, 229, 0.15);
+      box-shadow: var(--glass-shadow-hover);
     }
     .recovery-card.hidden {
       display: none !important;
     }
 
-    .recommended-flag {
-      position: absolute;
-      top: -12px;
-      left: 1.5rem;
-      background: var(--primary-indigo);
-      color: #ffffff;
-      font-size: 0.725rem;
-      font-weight: 800;
-      padding: 0.25rem 0.75rem;
-      border-radius: var(--radius-pill);
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.35);
-    }
-
-    .plan-mode-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.3rem;
-      font-size: 0.7rem;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      padding: 0.2rem 0.55rem;
-      border-radius: var(--radius-sm);
-      margin-bottom: 0.5rem;
-    }
-    .pill-mode-flight { background: #fee2e2; color: #991b1b; }
-    .pill-mode-train { background: #e0e7ff; color: #3730a3; }
-    .pill-mode-bus { background: #dcfce7; color: #166534; }
-    .pill-mode-multi { background: #fef3c7; color: #92400e; }
-
-    .plan-name-header {
-      font-size: 1.2rem;
-      font-weight: 800;
-      color: var(--text-main);
-      margin-bottom: 0.25rem;
-    }
-    .plan-sequence-tag {
-      font-size: 0.8rem;
-      font-weight: 700;
-      color: var(--text-sub);
-      margin-bottom: 1.15rem;
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
-      flex-wrap: wrap;
-    }
-
-    .plan-metrics-table {
-      background: rgba(255, 255, 255, 0.75);
-      border: 1px solid var(--glass-border);
-      border-radius: var(--radius-md);
-      padding: 0.85rem;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 0.75rem;
-      margin-bottom: 1.25rem;
-    }
-    .metric-unit-label {
-      font-size: 0.7rem;
-      font-weight: 800;
-      color: var(--text-sub);
-      text-transform: uppercase;
-    }
-    .metric-unit-val {
-      font-size: 1rem;
-      font-weight: 800;
-      color: var(--text-main);
-      margin-top: 0.1rem;
-    }
-
-    .plan-impact-summary {
-      font-size: 0.825rem;
-      color: var(--text-muted);
-      line-height: 1.45;
-      margin-bottom: 1.25rem;
-    }
-
-    /* Empty Filter State */
-    .empty-filter-state {
-      display: none;
-      grid-column: 1 / -1;
-      text-align: center;
-      padding: 3rem 1.5rem;
-      background: var(--glass-bg);
-      border-radius: var(--radius-lg);
-      border: 1px solid var(--glass-border);
-    }
-
-    /* AI Explanation Compact Panel */
-    .ai-explanation-panel {
-      background: var(--glass-bg-elevated);
-      backdrop-filter: var(--glass-blur);
-      -webkit-backdrop-filter: var(--glass-blur);
-      border: 1px solid var(--glass-border);
-      border-left: 5px solid var(--primary-indigo);
-      border-radius: var(--radius-lg);
-      padding: 1.5rem 1.75rem;
-      display: flex;
-      gap: 1.25rem;
-      align-items: flex-start;
-      box-shadow: var(--glass-shadow);
-    }
-    .ai-brain-icon {
-      width: 40px;
-      height: 40px;
-      border-radius: var(--radius-sm);
-      background: var(--recovery-bg);
-      color: var(--primary-indigo);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      border: 1px solid var(--recovery-border);
-    }
-    .ai-explanation-title {
-      font-size: 1rem;
-      font-weight: 800;
-      color: var(--text-main);
-      margin-bottom: 0.4rem;
-    }
-    .ai-explanation-list {
-      list-style: none;
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 0.75rem 1.75rem;
-      font-size: 0.85rem;
-      color: #334155;
-    }
-    .ai-explanation-list li {
-      display: flex;
-      align-items: flex-start;
-      gap: 0.5rem;
-    }
-    .check-bullet {
-      color: var(--success-solid);
-      font-weight: 800;
-    }
-
-    /* =============================================================
-       8. TOAST NOTIFICATION
-    ============================================================= */
+    /* Toast Notification */
     #toast {
       position: fixed;
       bottom: 2rem;
       right: 2rem;
-      background: rgba(15, 23, 42, 0.92);
+      background: rgba(15, 23, 42, 0.95);
       backdrop-filter: blur(14px);
       color: #ffffff;
-      padding: 0.85rem 1.35rem;
+      padding: 0.85rem 1.4rem;
       border-radius: var(--radius-md);
       font-size: 0.875rem;
       font-weight: 600;
-      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.2);
-      z-index: 200;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
       display: flex;
       align-items: center;
       gap: 0.65rem;
-      border: 1px solid rgba(255, 255, 255, 0.15);
+      z-index: 1000;
       transform: translateY(100px);
       opacity: 0;
-      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      pointer-events: none;
     }
     #toast.show {
       transform: translateY(0);
       opacity: 1;
     }
 
-    /* =============================================================
-       9. RESPONSIVE DESIGN (TABLET & MOBILE)
-    ============================================================= */
-    @media (max-width: 1200px) {
-      .recovery-plans-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-    }
-    @media (max-width: 1024px) {
-      .metrics-grid { grid-template-columns: 1fr; }
-      .ai-explanation-list { grid-template-columns: 1fr; }
-    }
-    @media (max-width: 768px) {
-      .mobile-menu-toggle { display: flex; }
-      #sidebar { 
-        transform: translateX(-100%); 
-        box-shadow: 10px 0 30px rgba(0, 0, 0, 0.15);
+    /* Mobile Responsive */
+    @media (max-width: 900px) {
+      body { flex-direction: column; }
+      #sidebar {
+        position: fixed;
+        left: -100%;
+        top: 0;
+        bottom: 0;
+        width: 280px;
+        transition: left 0.3s ease;
       }
       #sidebar.mobile-open {
-        transform: translateX(0);
+        left: 0;
       }
-      #main-wrap { 
-        margin-left: 0; 
-        padding: 1rem 1rem 2.5rem 1rem; 
+      #main-wrap {
+        padding: 1rem 1rem 3rem 1rem;
       }
-      .recovery-plans-grid {
+      .metrics-grid {
         grid-template-columns: 1fr;
       }
-      .disruption-alert-card {
+      .search-form-grid {
+        grid-template-columns: 1fr;
+      }
+      .recovery-card {
         flex-direction: column;
         align-items: flex-start;
-      }
-      .mode-tabs-container {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-      .mode-tabs-wrap {
-        width: 100%;
-      }
-      .ai-explanation-panel {
-        flex-direction: column;
       }
     }
   </style>
 </head>
 <body>
 
-  <!-- Background Ambient Glow Orbs for Glassmorphic Depth -->
-  <div class="ambient-glow glow-1"></div>
-  <div class="ambient-glow glow-2"></div>
-  <div class="ambient-glow glow-3"></div>
-
   <!-- =============================================================
-       LEFT SIDEBAR (FROSTED GLASS)
+       LEFT SIDEBAR
   ============================================================= -->
   <aside id="sidebar">
     <div class="brand-box">
       <div class="brand-icon">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/>
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71z"/>
         </svg>
       </div>
       <div>
-        <div class="brand-title">AeroRoute AI</div>
-        <div style="font-size: 0.725rem; color: var(--text-sub); font-weight: 600;">TravelShield Engine</div>
+        <div class="brand-title">TravelShield AI</div>
+        <div style="font-size: 0.725rem; color: var(--text-sub); font-weight: 600;">Disruption Recovery Engine</div>
       </div>
-      <!-- Close button on mobile -->
-      <button onclick="toggleSidebarMobile()" style="margin-left: auto; display: none;" class="mobile-menu-close">✕</button>
     </div>
 
     <ul class="nav-menu">
       <li>
         <button class="nav-btn active" id="nav-dashboard" onclick="showScreen('dashboard')">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <rect x="3" y="3" width="7" height="7"></rect>
-            <rect x="14" y="3" width="7" height="7"></rect>
-            <rect x="14" y="14" width="7" height="7"></rect>
-            <rect x="3" y="14" width="7" height="7"></rect>
-          </svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
           <span>Dashboard</span>
         </button>
       </li>
       <li>
+        <button class="nav-btn" id="nav-plan-journey" onclick="showScreen('plan-journey')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          <span>Plan Journey</span>
+        </button>
+      </li>
+      <li>
+        <button class="nav-btn" id="nav-live-status" onclick="showScreen('live-status')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+          <span>Live Status Tracker</span>
+        </button>
+      </li>
+      <li>
         <button class="nav-btn" id="nav-trip-details" onclick="showScreen('trip-details')">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="10"></circle>
-            <polyline points="12 6 12 12 16 14"></polyline>
-          </svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M22 2L11 13"></path><path d="M22 2l-7 20-4-9-9-4 20-7z"></path></svg>
           <span>Trip Timeline</span>
         </button>
       </li>
       <li>
         <button class="nav-btn" id="nav-recovery" onclick="showScreen('recovery')">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <polyline points="23 4 23 10 17 10"></polyline>
-            <polyline points="1 20 1 14 7 14"></polyline>
-            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
-          </svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
           <span>Recovery Center</span>
           <span class="badge-alert-count" id="sidebar-recovery-badge">5</span>
         </button>
       </li>
       <li>
         <button class="nav-btn" id="nav-updated-itinerary" onclick="showScreen('updated-itinerary')">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-            <polyline points="22 4 12 14.01 9 11.01"></polyline>
-          </svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
           <span>Updated Route</span>
         </button>
       </li>
       <li>
         <button class="nav-btn" id="nav-settings" onclick="showScreen('settings')">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="3"></circle>
-            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
-          </svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
           <span>Settings</span>
         </button>
       </li>
     </ul>
 
-    <!-- Hackathon Quick Demo Stepper -->
+    <!-- Quick Demo Stepper for Judges -->
     <div class="demo-flow-box">
-      <div class="demo-flow-title">
-        <span>⚡</span>
-        <span>Judge Demo Flow</span>
-      </div>
+      <div class="demo-flow-title">⚡ Judge Demo Flow</div>
       <div class="demo-stepper-list">
-        <button class="demo-step-btn" id="step-btn-1" onclick="executeDemoStep(1)">
-          <span>1.</span> Normal Itinerary
-        </button>
-        <button class="demo-step-btn" id="step-btn-2" onclick="executeDemoStep(2)">
-          <span>2.</span> Disruption Detected
-        </button>
-        <button class="demo-step-btn" id="step-btn-3" onclick="executeDemoStep(3)">
-          <span>3.</span> Recovery Center
-        </button>
-        <button class="demo-step-btn" id="step-btn-4" onclick="executeDemoStep(4)">
-          <span>4.</span> Resolved Route
-        </button>
+        <button class="demo-step-btn current" id="step-btn-1" onclick="executeDemoStep(1)">1. Normal Journey</button>
+        <button class="demo-step-btn" id="step-btn-2" onclick="executeDemoStep(2)">2. Disruption (4h Delay)</button>
+        <button class="demo-step-btn" id="step-btn-3" onclick="executeDemoStep(3)">3. Recovery Options</button>
+        <button class="demo-step-btn" id="step-btn-4" onclick="executeDemoStep(4)">4. Resolved Route</button>
       </div>
     </div>
   </aside>
 
   <!-- =============================================================
-       MAIN VIEW CONTAINER
+       MAIN WRAPPER & TOPBAR
   ============================================================= -->
   <main id="main-wrap">
-    <!-- Frosted Topbar -->
     <header class="top-header">
-      <div style="display: flex; align-items: center; gap: 0.75rem;">
-        <button class="mobile-menu-toggle" onclick="toggleSidebarMobile()" aria-label="Toggle Navigation">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <line x1="3" y1="12" x2="21" y2="12"></line>
-            <line x1="3" y1="6" x2="21" y2="6"></line>
-            <line x1="3" y1="18" x2="21" y2="18"></line>
-          </svg>
-        </button>
-        <div class="header-breadcrumb">
-          <span>AeroRoute Command</span>
-          <span>/</span>
-          <span class="breadcrumb-active" id="breadcrumb-current">Dashboard</span>
-        </div>
+      <div class="header-breadcrumb">
+        <span>TravelShield</span>
+        <span>/</span>
+        <span class="breadcrumb-active" id="breadcrumb-current">Dashboard</span>
       </div>
 
       <div class="header-right-tools">
-        <div class="live-status-pill">
-          <span class="status-dot-green"></span>
-          <span>Telemetry Live &middot; All Systems Monitored</span>
-        </div>
+        <!-- Live vs Demo Mode Switcher Button -->
+        <button class="live-mode-toggle live" id="mode-toggle-btn" onclick="toggleSystemMode()">
+          <span id="mode-indicator-dot" style="width: 8px; height: 8px; border-radius: 50%; background: #10b981; display: inline-block;"></span>
+          <span id="mode-text">LIVE API MODE</span>
+        </button>
 
-        <div class="avatar-wrap">
-          <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80" alt="Jenny Wilson">
-        </div>
+        <button class="refresh-btn" onclick="refreshLiveTelemetry()">
+          <span>↻</span>
+          <span id="last-updated-text">LAST UPDATED: Just Now</span>
+        </button>
       </div>
     </header>
 
@@ -1250,12 +999,12 @@
           </div>
           <div>
             <div class="alert-main-title">
-              <span>Train delayed by 4 hours</span>
-              <span class="badge badge-danger">CRITICAL PRIORITY</span>
-              <span style="font-size: 0.75rem; color: var(--text-sub); font-family: monospace;">ID: DIS-8942-IN</span>
+              <span>Train Delayed by 4 Hours (+240m)</span>
+              <span class="badge badge-danger">CRITICAL SEVERITY</span>
+              <span style="font-size: 0.75rem; color: var(--text-sub); font-family: monospace;">IRCTC LIVE #12127</span>
             </div>
             <p class="alert-sub-desc">
-              Train 12127 Mumbai-Pune delayed by 240 mins. <b>Your Pune &rarr; Goa bus connection will be missed.</b>
+              Pragati Superfast Express held at Karjat section. <b>Downstream connection to Goa Volvo Sleeper bus will be missed.</b>
             </p>
           </div>
         </div>
@@ -1271,54 +1020,37 @@
         <div class="metric-card">
           <div>
             <div class="metric-top">
-              <span>Upcoming Trips</span>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M22 2L11 13"></path>
-                <path d="M22 2l-7 20-4-9-9-4 20-7z"></path>
-              </svg>
+              <span>Active Itineraries</span>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle></svg>
             </div>
-            <div class="metric-value">2 Active Journeys</div>
+            <div class="metric-value">2 Monitored Trips</div>
             <div class="metric-caption">Mumbai to Goa via Pune &middot; Delhi to Bengaluru</div>
           </div>
-          <a class="metric-link" onclick="showScreen('trip-details')">
-            <span>View timeline breakdown</span>
-            <span>&rsaquo;</span>
-          </a>
+          <a class="metric-link" onclick="showScreen('trip-details')">View timeline breakdown &rsaquo;</a>
         </div>
 
         <div class="metric-card">
           <div>
             <div class="metric-top">
-              <span>Disruption Status</span>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="12" cy="12" r="10"></circle>
-                <line x1="12" y1="16" x2="12" y2="12"></line>
-                <line x1="12" y1="8" x2="12.01" y2="8"></line>
-              </svg>
+              <span>Disruption Severity</span>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path></svg>
             </div>
-            <div class="metric-value" style="color: var(--danger-solid);">85% Impact Score</div>
-            <div class="metric-caption">1 connection severely affected &middot; Requires immediate recovery</div>
+            <div class="metric-value" style="color: var(--danger-solid);">CRITICAL</div>
+            <div class="metric-caption">1 connection broken &middot; 2 downstream bookings at risk</div>
           </div>
-          <span class="badge badge-danger" style="margin-top: 1rem; align-self: flex-start;">Missed Connection Imminent</span>
+          <span class="badge badge-danger" style="margin-top: 1rem; align-self: flex-start;">Immediate Action Required</span>
         </div>
 
         <div class="metric-card">
           <div>
             <div class="metric-top">
-              <span>AI Recovery Status</span>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <polyline points="23 4 23 10 17 10"></polyline>
-                <polyline points="1 20 1 14 7 14"></polyline>
-                <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
-              </svg>
+              <span>Recovery Options</span>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline></svg>
             </div>
-            <div class="metric-value" style="color: var(--primary-indigo);">5 Alternatives Found</div>
-            <div class="metric-caption">Multi-modal options across Flights, Trains, and Sleeper Buses.</div>
+            <div class="metric-value" style="color: var(--primary-indigo);">5 Alternatives Scored</div>
+            <div class="metric-caption">Direct Flights, High-Speed Rail &amp; Overnight Volvo Sleepers</div>
           </div>
-          <a class="metric-link" onclick="showScreen('recovery')">
-            <span>Review AI suggestions</span>
-            <span>&rsaquo;</span>
-          </a>
+          <a class="metric-link" onclick="showScreen('recovery')">Review recovery plans &rsaquo;</a>
         </div>
       </div>
 
@@ -1326,8 +1058,8 @@
       <div class="card">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
           <div>
-            <h2 style="font-size: 1.15rem; font-weight: 800;">Active Trips &amp; Itineraries</h2>
-            <p style="font-size: 0.85rem; color: var(--text-muted);">Real-time telemetry and schedule tracking</p>
+            <h2 style="font-size: 1.15rem; font-weight: 800;">Active Trips &amp; Telemetry</h2>
+            <p style="font-size: 0.85rem; color: var(--text-muted);">Real-time multi-modal journey monitoring</p>
           </div>
           <button class="btn btn-outline" style="font-size: 0.8rem; padding: 0.4rem 0.85rem;" onclick="showScreen('trip-details')">
             Open Full Timeline &rarr;
@@ -1336,7 +1068,7 @@
 
         <div class="trip-preview-row">
           <div style="display: flex; align-items: center; gap: 1rem;">
-            <div style="width: 42px; height: 42px; border-radius: var(--radius-sm); background: var(--danger-bg); color: var(--danger-solid); display: flex; align-items: center; justify-content: center; font-size: 1.25rem; border: 1px solid var(--danger-border);">
+            <div style="width: 42px; height: 42px; border-radius: var(--radius-sm); background: var(--danger-bg); color: var(--danger-solid); display: flex; align-items: center; justify-content: center; font-size: 1.25rem;">
               🚆
             </div>
             <div>
@@ -1354,33 +1086,172 @@
 
         <div class="trip-preview-row">
           <div style="display: flex; align-items: center; gap: 1rem;">
-            <div style="width: 42px; height: 42px; border-radius: var(--radius-sm); background: var(--success-bg); color: var(--success-solid); display: flex; align-items: center; justify-content: center; font-size: 1.25rem; border: 1px solid var(--success-border);">
+            <div style="width: 42px; height: 42px; border-radius: var(--radius-sm); background: var(--success-bg); color: var(--success-solid); display: flex; align-items: center; justify-content: center; font-size: 1.25rem;">
               ✈️
             </div>
             <div>
               <div style="font-weight: 800; font-size: 0.95rem;">Delhi (DEL) &rarr; Bengaluru (BLR)</div>
               <div style="font-size: 0.825rem; color: var(--text-muted); margin-top: 0.2rem;">
-                Flight 6E-652 &middot; Dep 02:15 PM &middot; Gate B4
+                Flight 6E-652 &middot; Dep 02:15 PM &middot; Gate B4 &middot; Status: ON TIME
               </div>
             </div>
           </div>
           <div style="display: flex; align-items: center; gap: 1rem;">
             <span class="badge badge-success">On Time</span>
-            <button class="btn btn-outline" style="padding: 0.45rem 0.95rem; font-size: 0.8rem;" onclick="triggerToast('Flight 6E-652 is operating normally. Gate B4 verified.')">Details</button>
+            <button class="btn btn-outline" style="padding: 0.45rem 0.95rem; font-size: 0.8rem;" onclick="triggerToast('Flight 6E-652 is on schedule. Gate B4 confirmed.')">Telemetry</button>
           </div>
         </div>
       </div>
     </section>
 
     <!-- ===========================================================
-         SCREEN 2: CHRONOLOGICAL TRIP DETAILS (MUMBAI -> GOA)
+         SCREEN 2: PLAN JOURNEY (UNIFIED MULTI-MODAL SEARCH)
+    =========================================================== -->
+    <section id="screen-plan-journey" class="screen-view">
+      <div>
+        <h1 style="font-size: 1.6rem; font-weight: 800; color: var(--primary);">Plan Multi-Modal Journey</h1>
+        <p style="font-size: 0.9rem; color: var(--text-muted); margin-top: 0.2rem;">
+          Unified travel search across Indian Railways, Domestic Flights, and Intercity Buses.
+        </p>
+      </div>
+
+      <div class="card">
+        <!-- Mode Tabs for Search -->
+        <div style="display: flex; gap: 0.5rem; margin-bottom: 1.25rem;">
+          <button class="mode-tab-btn active" id="search-mode-all" onclick="selectSearchMode('all')">All Modes</button>
+          <button class="mode-tab-btn" id="search-mode-flight" onclick="selectSearchMode('flight')">✈ Flights</button>
+          <button class="mode-tab-btn" id="search-mode-train" onclick="selectSearchMode('train')">🚆 Trains</button>
+          <button class="mode-tab-btn" id="search-mode-bus" onclick="selectSearchMode('bus')">🚌 Buses</button>
+        </div>
+
+        <div class="search-form-grid">
+          <div class="input-group">
+            <label>From (Source)</label>
+            <input type="text" class="input-field" id="search-from" placeholder="City or Station (e.g. Mumbai CSMT)" value="Mumbai" oninput="handleLocationSearch('search-from', 'dropdown-from')" autocomplete="off">
+            <div class="autocomplete-dropdown" id="dropdown-from"></div>
+          </div>
+
+          <div class="input-group">
+            <label>To (Destination)</label>
+            <input type="text" class="input-field" id="search-to" placeholder="City or Station (e.g. Goa / MAO)" value="Goa" oninput="handleLocationSearch('search-to', 'dropdown-to')" autocomplete="off">
+            <div class="autocomplete-dropdown" id="dropdown-to"></div>
+          </div>
+
+          <div class="input-group">
+            <label>Travel Date</label>
+            <input type="date" class="input-field" id="search-date">
+          </div>
+
+          <div class="input-group">
+            <label>Sort By</label>
+            <select class="input-field" id="search-sort">
+              <option value="cheapest">Cheapest First</option>
+              <option value="fastest">Fastest (Shortest Duration)</option>
+              <option value="earliest">Earliest Departure</option>
+              <option value="direct">Direct Connections Only</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end;">
+          <button class="btn btn-primary" onclick="executeJourneySearch()">
+            <span>Search Routes</span>
+            <span>&rarr;</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Results Grid -->
+      <div id="search-results-section" style="display: none;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+          <h3 id="search-results-count-title" style="font-size: 1.15rem; font-weight: 800;">Available Options</h3>
+          <span class="badge badge-recovery" id="search-data-source-badge">Live API &amp; Multi-modal Engine</span>
+        </div>
+        <div class="search-results-grid" id="search-results-container"></div>
+      </div>
+    </section>
+
+    <!-- ===========================================================
+         SCREEN 3: LIVE STATUS TRACKER
+    =========================================================== -->
+    <section id="screen-live-status" class="screen-view">
+      <div>
+        <h1 style="font-size: 1.6rem; font-weight: 800; color: var(--primary);">Live Status Tracker</h1>
+        <p style="font-size: 0.9rem; color: var(--text-muted); margin-top: 0.2rem;">
+          Check real-time train running status via RapidAPI IRCTC or domestic flight tracking via AeroDataBox.
+        </p>
+      </div>
+
+      <div class="card">
+        <div style="display: flex; gap: 0.5rem; margin-bottom: 1.25rem;">
+          <button class="mode-tab-btn active" id="tracker-mode-train" onclick="selectTrackerMode('train')">🚆 Train Running Status</button>
+          <button class="mode-tab-btn" id="tracker-mode-flight" onclick="selectTrackerMode('flight')">✈ Flight Live Status</button>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 2fr 1fr 1fr auto; gap: 1rem; align-items: flex-end;">
+          <div class="input-group">
+            <label id="tracker-input-label">Train Number (5 Digits)</label>
+            <input type="text" class="input-field" id="tracker-number" placeholder="e.g. 12051, 12127, 22436" value="12127">
+          </div>
+
+          <div class="input-group">
+            <label>Journey Date</label>
+            <input type="date" class="input-field" id="tracker-date">
+          </div>
+
+          <div class="input-group">
+            <label>&nbsp;</label>
+            <button class="btn btn-primary" style="width: 100%;" onclick="executeLiveTracker()">
+              <span>Check Live Status</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Telemetry Output Card -->
+      <div class="card" id="tracker-result-card" style="display: none;">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(226, 232, 240, 0.7); padding-bottom: 1rem; margin-bottom: 1rem;">
+          <div>
+            <div style="display: flex; align-items: center; gap: 0.65rem;">
+              <span style="font-size: 1.5rem;" id="tracker-icon">🚆</span>
+              <h2 style="font-size: 1.3rem; font-weight: 800;" id="tracker-vehicle-name">Pragati Superfast Express (12127)</h2>
+            </div>
+            <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.25rem;" id="tracker-source-meta">Data Source: RapidAPI Indian Railways (Live)</div>
+          </div>
+          <span class="badge badge-danger" id="tracker-status-badge">DELAYED +240m</span>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem;">
+          <div>
+            <div style="font-size: 0.75rem; font-weight: 800; color: var(--text-sub); text-transform: uppercase;">CURRENT POSITION</div>
+            <div style="font-size: 1.1rem; font-weight: 800; margin-top: 0.25rem;" id="tracker-current-pos">Karjat Junction (KJT)</div>
+            <div style="font-size: 0.8rem; color: var(--text-muted);" id="tracker-platform">Platform 2</div>
+          </div>
+
+          <div>
+            <div style="font-size: 0.75rem; font-weight: 800; color: var(--text-sub); text-transform: uppercase;">DELAY SEVERITY</div>
+            <div style="font-size: 1.1rem; font-weight: 800; color: var(--danger-solid); margin-top: 0.25rem;" id="tracker-delay-val">240 Minutes</div>
+            <div style="font-size: 0.8rem; color: var(--text-muted);">Causes downstream connection failure</div>
+          </div>
+
+          <div>
+            <div style="font-size: 0.75rem; font-weight: 800; color: var(--text-sub); text-transform: uppercase;">DISRUPTION CAUSE</div>
+            <div style="font-size: 0.95rem; font-weight: 700; color: var(--text-main); margin-top: 0.25rem;" id="tracker-cause">Heavy Monsoon Waterlogging</div>
+            <div style="font-size: 0.8rem; color: var(--text-muted);">Bhor Ghat incline speed restrictions</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===========================================================
+         SCREEN 4: CHRONOLOGICAL TRIP DETAILS (TIMELINE)
     =========================================================== -->
     <section id="screen-trip-details" class="screen-view">
       <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
         <div>
           <h1 style="font-size: 1.6rem; font-weight: 800; color: var(--primary);">Trip Details: Mumbai to Goa</h1>
           <p style="font-size: 0.9rem; color: var(--text-muted); margin-top: 0.2rem;">
-            Chronological multi-modal journey schedule with real-time disruption monitoring.
+            Chronological multi-modal journey with real-time disruption monitoring.
           </p>
         </div>
         <button class="btn btn-recovery" onclick="showScreen('recovery')">
@@ -1395,11 +1266,11 @@
             <div class="timeline-node-icon">📍</div>
             <div class="timeline-card">
               <div class="timeline-card-header">
-                <span class="timeline-time">06:00 AM &middot; Origin</span>
+                <span style="font-size: 0.8rem; font-weight: 800; color: var(--text-sub);">06:00 AM &middot; ORIGIN</span>
                 <span class="badge badge-success">Departed</span>
               </div>
-              <div class="timeline-title">Mumbai (CSMT Station)</div>
-              <div class="timeline-meta">Traveler checked-in and boarded at Platform 4.</div>
+              <div style="font-size: 1.05rem; font-weight: 800;">Mumbai (CSMT Station)</div>
+              <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.25rem;">Traveler boarded at Platform 4.</div>
             </div>
           </div>
 
@@ -1408,14 +1279,14 @@
             <div class="timeline-node-icon danger">🚆</div>
             <div class="timeline-card disrupted">
               <div class="timeline-card-header">
-                <span class="timeline-time">06:30 AM &middot; Leg 1</span>
+                <span style="font-size: 0.8rem; font-weight: 800; color: var(--text-sub);">06:30 AM &middot; LEG 1</span>
                 <span class="badge badge-danger">4h Delay (+240m)</span>
               </div>
-              <div class="timeline-title">Train 12127 (Pragati Superfast Express)</div>
-              <div class="timeline-meta">Provider: Indian Railways &middot; Route: CSMT Mumbai &rarr; Pune Junction</div>
+              <div style="font-size: 1.05rem; font-weight: 800;">Train 12127 (Pragati Superfast Express)</div>
+              <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.25rem;">Provider: Indian Railways &middot; CSMT Mumbai &rarr; Pune Junction</div>
               <div class="disruption-callout red">
                 <span>⚠️</span>
-                <span>Severe monsoon waterlogging at Karjat section. Expected arrival in Pune postponed from 09:50 AM to 01:50 PM.</span>
+                <span>Severe monsoon waterlogging at Karjat section. Arrival in Pune postponed from 09:50 AM to 01:50 PM.</span>
               </div>
             </div>
           </div>
@@ -1423,13 +1294,13 @@
           <!-- Step 3: Pune Junction Station -->
           <div class="timeline-step">
             <div class="timeline-node-icon warning">📍</div>
-            <div class="timeline-card missed-conn">
+            <div class="timeline-card" style="background: rgba(255, 251, 235, 0.85); border-color: var(--warning-border);">
               <div class="timeline-card-header">
-                <span class="timeline-time">01:50 PM (Estimated)</span>
+                <span style="font-size: 0.8rem; font-weight: 800; color: var(--text-sub);">01:50 PM (ESTIMATED)</span>
                 <span class="badge badge-warning">Missed Layover</span>
               </div>
-              <div class="timeline-title">Pune Junction Transit Hub</div>
-              <div class="timeline-meta">Scheduled connection buffer of 1h 40m has expired due to train delay.</div>
+              <div style="font-size: 1.05rem; font-weight: 800;">Pune Junction Transit Hub</div>
+              <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.25rem;">Scheduled connection buffer of 1h 40m has expired due to train delay.</div>
             </div>
           </div>
 
@@ -1438,45 +1309,28 @@
             <div class="timeline-node-icon danger">🚌</div>
             <div class="timeline-card disrupted">
               <div class="timeline-card-header">
-                <span class="timeline-time">11:30 AM &middot; Leg 2</span>
+                <span style="font-size: 0.8rem; font-weight: 800; color: var(--text-sub);">11:30 AM &middot; LEG 2</span>
                 <span class="badge badge-danger">Connection Missed</span>
               </div>
-              <div class="timeline-title">IntrCity SmartBus AC Multi-Axle</div>
-              <div class="timeline-meta">Provider: IntrCity SmartBus &middot; Swargate Pune &rarr; Panaji Goa</div>
+              <div style="font-size: 1.05rem; font-weight: 800;">IntrCity SmartBus AC Multi-Axle</div>
+              <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.25rem;">Provider: IntrCity SmartBus &middot; Swargate Pune &rarr; Panaji Goa</div>
               <div class="disruption-callout red">
                 <span>❌</span>
-                <span>Bus departed Swargate on schedule at 11:30 AM. You will not be in Pune in time. Ticket is forfeit without rerouting.</span>
+                <span>Bus departed Swargate on schedule. Passenger stranded in transit without recovery rerouting.</span>
               </div>
             </div>
           </div>
 
-          <!-- Step 5: Goa Arrival & 🏨 Hotel -->
+          <!-- Step 5: Goa Hotel -->
           <div class="timeline-step">
             <div class="timeline-node-icon warning">🏨</div>
-            <div class="timeline-card missed-conn">
-              <div class="timeline-card-header">
-                <span class="timeline-time">03:00 PM &middot; Destination</span>
-                <span class="badge badge-warning">Forfeiture Risk</span>
-              </div>
-              <div class="timeline-title">Radisson Blu Resort Goa (Cavelossim Beach)</div>
-              <div class="timeline-meta">Booking Ref: RBG-44921 &middot; 2 Nights Deluxe Pool View ($420 total)</div>
-              <div class="disruption-callout amber">
-                <span>🛡️</span>
-                <span>Late check-in policy requires front-desk notification before 06:00 PM or room will be released to standby pool.</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Step 6: 🎟️ Activity -->
-          <div class="timeline-step">
-            <div class="timeline-node-icon">🎟️</div>
             <div class="timeline-card">
               <div class="timeline-card-header">
-                <span class="timeline-time">09:00 AM Next Day &middot; Activity</span>
-                <span class="badge badge-success">Scheduled</span>
+                <span style="font-size: 0.8rem; font-weight: 800; color: var(--text-sub);">08:00 PM TONIGHT &middot; LODGING</span>
+                <span class="badge badge-warning">Late Check-in Risk</span>
               </div>
-              <div class="timeline-title">Dudhsagar Waterfalls Guided Trek &amp; Jeep Safari</div>
-              <div class="timeline-meta">Provider: Goa Outdoor Adventures &middot; Departure from resort lobby</div>
+              <div style="font-size: 1.05rem; font-weight: 800;">Radisson Blu Resort Goa Cavelossim</div>
+              <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.25rem;">Automated hotel delay notice queued by TravelShield Engine.</div>
             </div>
           </div>
         </div>
@@ -1484,431 +1338,230 @@
     </section>
 
     <!-- ===========================================================
-         SCREEN 3: RECOVERY CENTER (WITH MODE FILTER TABS)
+         SCREEN 5: RECOVERY COMMAND CENTER (WITH MODE TABS)
     =========================================================== -->
     <section id="screen-recovery" class="screen-view">
       <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
         <div>
           <h1 style="font-size: 1.6rem; font-weight: 800; color: var(--primary);">Recovery Command Center</h1>
           <p style="font-size: 0.9rem; color: var(--text-muted); margin-top: 0.2rem;">
-            Comparable recovery alternatives generated by TravelShield AI engine.
+            Autonomous rerouting options computed with weighted score formula (30% Arrival, 25% Reliability, 20% Duration, 15% Cost, 10% Transfers).
           </p>
         </div>
-        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-          <span class="badge badge-recovery" id="recovery-eval-badge">5 Alternatives Evaluated</span>
-          <span class="badge badge-success">Radisson Hold Staged</span>
-        </div>
+        <span class="badge badge-recovery" id="recovery-eval-badge">5 Alternatives Evaluated</span>
       </div>
 
-      <!-- MODE FILTER TABS BAR -->
+      <!-- Mode Tabs Filter Bar -->
       <div class="mode-tabs-container">
         <div class="mode-tabs-wrap">
-          <button class="mode-tab-btn active" data-filter="all" onclick="filterRecoveryMode('all', this)">
-            <span>All</span>
-            <span class="mode-count-badge" id="count-badge-all">5</span>
-          </button>
-          <button class="mode-tab-btn" data-filter="flight" onclick="filterRecoveryMode('flight', this)">
-            <span>✈ Flights</span>
-            <span class="mode-count-badge" id="count-badge-flight">2</span>
-          </button>
-          <button class="mode-tab-btn" data-filter="train" onclick="filterRecoveryMode('train', this)">
-            <span>🚆 Trains</span>
-            <span class="mode-count-badge" id="count-badge-train">2</span>
-          </button>
-          <button class="mode-tab-btn" data-filter="bus" onclick="filterRecoveryMode('bus', this)">
-            <span>🚌 Buses</span>
-            <span class="mode-count-badge" id="count-badge-bus">2</span>
-          </button>
+          <span style="font-size: 0.775rem; font-weight: 800; color: var(--text-sub); text-transform: uppercase; margin-right: 0.5rem;">Filter Mode:</span>
+          <button class="mode-tab-btn active" data-filter="all" onclick="filterRecoveryMode('all', this)">All Alternatives</button>
+          <button class="mode-tab-btn" data-filter="flight" onclick="filterRecoveryMode('flight', this)">✈ Flights</button>
+          <button class="mode-tab-btn" data-filter="train" onclick="filterRecoveryMode('train', this)">🚆 Trains</button>
+          <button class="mode-tab-btn" data-filter="bus" onclick="filterRecoveryMode('bus', this)">🚌 Buses</button>
         </div>
-        <div class="mode-filter-meta">
-          <span id="active-filter-summary">Showing <b>5</b> total multimodal alternatives</span>
+
+        <div style="font-size: 0.825rem; font-weight: 700; color: var(--text-sub);" id="active-filter-summary">
+          Showing <b>5</b> total multimodal alternatives
         </div>
       </div>
 
-      <!-- AI Thinking State Bar -->
-      <div id="ai-thinking-state" class="ai-thinking-bar">
-        <div class="ai-thinking-spinner"></div>
-        <span id="ai-thinking-text">TravelShield AI filtering optimal alternatives...</span>
+      <!-- AI Thinking Bar -->
+      <div id="ai-thinking-state" style="display: none; background: rgba(238, 242, 255, 0.9); border: 1px solid var(--recovery-border); border-radius: var(--radius-md); padding: 0.85rem 1.25rem; align-items: center; gap: 0.85rem;">
+        <span style="font-size: 1.2rem;">⚡</span>
+        <span style="font-size: 0.85rem; font-weight: 600; color: var(--primary-indigo);" id="ai-thinking-text">TravelShield AI filtering optimal alternatives...</span>
       </div>
 
-      <!-- 5 Comparable Plan Cards with data-mode attributes -->
-      <div class="recovery-plans-grid" id="plans-container">
-        
-        <!-- Plan 1: Recommended The Sprinter (Flight) -->
-        <div class="recovery-card recommended" data-mode="flight" id="plan-card-1">
-          <div class="recommended-flag">★ AI Recommended</div>
-          <div>
-            <div class="plan-mode-pill pill-mode-flight">✈ Flight + Cab Express</div>
-            <div class="plan-name-header">The Sprinter</div>
-            <div class="plan-sequence-tag">
-              <span>🚕 Private Cab</span>
-              <span>&rarr;</span>
-              <span>✈️ Flight AI-882</span>
+      <!-- Recovery Cards Grid -->
+      <div class="recovery-cards-grid" id="recovery-cards-list">
+        <!-- Option 1: Flight (The Sprinter) -->
+        <div class="recovery-card" data-mode="flight">
+          <div style="display: flex; align-items: center; gap: 1.25rem;">
+            <div style="width: 52px; height: 52px; border-radius: 14px; background: rgba(79, 70, 229, 0.12); color: var(--primary-indigo); display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">
+              ✈️
             </div>
-
-            <div class="plan-metrics-table">
-              <div>
-                <div class="metric-unit-label">Total Delay</div>
-                <div class="metric-unit-val" style="color: var(--success-solid);">+45 mins</div>
+            <div>
+              <div style="display: flex; align-items: center; gap: 0.65rem;">
+                <h3 style="font-size: 1.15rem; font-weight: 800;">The Sprinter (Air India Express AI-882)</h3>
+                <span class="badge badge-success">BEST OPTION</span>
+                <span class="badge badge-recovery">Score 95/100</span>
               </div>
-              <div>
-                <div class="metric-unit-label">Recovery Score</div>
-                <div class="metric-unit-val" style="color: var(--primary-indigo);">95 / 100</div>
-              </div>
-              <div>
-                <div class="metric-unit-label">Departure</div>
-                <div class="metric-unit-val">02:30 PM</div>
-              </div>
-              <div>
-                <div class="metric-unit-label">Goa Arrival</div>
-                <div class="metric-unit-val">04:15 PM</div>
-              </div>
-              <div>
-                <div class="metric-unit-label">Cost / Fare</div>
-                <div class="metric-unit-val">$118 / ₹9,800</div>
-              </div>
-              <div>
-                <div class="metric-unit-label">Transfers</div>
-                <div class="metric-unit-val">1 Quick Transfer</div>
+              <p style="font-size: 0.875rem; color: var(--text-muted); margin-top: 0.35rem;">
+                Station-to-Airport Express cab + Direct Flight AI-882 to Goa Dabolim. Arrives at 16:15 PM today (Net delay: 45m).
+              </p>
+              <div style="display: flex; gap: 1.25rem; margin-top: 0.65rem; font-size: 0.825rem; color: var(--text-sub); font-weight: 600;">
+                <span>⏱ Duration: 2h 45m</span>
+                <span>🔀 Transfers: 1 (Cab)</span>
+                <span>💰 Net Fare: +₹2,850</span>
+                <span>🏨 Hotel: 100% Preserved</span>
               </div>
             </div>
-
-            <p class="plan-impact-summary">
-              <b>Itinerary Impact:</b> Arrives in Goa by 04:15 PM. Hotel check-in preserved without late fee. All evening plans and next morning's trek intact.
-            </p>
           </div>
-
-          <button class="btn btn-recovery" style="width: 100%;" onclick="applyPlan('The Sprinter')">
-            Select &amp; Apply Recommendation
-          </button>
+          <button class="btn btn-recovery" onclick="applyPlan('The Sprinter')">Apply Plan</button>
         </div>
 
-        <!-- Plan 2: Direct Air Shuttle (Flight) -->
-        <div class="recovery-card" data-mode="flight" id="plan-card-2">
-          <div>
-            <div class="plan-mode-pill pill-mode-flight">✈ Direct Flight Standby</div>
-            <div class="plan-name-header">Direct Air Shuttle</div>
-            <div class="plan-sequence-tag">
-              <span>🚕 Station Cab</span>
-              <span>&rarr;</span>
-              <span>✈️ Flight 6E-409 (IndiGo)</span>
+        <!-- Option 2: Flight (Direct Air Shuttle) -->
+        <div class="recovery-card" data-mode="flight">
+          <div style="display: flex; align-items: center; gap: 1.25rem;">
+            <div style="width: 52px; height: 52px; border-radius: 14px; background: rgba(79, 70, 229, 0.12); color: var(--primary-indigo); display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">
+              ✈️
             </div>
-
-            <div class="plan-metrics-table">
-              <div>
-                <div class="metric-unit-label">Total Delay</div>
-                <div class="metric-unit-val" style="color: var(--success-solid);">+75 mins</div>
+            <div>
+              <div style="display: flex; align-items: center; gap: 0.65rem;">
+                <h3 style="font-size: 1.15rem; font-weight: 800;">Direct Air Shuttle (IndiGo 6E-409 via PNQ)</h3>
+                <span class="badge badge-recovery">FASTEST</span>
+                <span class="badge badge-recovery">Score 92/100</span>
               </div>
-              <div>
-                <div class="metric-unit-label">Recovery Score</div>
-                <div class="metric-unit-val">91 / 100</div>
-              </div>
-              <div>
-                <div class="metric-unit-label">Departure</div>
-                <div class="metric-unit-val">03:45 PM</div>
-              </div>
-              <div>
-                <div class="metric-unit-label">Goa Arrival</div>
-                <div class="metric-unit-val">05:10 PM</div>
-              </div>
-              <div>
-                <div class="metric-unit-label">Cost / Fare</div>
-                <div class="metric-unit-val">$96 / ₹7,999</div>
-              </div>
-              <div>
-                <div class="metric-unit-label">Transfers</div>
-                <div class="metric-unit-val">1 Transfer</div>
+              <p style="font-size: 0.875rem; color: var(--text-muted); margin-top: 0.35rem;">
+                Board direct IndiGo flight from Pune Airport to Goa Mopa. Direct same-day arrival by 17:10 PM.
+              </p>
+              <div style="display: flex; gap: 1.25rem; margin-top: 0.65rem; font-size: 0.825rem; color: var(--text-sub); font-weight: 600;">
+                <span>⏱ Duration: 1h 25m</span>
+                <span>🔀 Transfers: 0</span>
+                <span>💰 Net Fare: +₹3,200</span>
               </div>
             </div>
-
-            <p class="plan-impact-summary">
-              <b>Itinerary Impact:</b> Direct connection from Pune Airport to MOPA Goa. Generous 1h 45m transit buffer at Pune Station.
-            </p>
           </div>
-
-          <button class="btn btn-outline" style="width: 100%;" onclick="applyPlan('Direct Air Shuttle')">
-            Select This Plan
-          </button>
+          <button class="btn btn-recovery" onclick="applyPlan('Direct Air Shuttle')">Apply Plan</button>
         </div>
 
-        <!-- Plan 3: The Rail Express (Train) -->
-        <div class="recovery-card" data-mode="train" id="plan-card-3">
-          <div>
-            <div class="plan-mode-pill pill-mode-train">🚆 Direct High-Speed Rail</div>
-            <div class="plan-name-header">The Rail Express</div>
-            <div class="plan-sequence-tag">
-              <span>🚆 Tejas Express 22119</span>
+        <!-- Option 3: Train (The Rail Express) -->
+        <div class="recovery-card" data-mode="train">
+          <div style="display: flex; align-items: center; gap: 1.25rem;">
+            <div style="width: 52px; height: 52px; border-radius: 14px; background: rgba(16, 185, 129, 0.12); color: var(--success-solid); display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">
+              🚆
             </div>
-
-            <div class="plan-metrics-table">
-              <div>
-                <div class="metric-unit-label">Total Delay</div>
-                <div class="metric-unit-val" style="color: var(--warning-solid);">+130 mins</div>
+            <div>
+              <div style="display: flex; align-items: center; gap: 0.65rem;">
+                <h3 style="font-size: 1.15rem; font-weight: 800;">The Rail Express (Tejas Express 22119)</h3>
+                <span class="badge badge-success">MOST RELIABLE</span>
+                <span class="badge badge-recovery">Score 88/100</span>
               </div>
-              <div>
-                <div class="metric-unit-label">Recovery Score</div>
-                <div class="metric-unit-val">90 / 100</div>
-              </div>
-              <div>
-                <div class="metric-unit-label">Departure</div>
-                <div class="metric-unit-val">02:10 PM</div>
-              </div>
-              <div>
-                <div class="metric-unit-label">Goa Arrival</div>
-                <div class="metric-unit-val">07:45 PM</div>
-              </div>
-              <div>
-                <div class="metric-unit-label">Cost / Fare</div>
-                <div class="metric-unit-val">$42 / ₹3,450</div>
-              </div>
-              <div>
-                <div class="metric-unit-label">Transfers</div>
-                <div class="metric-unit-val">0 (Direct Train)</div>
+              <p style="font-size: 0.875rem; color: var(--text-muted); margin-top: 0.35rem;">
+                Transfer to Vande Bharat / Tejas Superfast rail directly to Madgaon Junction. Zero road congestion risk.
+              </p>
+              <div style="display: flex; gap: 1.25rem; margin-top: 0.65rem; font-size: 0.825rem; color: var(--text-sub); font-weight: 600;">
+                <span>⏱ Duration: 5h 35m</span>
+                <span>🔀 Transfers: 1</span>
+                <span>💰 Net Fare: +₹850</span>
               </div>
             </div>
-
-            <p class="plan-impact-summary">
-              <b>Itinerary Impact:</b> Zero mode transfers. Tejas Executive Chair Car boarded right at Pune Junction Platform 1. Arrives in time for dinner.
-            </p>
           </div>
-
-          <button class="btn btn-outline" style="width: 100%;" onclick="applyPlan('The Rail Express')">
-            Select This Plan
-          </button>
+          <button class="btn btn-recovery" onclick="applyPlan('The Rail Express')">Apply Plan</button>
         </div>
 
-        <!-- Plan 4: The Optimal (Train + Bus) -->
-        <div class="recovery-card" data-mode="train,bus" id="plan-card-4">
-          <div>
-            <div class="plan-mode-pill pill-mode-multi">🚆+🚌 Rail &amp; Sleeper Bus</div>
-            <div class="plan-name-header">The Optimal</div>
-            <div class="plan-sequence-tag">
-              <span>🚆 Vande Bharat</span>
-              <span>&rarr;</span>
-              <span>🚌 Luxury Sleeper Bus</span>
+        <!-- Option 4: Train + Bus Combo (The Optimal) -->
+        <div class="recovery-card" data-mode="train,bus">
+          <div style="display: flex; align-items: center; gap: 1.25rem;">
+            <div style="width: 52px; height: 52px; border-radius: 14px; background: rgba(245, 158, 11, 0.12); color: var(--warning-solid); display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">
+              🚆🚌
             </div>
-
-            <div class="plan-metrics-table">
-              <div>
-                <div class="metric-unit-label">Total Delay</div>
-                <div class="metric-unit-val" style="color: var(--warning-solid);">+180 mins</div>
+            <div>
+              <div style="display: flex; align-items: center; gap: 0.65rem;">
+                <h3 style="font-size: 1.15rem; font-weight: 800;">The Optimal (Vande Bharat + Volvo Sleeper)</h3>
+                <span class="badge badge-warning">BALANCED VALUE</span>
+                <span class="badge badge-recovery">Score 82/100</span>
               </div>
-              <div>
-                <div class="metric-unit-label">Recovery Score</div>
-                <div class="metric-unit-val">89 / 100</div>
-              </div>
-              <div>
-                <div class="metric-unit-label">Departure</div>
-                <div class="metric-unit-val">03:15 PM</div>
-              </div>
-              <div>
-                <div class="metric-unit-label">Goa Arrival</div>
-                <div class="metric-unit-val">08:30 PM</div>
-              </div>
-              <div>
-                <div class="metric-unit-label">Cost / Fare</div>
-                <div class="metric-unit-val">$48 / ₹3,950</div>
-              </div>
-              <div>
-                <div class="metric-unit-label">Transfers</div>
-                <div class="metric-unit-val">1 Hub Transfer</div>
+              <p style="font-size: 0.875rem; color: var(--text-muted); margin-top: 0.35rem;">
+                Arrive in Pune via Vande Bharat, then board the 20:00 PM IntrCity Volvo sleeper bus to Panaji.
+              </p>
+              <div style="display: flex; gap: 1.25rem; margin-top: 0.65rem; font-size: 0.825rem; color: var(--text-sub); font-weight: 600;">
+                <span>⏱ Duration: 8h 30m</span>
+                <span>🔀 Transfers: 1</span>
+                <span>💰 Net Fare: +₹450</span>
               </div>
             </div>
-
-            <p class="plan-impact-summary">
-              <b>Itinerary Impact:</b> Arrives late evening. Autonomous hotel hold protocol notified Radisson front desk. Room held successfully.
-            </p>
           </div>
-
-          <button class="btn btn-outline" style="width: 100%;" onclick="applyPlan('The Optimal')">
-            Select This Plan
-          </button>
+          <button class="btn btn-recovery" onclick="applyPlan('The Optimal')">Apply Plan</button>
         </div>
 
-        <!-- Plan 5: The Economical (Bus) -->
-        <div class="recovery-card" data-mode="bus" id="plan-card-5">
-          <div>
-            <div class="plan-mode-pill pill-mode-bus">🚌 Direct AC Bus</div>
-            <div class="plan-name-header">The Economical</div>
-            <div class="plan-sequence-tag">
-              <span>🚌 Direct Sleeper SmartBus</span>
+        <!-- Option 5: Bus (The Economical) -->
+        <div class="recovery-card" data-mode="bus">
+          <div style="display: flex; align-items: center; gap: 1.25rem;">
+            <div style="width: 52px; height: 52px; border-radius: 14px; background: rgba(59, 130, 246, 0.12); color: #2563eb; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">
+              🚌
             </div>
-
-            <div class="plan-metrics-table">
-              <div>
-                <div class="metric-unit-label">Total Delay</div>
-                <div class="metric-unit-val" style="color: var(--text-muted);">+290 mins</div>
+            <div>
+              <div style="display: flex; align-items: center; gap: 0.65rem;">
+                <h3 style="font-size: 1.15rem; font-weight: 800;">The Economical (VRL Multi-Axle Sleeper)</h3>
+                <span class="badge badge-success">CHEAPEST</span>
+                <span class="badge badge-recovery">Score 76/100</span>
               </div>
-              <div>
-                <div class="metric-unit-label">Recovery Score</div>
-                <div class="metric-unit-val">81 / 100</div>
-              </div>
-              <div>
-                <div class="metric-unit-label">Departure</div>
-                <div class="metric-unit-val">04:00 PM</div>
-              </div>
-              <div>
-                <div class="metric-unit-label">Goa Arrival</div>
-                <div class="metric-unit-val">11:15 PM</div>
-              </div>
-              <div>
-                <div class="metric-unit-label">Cost / Fare</div>
-                <div class="metric-unit-val">$24 / ₹1,999</div>
-              </div>
-              <div>
-                <div class="metric-unit-label">Transfers</div>
-                <div class="metric-unit-val">0 (Direct)</div>
+              <p style="font-size: 0.875rem; color: var(--text-muted); margin-top: 0.35rem;">
+                Overnight Scania AC sleeper coach departing Pune Swargate at 21:30 PM. Arrives at 07:45 AM tomorrow.
+              </p>
+              <div style="display: flex; gap: 1.25rem; margin-top: 0.65rem; font-size: 0.825rem; color: var(--text-sub); font-weight: 600;">
+                <span>⏱ Duration: 10h 15m</span>
+                <span>🔀 Transfers: 1</span>
+                <span>💰 Net Fare: -₹150 (Refund)</span>
               </div>
             </div>
-
-            <p class="plan-impact-summary">
-              <b>Itinerary Impact:</b> Minimal out-of-pocket expense. Arrives near midnight; dinner forfeited but hotel check-in protected.
-            </p>
           </div>
-
-          <button class="btn btn-outline" style="width: 100%;" onclick="applyPlan('The Economical')">
-            Select This Plan
-          </button>
+          <button class="btn btn-recovery" onclick="applyPlan('The Economical')">Apply Plan</button>
         </div>
-
-        <!-- Empty Filter State Fallback -->
-        <div class="empty-filter-state" id="empty-state">
-          <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">🔍</div>
-          <h3 style="font-size: 1.15rem; font-weight: 800; color: var(--text-main);">No Alternatives Found</h3>
-          <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0.35rem 0 1rem 0;">
-            No recovery routes match the selected filter.
-          </p>
-          <button class="btn btn-recovery" onclick="filterRecoveryMode('all', document.querySelector('.mode-tab-btn[data-filter=\"all\"]'))">
-            Show All Alternatives
-          </button>
-        </div>
-
       </div>
 
-      <!-- AI Explanation Compact Panel -->
-      <div class="ai-explanation-panel">
-        <div class="ai-brain-icon">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M12 2a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2 2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"></path>
-            <rect x="4" y="8" width="16" height="12" rx="2"></rect>
-          </svg>
-        </div>
-        <div style="flex: 1;">
-          <div class="ai-explanation-title">Why "The Sprinter" is Recommended?</div>
-          <ul class="ai-explanation-list">
-            <li>
-              <span class="check-bullet">✓</span>
-              <span><b>Itinerary Preservation:</b> Arriving at 04:15 PM keeps your check-in and evening plans completely intact.</span>
-            </li>
-            <li>
-              <span class="check-bullet">✓</span>
-              <span><b>Downstream Value Protection:</b> Prevents $420 hotel forfeiture and protects tomorrow morning's non-refundable trek.</span>
-            </li>
-            <li>
-              <span class="check-bullet">✓</span>
-              <span><b>Minimal Trade-Off:</b> Higher initial airfare ($118) is offset by DGCA statutory delay claim against the railroad ($120).</span>
-            </li>
-            <li>
-              <span class="check-bullet">✓</span>
-              <span><b>Comfort Margin:</b> 50-minute dedicated cab ensures smooth transit from Pune station to PNQ airport gate.</span>
-            </li>
-          </ul>
-        </div>
+      <div id="empty-state" style="display: none; text-align: center; padding: 3rem; background: var(--glass-bg); border-radius: var(--radius-lg); border: 1px solid var(--glass-border);">
+        <p style="font-size: 1.1rem; font-weight: 700; color: var(--text-muted);">No alternatives found for this mode filter.</p>
       </div>
     </section>
 
     <!-- ===========================================================
-         SCREEN 4: UPDATED ITINERARY (POST-RECOVERY RESOLVED)
+         SCREEN 6: UPDATED ROUTE
     =========================================================== -->
     <section id="screen-updated-itinerary" class="screen-view">
-      <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
         <div>
-          <div style="display: flex; align-items: center; gap: 0.65rem;">
-            <h1 style="font-size: 1.6rem; font-weight: 800; color: var(--primary);">Updated Journey: Mumbai to Goa</h1>
-            <span class="badge badge-success">✓ Disruption Resolved</span>
-          </div>
+          <h1 style="font-size: 1.6rem; font-weight: 800; color: var(--primary);">Resolved Journey Route</h1>
           <p style="font-size: 0.9rem; color: var(--text-muted); margin-top: 0.2rem;">
-            Replacement route active. All downstream reservations held and confirmed.
+            Itinerary successfully recovered by TravelShield Engine. All downstream hotel &amp; activity reservations protected.
           </p>
         </div>
-
-        <button class="btn btn-outline" onclick="showScreen('dashboard')">
-          &larr; Back to Dashboard
-        </button>
+        <span class="badge badge-success">✓ 100% RECOVERED</span>
       </div>
 
       <div class="card">
         <div class="timeline-container">
-          <!-- Leg 1: Train Disrupted but Managed -->
+          <!-- Step 1: Mumbai -->
           <div class="timeline-step">
-            <div class="timeline-node-icon warning">🚆</div>
+            <div class="timeline-node-icon success">📍</div>
             <div class="timeline-card">
               <div class="timeline-card-header">
-                <span class="timeline-time">06:30 AM &middot; In Transit</span>
-                <span class="badge badge-warning">Delayed (+240m)</span>
+                <span style="font-size: 0.8rem; font-weight: 800; color: var(--text-sub);">06:00 AM &middot; ORIGIN</span>
+                <span class="badge badge-success">Completed</span>
               </div>
-              <div class="timeline-title">Train 12127 (Pragati Superfast Express)</div>
-              <div class="timeline-meta">CSMT Mumbai &rarr; Pune Jn &middot; Estimated arrival: 01:50 PM</div>
+              <div style="font-size: 1.05rem; font-weight: 800;">Mumbai (CSMT Station)</div>
+              <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.25rem;">Departed on scheduled itinerary leg.</div>
             </div>
           </div>
 
-          <!-- Highlighted Replacement Leg 1: Cab Transfer -->
+          <!-- Step 2: Recovered Replacement Leg -->
           <div class="timeline-step">
-            <div class="timeline-node-icon recovery">🚕</div>
+            <div class="timeline-node-icon success">✈️</div>
             <div class="timeline-card recovered">
               <div class="timeline-card-header">
-                <span class="timeline-time">01:55 PM &middot; REPLACEMENT LEG A</span>
-                <span class="badge badge-recovery">✓ Autonomous Cab Hold</span>
+                <span style="font-size: 0.8rem; font-weight: 800; color: var(--primary-indigo);">15:10 PM &middot; RECOVERED AIR SHUTTLE</span>
+                <span class="badge badge-recovery">Booking Confirmed</span>
               </div>
-              <div class="timeline-title">Uber Executive Station-to-Airport Transfer</div>
-              <div class="timeline-meta">Pune Junction &rarr; Pune International Airport (PNQ Terminal 1) &middot; Driver Assigned</div>
-              <div class="disruption-callout blue">
-                <span>🚕</span>
-                <span>Driver waiting at Station Exit Gate 2. ETA to Airport Gate: 25 minutes.</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Highlighted Replacement Leg 2: Flight AI-882 -->
-          <div class="timeline-step">
-            <div class="timeline-node-icon recovery">✈️</div>
-            <div class="timeline-card recovered">
-              <div class="timeline-card-header">
-                <span class="timeline-time">03:10 PM &middot; REPLACEMENT LEG B</span>
-                <span class="badge badge-recovery">✓ Boarding Pass Issued</span>
-              </div>
-              <div class="timeline-title">Flight AI-882 (Air India Express)</div>
-              <div class="timeline-meta">PNQ Pune &rarr; GOI Dabolim Goa &middot; Seat 14A (Window) &middot; Gate 3</div>
-              <div class="disruption-callout blue">
-                <span>✈️</span>
-                <span>Flight is on schedule. Expected touchdown at Goa Dabolim: 04:15 PM (net delay reduced to only 45 mins!).</span>
+              <div style="font-size: 1.05rem; font-weight: 800;">Flight AI-882 (Air India Express Direct)</div>
+              <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.25rem;">BOM &rarr; GOI (Dabolim Airport) &middot; Seat 14A &middot; Gate 3</div>
+              <div class="disruption-callout" style="background: rgba(224, 231, 255, 0.9); color: var(--recovery-text); border: 1px solid rgba(199, 210, 254, 0.8);">
+                <span>✓</span>
+                <span>Bypassed 4-hour train delay! Direct flight arriving in Goa at 16:15 PM today. Net delay reduced to only 45 minutes.</span>
               </div>
             </div>
           </div>
 
-          <!-- Leg 3: Radisson Hotel Protected -->
+          <!-- Step 3: Goa Hotel Preserved -->
           <div class="timeline-step">
             <div class="timeline-node-icon success">🏨</div>
             <div class="timeline-card">
               <div class="timeline-card-header">
-                <span class="timeline-time">05:00 PM &middot; Destination</span>
-                <span class="badge badge-success">✓ Late Check-In Verified</span>
+                <span style="font-size: 0.8rem; font-weight: 800; color: var(--text-sub);">17:30 PM &middot; LODGING PRESERVED</span>
+                <span class="badge badge-success">Check-in Verified</span>
               </div>
-              <div class="timeline-title">Radisson Blu Resort Goa (Cavelossim)</div>
-              <div class="timeline-meta">Hotel confirmed reservation hold until 11:00 PM. No cancellation penalties.</div>
-            </div>
-          </div>
-
-          <!-- Leg 4: Activity Protected -->
-          <div class="timeline-step">
-            <div class="timeline-node-icon success">🎟️</div>
-            <div class="timeline-card">
-              <div class="timeline-card-header">
-                <span class="timeline-time">09:00 AM Next Day &middot; Activity</span>
-                <span class="badge badge-success">✓ Schedule Intact</span>
-              </div>
-              <div class="timeline-title">Dudhsagar Waterfalls Guided Trek</div>
-              <div class="timeline-meta">Pickup scheduled from resort lobby at 09:00 AM.</div>
+              <div style="font-size: 1.05rem; font-weight: 800;">Radisson Blu Resort Goa Cavelossim</div>
+              <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.25rem;">Traveler arrives well ahead of evening dinner. Zero room forfeiture penalty.</div>
             </div>
           </div>
         </div>
@@ -1916,10 +1569,10 @@
     </section>
 
     <!-- ===========================================================
-         SCREEN 5: SETTINGS
+         SCREEN 7: SETTINGS & AUTOMATION
     =========================================================== -->
     <section id="screen-settings" class="screen-view">
-      <div style="margin-bottom: 0.5rem;">
+      <div>
         <h1 style="font-size: 1.6rem; font-weight: 800; color: var(--primary);">System Configuration &amp; Policies</h1>
         <p style="font-size: 0.9rem; color: var(--text-muted); margin-top: 0.2rem;">
           Autonomous rerouting rules, compensation claims, and traveler credentials.
@@ -1929,32 +1582,30 @@
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem;">
         <div class="card">
           <h3 style="font-size: 1.05rem; font-weight: 800; margin-bottom: 1rem;">⚡ Autonomous Recovery Rules</h3>
-          <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.25rem;">
-            When delay duration exceeds threshold, TravelShield autonomous engine triggers instant bookings.
-          </p>
-
-          <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.85rem 0; border-bottom: 1px solid rgba(226, 232, 240, 0.7);">
-            <div>
-              <div style="font-weight: 700; font-size: 0.875rem;">Autonomous Rebooking Protocol</div>
-              <div style="font-size: 0.775rem; color: var(--text-muted);">Triggers when delay > 45 minutes</div>
+          <div style="display: flex; flex-direction: column; gap: 1rem; font-size: 0.875rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.75rem;">
+              <div>
+                <div style="font-weight: 700;">Auto-Rerouting Trigger</div>
+                <div style="font-size: 0.775rem; color: var(--text-muted);">Triggers when delay exceeds 45 minutes</div>
+              </div>
+              <span class="badge badge-success">Enabled</span>
             </div>
-            <span class="badge badge-success">Enabled</span>
-          </div>
 
-          <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.85rem 0; border-bottom: 1px solid rgba(226, 232, 240, 0.7);">
-            <div>
-              <div style="font-weight: 700; font-size: 0.875rem;">Hotel Forfeiture Protection</div>
-              <div style="font-size: 0.775rem; color: var(--text-muted);">Sends automated delayed arrival notice to front desk</div>
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.75rem;">
+              <div>
+                <div style="font-weight: 700;">Hotel Forfeiture Protection</div>
+                <div style="font-size: 0.775rem; color: var(--text-muted);">Automated late check-in notification</div>
+              </div>
+              <span class="badge badge-success">Enabled</span>
             </div>
-            <span class="badge badge-success">Enabled</span>
-          </div>
 
-          <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.85rem 0;">
-            <div>
-              <div style="font-weight: 700; font-size: 0.875rem;">Zero-Click DGCA Rail Claim</div>
-              <div style="font-size: 0.775rem; color: var(--text-muted);">Files delay refund automatically for >3h train delay</div>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <div style="font-weight: 700;">Zero-Click DGCA Rail Claim</div>
+                <div style="font-size: 0.775rem; color: var(--text-muted);">Files delay refund automatically for >3h train delay</div>
+              </div>
+              <span class="badge badge-success">Enabled</span>
             </div>
-            <span class="badge badge-success">Enabled</span>
           </div>
         </div>
 
@@ -1966,7 +1617,7 @@
               <div style="font-weight: 800; font-size: 0.95rem; margin-top: 0.15rem;">Jenny Wilson</div>
             </div>
             <div>
-              <span style="font-size: 0.75rem; font-weight: 800; color: var(--text-sub); text-transform: uppercase;">FREQUENT FLYER / RAIL LOYALTY</span>
+              <span style="font-size: 0.75rem; font-weight: 800; color: var(--text-sub); text-transform: uppercase;">LOYALTY PROGRAM CREDENTIALS</span>
               <div style="font-weight: 600; margin-top: 0.15rem;">Air India Flying Returns: AI-98241098 &middot; IRCTC: 771829</div>
             </div>
             <div>
@@ -1979,7 +1630,7 @@
     </section>
   </main>
 
-  <!-- Toast Notification element -->
+  <!-- Toast Notification -->
   <div id="toast">
     <span id="toast-icon">✓</span>
     <span id="toast-msg">Action performed</span>
@@ -1989,8 +1640,14 @@
        JAVASCRIPT LOGIC
   ============================================================= -->
   <script>
+    let currentSearchMode = 'all';
+    let currentTrackerMode = 'train';
+    let isDemoMode = false;
+
     const screenTitles = {
       'dashboard': 'Dashboard Overview',
+      'plan-journey': 'Plan Multi-Modal Journey',
+      'live-status': 'Live Status Tracker',
       'trip-details': 'Trip Timeline (Mumbai → Goa)',
       'recovery': 'Recovery Command Center',
       'updated-itinerary': 'Resolved Journey Route',
@@ -2009,30 +1666,324 @@
       const breadcrumb = document.getElementById('breadcrumb-current');
       if (breadcrumb) breadcrumb.innerText = screenTitles[screenId] || 'Dashboard';
 
-      // Close mobile drawer if open
-      const sidebar = document.getElementById('sidebar');
-      if (sidebar && sidebar.classList.contains('mobile-open')) {
-        sidebar.classList.remove('mobile-open');
-      }
-
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    function toggleSidebarMobile() {
-      const sidebar = document.getElementById('sidebar');
-      sidebar.classList.toggle('mobile-open');
+    // Initialize dates on page load
+    document.addEventListener('DOMContentLoaded', () => {
+      const today = new Date().toISOString().split('T')[0];
+      const searchDate = document.getElementById('search-date');
+      const trackerDate = document.getElementById('tracker-date');
+      if (searchDate) searchDate.value = today;
+      if (trackerDate) trackerDate.value = today;
+
+      checkSystemMode();
+    });
+
+    // Check system mode from backend API
+    async function checkSystemMode() {
+      try {
+        const res = await fetch('/api/system/mode');
+        if (res.ok) {
+          const data = await res.json();
+          isDemoMode = data.demo_mode;
+          updateModeUI();
+        }
+      } catch (e) {
+        console.warn("Backend mode check:", e);
+      }
+    }
+
+    async function toggleSystemMode() {
+      try {
+        const res = await fetch('/api/system/toggle-mode', { method: 'POST' });
+        if (res.ok) {
+          const data = await res.json();
+          isDemoMode = data.demo_mode;
+          updateModeUI();
+          triggerToast(data.message);
+        }
+      } catch (e) {
+        isDemoMode = !isDemoMode;
+        updateModeUI();
+        triggerToast(`Switched to ${isDemoMode ? 'DEMO' : 'LIVE'} Mode`);
+      }
+    }
+
+    function updateModeUI() {
+      const btn = document.getElementById('mode-toggle-btn');
+      const text = document.getElementById('mode-text');
+      const dot = document.getElementById('mode-indicator-dot');
+      if (!btn || !text || !dot) return;
+
+      if (isDemoMode) {
+        btn.className = 'live-mode-toggle demo';
+        text.innerText = '🟡 DEMO MODE';
+        dot.style.background = '#f59e0b';
+      } else {
+        btn.className = 'live-mode-toggle live';
+        text.innerText = '🟢 LIVE API MODE';
+        dot.style.background = '#10b981';
+      }
+    }
+
+    function refreshLiveTelemetry() {
+      const updatedText = document.getElementById('last-updated-text');
+      const now = new Date();
+      const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      if (updatedText) updatedText.innerText = `LAST UPDATED: ${timeStr}`;
+      triggerToast('Refreshed real-time telemetry from RapidAPI & AOPAY.');
     }
 
     // =============================================================
-    // MODE TABS FILTERING LOGIC
+    // LOCATION AUTOCOMPLETE
+    // =============================================================
+    let autocompleteTimer = null;
+    function handleLocationSearch(inputId, dropdownId) {
+      clearTimeout(autocompleteTimer);
+      const query = document.getElementById(inputId).value.trim();
+      const dropdown = document.getElementById(dropdownId);
+
+      if (!query || query.length < 1) {
+        dropdown.style.display = 'none';
+        return;
+      }
+
+      autocompleteTimer = setTimeout(async () => {
+        try {
+          const res = await fetch(`/api/locations/autocomplete?query=${encodeURIComponent(query)}&mode=${currentSearchMode}`);
+          if (res.ok) {
+            const data = await res.json();
+            renderAutocompleteItems(data.suggestions || [], inputId, dropdownId);
+          }
+        } catch (e) {
+          console.warn("Autocomplete error:", e);
+        }
+      }, 200);
+    }
+
+    function renderAutocompleteItems(items, inputId, dropdownId) {
+      const dropdown = document.getElementById(dropdownId);
+      dropdown.innerHTML = '';
+
+      if (!items || items.length === 0) {
+        dropdown.style.display = 'none';
+        return;
+      }
+
+      dropdown.style.display = 'block';
+      items.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'autocomplete-item';
+        let icon = item.type === 'airport' ? '✈️' : (item.type === 'railway_station' ? '🚆' : '🚌');
+        div.innerHTML = `
+          <div>
+            <div style="font-weight: 700;">${icon} ${item.name}</div>
+            <div style="font-size: 0.75rem; color: var(--text-muted);">${item.city}, ${item.state}</div>
+          </div>
+          <span style="background: #f1f5f9; padding: 0.2rem 0.5rem; border-radius: 4px; font-weight: 800;">${item.code}</span>
+        `;
+        div.onclick = () => {
+          document.getElementById(inputId).value = `${item.city} (${item.code})`;
+          dropdown.style.display = 'none';
+        };
+        dropdown.appendChild(div);
+      });
+    }
+
+    // Close autocomplete when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('#search-from') && !e.target.closest('#dropdown-from')) {
+        const dFrom = document.getElementById('dropdown-from');
+        if (dFrom) dFrom.style.display = 'none';
+      }
+      if (!e.target.closest('#search-to') && !e.target.closest('#dropdown-to')) {
+        const dTo = document.getElementById('dropdown-to');
+        if (dTo) dTo.style.display = 'none';
+      }
+    });
+
+    // =============================================================
+    // UNIFIED SEARCH LOGIC
+    // =============================================================
+    function selectSearchMode(mode) {
+      currentSearchMode = mode;
+      document.querySelectorAll('#screen-plan-journey .mode-tab-btn').forEach(btn => btn.classList.remove('active'));
+      const active = document.getElementById(`search-mode-${mode}`);
+      if (active) active.classList.add('active');
+    }
+
+    async function executeJourneySearch() {
+      const fromVal = document.getElementById('search-from').value.trim();
+      const toVal = document.getElementById('search-to').value.trim();
+      const dateVal = document.getElementById('search-date').value;
+      const sortVal = document.getElementById('search-sort').value;
+
+      triggerToast(`Searching routes from ${fromVal} to ${toVal}...`);
+
+      try {
+        const res = await fetch('/api/search', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            origin: fromVal,
+            destination: toVal,
+            travel_date: dateVal,
+            transport_type: currentSearchMode,
+            sort_by: sortVal
+          })
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          renderSearchResults(data);
+        } else {
+          triggerToast('Error searching routes.');
+        }
+      } catch (e) {
+        console.warn("Search failed:", e);
+        triggerToast('Could not complete search.');
+      }
+    }
+
+    function renderSearchResults(data) {
+      const section = document.getElementById('search-results-section');
+      const container = document.getElementById('search-results-container');
+      const title = document.getElementById('search-results-count-title');
+      const badge = document.getElementById('search-data-source-badge');
+
+      section.style.display = 'block';
+      container.innerHTML = '';
+
+      const results = data.results || [];
+      title.innerText = `${results.length} Available Option${results.length === 1 ? '' : 's'} (${data.origin} → ${data.destination})`;
+      badge.innerText = data.demo_mode ? '🟡 Demo Presentation Data' : '🟢 Live APIs Connected';
+
+      if (results.length === 0) {
+        container.innerHTML = '<div style="grid-column: 1/-1; padding: 2rem; text-align: center; color: var(--text-muted);">No routes available for the selected criteria.</div>';
+        return;
+      }
+
+      results.forEach(r => {
+        const card = document.createElement('div');
+        card.className = 'search-card';
+
+        let icon = r.type === 'flight' ? '✈️' : (r.type === 'train' ? '🚆' : '🚌');
+        let statusBadgeClass = (r.status || '').includes('DELAYED') ? 'badge-danger' : 'badge-success';
+
+        card.innerHTML = `
+          <div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+              <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <span style="font-size: 1.25rem;">${icon}</span>
+                <span style="font-weight: 800; font-size: 1rem;">${r.name || r.vehicle_number}</span>
+              </div>
+              <span class="badge ${statusBadgeClass}">${r.status || 'SCHEDULED'}</span>
+            </div>
+            <div style="font-size: 0.8rem; color: var(--text-sub); margin-bottom: 0.85rem;">
+              Carrier: <b>${r.carrier}</b> &middot; Vehicle: <b>${r.vehicle_number}</b>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(248, 250, 252, 0.8); padding: 0.75rem 1rem; border-radius: 8px;">
+              <div>
+                <div style="font-size: 1.15rem; font-weight: 800;">${r.departure_time || 'N/A'}</div>
+                <div style="font-size: 0.75rem; color: var(--text-muted);">${r.origin}</div>
+              </div>
+              <div style="text-align: center; font-size: 0.75rem; color: var(--text-sub);">
+                <div>${r.duration_minutes ? Math.floor(r.duration_minutes/60)+'h '+(r.duration_minutes%60)+'m' : 'Direct'}</div>
+                <div style="color: var(--primary-indigo); font-weight: 700;">&mdash;&mdash;&gt;</div>
+              </div>
+              <div style="text-align: right;">
+                <div style="font-size: 1.15rem; font-weight: 800;">${r.arrival_time || 'N/A'}</div>
+                <div style="font-size: 0.75rem; color: var(--text-muted);">${r.destination}</div>
+              </div>
+            </div>
+          </div>
+
+          <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #f1f5f9; padding-top: 0.85rem;">
+            <div>
+              <div style="font-size: 1.2rem; font-weight: 800; color: var(--text-main);">₹${r.price.toLocaleString()}</div>
+              <div style="font-size: 0.7rem; color: var(--text-sub);">${r.data_source || 'Live API'}</div>
+            </div>
+            <button class="btn btn-primary" style="padding: 0.45rem 0.95rem; font-size: 0.8rem;" onclick="triggerToast('Option ${r.vehicle_number} selected! Added to monitored itineraries.')">Select</button>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    // =============================================================
+    // LIVE STATUS TRACKER
+    // =============================================================
+    function selectTrackerMode(mode) {
+      currentTrackerMode = mode;
+      document.querySelectorAll('#screen-live-status .mode-tab-btn').forEach(btn => btn.classList.remove('active'));
+      const active = document.getElementById(`tracker-mode-${mode}`);
+      if (active) active.classList.add('active');
+
+      const label = document.getElementById('tracker-input-label');
+      const input = document.getElementById('tracker-number');
+      if (mode === 'train') {
+        label.innerText = 'Train Number (5 Digits)';
+        input.placeholder = 'e.g. 12051, 12127, 22436';
+        input.value = '12127';
+      } else {
+        label.innerText = 'Flight Number (IATA)';
+        input.placeholder = 'e.g. AI-882, 6E-409, QP-1322';
+        input.value = 'AI-882';
+      }
+    }
+
+    async function executeLiveTracker() {
+      const num = document.getElementById('tracker-number').value.trim();
+      const date = document.getElementById('tracker-date').value;
+
+      triggerToast(`Checking live telemetry for ${num}...`);
+
+      const endpoint = currentTrackerMode === 'train' 
+        ? `/api/trains/live-status?train_number=${encodeURIComponent(num)}&date=${date}`
+        : `/api/flights/live-status?flight_number=${encodeURIComponent(num)}&date=${date}`;
+
+      try {
+        const res = await fetch(endpoint);
+        if (res.ok) {
+          const data = await res.json();
+          renderTrackerResult(data);
+        } else {
+          triggerToast('Telemetry lookup failed.');
+        }
+      } catch (e) {
+        console.warn("Tracker error:", e);
+        triggerToast('Could not reach telemetry service.');
+      }
+    }
+
+    function renderTrackerResult(data) {
+      const card = document.getElementById('tracker-result-card');
+      card.style.display = 'block';
+
+      document.getElementById('tracker-icon').innerText = currentTrackerMode === 'train' ? '🚆' : '✈️';
+      document.getElementById('tracker-vehicle-name').innerText = `${data.name} (${data.vehicle_number})`;
+      document.getElementById('tracker-source-meta').innerText = `Data Source: ${data.data_source || 'RapidAPI Live'} · Last Updated: ${data.last_updated || 'Just Now'}`;
+
+      const badge = document.getElementById('tracker-status-badge');
+      badge.innerText = data.status || 'ON TIME';
+      badge.className = `badge ${(data.delay_minutes > 0 ? 'badge-danger' : 'badge-success')}`;
+
+      document.getElementById('tracker-current-pos').innerText = data.current_station || data.terminal || 'En Route';
+      document.getElementById('tracker-platform').innerText = data.platform || data.gate || 'Gate Assigned';
+      document.getElementById('tracker-delay-val').innerText = `${data.delay_minutes || 0} Minutes`;
+      document.getElementById('tracker-cause').innerText = data.disruption_cause || (data.delay_minutes > 0 ? 'Operational Delay' : 'Running on Schedule');
+    }
+
+    // =============================================================
+    // RECOVERY MODE FILTER TABS
     // =============================================================
     let filterDebounce = null;
     function filterRecoveryMode(mode, tabBtn) {
-      // Set active tab visually
       document.querySelectorAll('.mode-tab-btn').forEach(btn => btn.classList.remove('active'));
       if (tabBtn) tabBtn.classList.add('active');
 
-      // AI Thinking state simulation
       const thinkingBar = document.getElementById('ai-thinking-state');
       const thinkingText = document.getElementById('ai-thinking-text');
       const modeNames = { 'all': 'all multimodal', 'flight': 'flight & air transfer', 'train': 'rail & express train', 'bus': 'intercity sleeper bus' };
@@ -2057,7 +2008,6 @@
           }
         });
 
-        // Show/hide empty state
         const emptyState = document.getElementById('empty-state');
         if (visibleCount === 0) {
           emptyState.style.display = 'block';
@@ -2065,7 +2015,6 @@
           emptyState.style.display = 'none';
         }
 
-        // Update Summary Meta & Badges
         const modeLabels = { 'all': 'total multimodal', 'flight': 'flight', 'train': 'train', 'bus': 'bus' };
         const summaryEl = document.getElementById('active-filter-summary');
         if (summaryEl) {
@@ -2078,10 +2027,10 @@
         }
 
         triggerToast(`Filtered to ${visibleCount} ${modeLabels[mode]} option${visibleCount === 1 ? '' : 's'}.`);
-      }, 250);
+      }, 200);
     }
 
-    // Interactive Demo Flow for Judges
+    // Judge Demo Stepper
     function executeDemoStep(stepNumber) {
       document.querySelectorAll('.demo-step-btn').forEach(b => b.classList.remove('current'));
       const btn = document.getElementById(`step-btn-${stepNumber}`);
@@ -2108,7 +2057,7 @@
       setTimeout(() => {
         showScreen('updated-itinerary');
         triggerToast(`✓ Itinerary Updated! Hotel late check-in verified at Radisson Blu.`);
-      }, 750);
+      }, 600);
     }
 
     let toastTimer = null;

@@ -1,96 +1,113 @@
 """
 Location Resolver & Autocomplete Engine for Indian Transport Hubs.
-Resolves user text input (e.g. 'Mumbai', 'Delhi', 'Bengaluru') into:
-- Airport IATA Codes (for AOPAY Flight API /v2/flights/search)
-- Railway Station Codes (for Indian Rail API TrainBetweenStation)
-- Bus City Names (for AOPAY Bus API /v2/bus/search)
+Resolves user text input into:
+- Railway Stations with IRCTC Station Codes (CSMT, NDLS, PUNE, etc.)
+- Airports with IATA Codes (BOM, DEL, PNQ, BLR, GOI, GOX, etc.)
+- Bus Terminals & Hubs (Swargate, Mapusa, Borivali, Majestic, etc.)
 """
 
 from typing import List, Dict, Any, Optional
 
-# Database of Indian commercial airports, major railway stations, and cities
 INDIAN_HUB_DATABASE = [
     # Mumbai
     {"name": "Mumbai (Chhatrapati Shivaji Maharaj International Airport)", "city": "Mumbai", "code": "BOM", "type": "airport", "state": "Maharashtra"},
-    {"name": "Mumbai CST (Chhatrapati Shivaji Maharaj Terminus)", "city": "Mumbai", "code": "CSMT", "type": "railway_station", "state": "Maharashtra"},
-    {"name": "Mumbai Central", "city": "Mumbai", "code": "MMCT", "type": "railway_station", "state": "Maharashtra"},
-    {"name": "Lokmanya Tilak Terminus", "city": "Mumbai", "code": "LTT", "type": "railway_station", "state": "Maharashtra"},
+    {"name": "Chhatrapati Shivaji Maharaj Terminus (CSMT)", "city": "Mumbai", "code": "CSMT", "type": "railway_station", "state": "Maharashtra"},
+    {"name": "Mumbai Central (MMCT)", "city": "Mumbai", "code": "MMCT", "type": "railway_station", "state": "Maharashtra"},
+    {"name": "Lokmanya Tilak Terminus (LTT)", "city": "Mumbai", "code": "LTT", "type": "railway_station", "state": "Maharashtra"},
+    {"name": "Borivali Station & Bus Terminal", "city": "Mumbai", "code": "BVI", "type": "bus_station", "state": "Maharashtra"},
+    {"name": "Thane Station", "city": "Mumbai", "code": "TNA", "type": "railway_station", "state": "Maharashtra"},
+    {"name": "Panvel Junction", "city": "Mumbai", "code": "PNVL", "type": "railway_station", "state": "Maharashtra"},
     {"name": "Mumbai", "city": "Mumbai", "code": "BOM", "type": "city", "state": "Maharashtra"},
 
-    # Delhi
-    {"name": "Delhi (Indira Gandhi International Airport)", "city": "Delhi", "code": "DEL", "type": "airport", "state": "Delhi"},
-    {"name": "New Delhi Railway Station", "city": "Delhi", "code": "NDLS", "type": "railway_station", "state": "Delhi"},
-    {"name": "Hazrat Nizamuddin", "city": "Delhi", "code": "NZM", "type": "railway_station", "state": "Delhi"},
-    {"name": "Old Delhi Junction", "city": "Delhi", "code": "DLI", "type": "railway_station", "state": "Delhi"},
-    {"name": "Anand Vihar Terminal", "city": "Delhi", "code": "ANVT", "type": "railway_station", "state": "Delhi"},
-    {"name": "Delhi", "city": "Delhi", "code": "DEL", "type": "city", "state": "Delhi"},
-
-    # Bengaluru
-    {"name": "Bengaluru (Kempegowda International Airport)", "city": "Bengaluru", "code": "BLR", "type": "airport", "state": "Karnataka"},
-    {"name": "KSR Bengaluru City Junction", "city": "Bengaluru", "code": "SBC", "type": "railway_station", "state": "Karnataka"},
-    {"name": "Yesvantpur Junction", "city": "Bengaluru", "code": "YPR", "type": "railway_station", "state": "Karnataka"},
-    {"name": "Bengaluru", "city": "Bengaluru", "code": "BLR", "type": "city", "state": "Karnataka"},
-
-    # Hyderabad
-    {"name": "Hyderabad (Rajiv Gandhi International Airport)", "city": "Hyderabad", "code": "HYD", "type": "airport", "state": "Telangana"},
-    {"name": "Secunderabad Junction", "city": "Hyderabad", "code": "SC", "type": "railway_station", "state": "Telangana"},
-    {"name": "Hyderabad Deccan Nampally", "city": "Hyderabad", "code": "HYB", "type": "railway_station", "state": "Telangana"},
-    {"name": "Kacheguda", "city": "Hyderabad", "code": "KCG", "type": "railway_station", "state": "Telangana"},
-    {"name": "Hyderabad", "city": "Hyderabad", "code": "HYD", "type": "city", "state": "Telangana"},
-
-    # Chennai
-    {"name": "Chennai (Chennai International Airport)", "city": "Chennai", "code": "MAA", "type": "airport", "state": "Tamil Nadu"},
-    {"name": "Puratchi Thalaivar Dr. M.G. Ramachandran Central (Chennai Central)", "city": "Chennai", "code": "MAS", "type": "railway_station", "state": "Tamil Nadu"},
-    {"name": "Chennai Egmore", "city": "Chennai", "code": "MS", "type": "railway_station", "state": "Tamil Nadu"},
-    {"name": "Chennai", "city": "Chennai", "code": "MAA", "type": "city", "state": "Tamil Nadu"},
-
-    # Kolkata
-    {"name": "Kolkata (Netaji Subhash Chandra Bose International Airport)", "city": "Kolkata", "code": "CCU", "type": "airport", "state": "West Bengal"},
-    {"name": "Howrah Junction", "city": "Kolkata", "code": "HWH", "type": "railway_station", "state": "West Bengal"},
-    {"name": "Sealdah", "city": "Kolkata", "code": "SDAH", "type": "railway_station", "state": "West Bengal"},
-    {"name": "Kolkata Shalimar", "city": "Kolkata", "code": "SHM", "type": "railway_station", "state": "West Bengal"},
-    {"name": "Kolkata", "city": "Kolkata", "code": "CCU", "type": "city", "state": "West Bengal"},
-
     # Pune
-    {"name": "Pune (Pune International Airport)", "city": "Pune", "code": "PNQ", "type": "airport", "state": "Maharashtra"},
-    {"name": "Pune Junction", "city": "Pune", "code": "PUNE", "type": "railway_station", "state": "Maharashtra"},
+    {"name": "Pune International Airport (PNQ)", "city": "Pune", "code": "PNQ", "type": "airport", "state": "Maharashtra"},
+    {"name": "Pune Junction (PUNE)", "city": "Pune", "code": "PUNE", "type": "railway_station", "state": "Maharashtra"},
+    {"name": "Swargate Intercity Bus Terminal", "city": "Pune", "code": "SWG", "type": "bus_station", "state": "Maharashtra"},
+    {"name": "Shivajinagar Bus & Rail Hub", "city": "Pune", "code": "SVJR", "type": "bus_station", "state": "Maharashtra"},
     {"name": "Pune", "city": "Pune", "code": "PNQ", "type": "city", "state": "Maharashtra"},
 
     # Goa
-    {"name": "Goa (Dabolim Airport)", "city": "Goa", "code": "GOI", "type": "airport", "state": "Goa"},
-    {"name": "Goa (Manohar International Airport Mopa)", "city": "Goa", "code": "GOX", "type": "airport", "state": "Goa"},
-    {"name": "Madgaon Junction", "city": "Goa", "code": "MAO", "type": "railway_station", "state": "Goa"},
-    {"name": "Vasco da Gama", "city": "Goa", "code": "VSG", "type": "railway_station", "state": "Goa"},
+    {"name": "Goa Dabolim Airport (GOI)", "city": "Goa", "code": "GOI", "type": "airport", "state": "Goa"},
+    {"name": "Manohar International Airport Mopa (GOX)", "city": "Goa", "code": "GOX", "type": "airport", "state": "Goa"},
+    {"name": "Madgaon Junction (MAO)", "city": "Goa", "code": "MAO", "type": "railway_station", "state": "Goa"},
+    {"name": "Thivim Railway Station (THVM)", "city": "Goa", "code": "THVM", "type": "railway_station", "state": "Goa"},
+    {"name": "Vasco da Gama (VSG)", "city": "Goa", "code": "VSG", "type": "railway_station", "state": "Goa"},
+    {"name": "Panaji Central Bus Stand", "city": "Goa", "code": "PAN", "type": "bus_station", "state": "Goa"},
+    {"name": "Mapusa Interstate Bus Stand", "city": "Goa", "code": "MAP", "type": "bus_station", "state": "Goa"},
     {"name": "Goa", "city": "Goa", "code": "GOI", "type": "city", "state": "Goa"},
 
+    # Delhi
+    {"name": "Indira Gandhi International Airport (DEL)", "city": "Delhi", "code": "DEL", "type": "airport", "state": "Delhi"},
+    {"name": "New Delhi Railway Station (NDLS)", "city": "Delhi", "code": "NDLS", "type": "railway_station", "state": "Delhi"},
+    {"name": "Hazrat Nizamuddin (NZM)", "city": "Delhi", "code": "NZM", "type": "railway_station", "state": "Delhi"},
+    {"name": "Anand Vihar ISBT & Rail Terminal", "city": "Delhi", "code": "ANVT", "type": "bus_station", "state": "Delhi"},
+    {"name": "Kashmere Gate ISBT", "city": "Delhi", "code": "ISBT", "type": "bus_station", "state": "Delhi"},
+    {"name": "Delhi", "city": "Delhi", "code": "DEL", "type": "city", "state": "Delhi"},
+
+    # Bengaluru
+    {"name": "Kempegowda International Airport (BLR)", "city": "Bengaluru", "code": "BLR", "type": "airport", "state": "Karnataka"},
+    {"name": "KSR Bengaluru City Junction (SBC)", "city": "Bengaluru", "code": "SBC", "type": "railway_station", "state": "Karnataka"},
+    {"name": "Yesvantpur Junction (YPR)", "city": "Bengaluru", "code": "YPR", "type": "railway_station", "state": "Karnataka"},
+    {"name": "Majestic KSRTC Intercity Bus Station", "city": "Bengaluru", "code": "MAJ", "type": "bus_station", "state": "Karnataka"},
+    {"name": "Bengaluru", "city": "Bengaluru", "code": "BLR", "type": "city", "state": "Karnataka"},
+
+    # Hyderabad
+    {"name": "Rajiv Gandhi International Airport (HYD)", "city": "Hyderabad", "code": "HYD", "type": "airport", "state": "Telangana"},
+    {"name": "Secunderabad Junction (SC)", "city": "Hyderabad", "code": "SC", "type": "railway_station", "state": "Telangana"},
+    {"name": "Hyderabad Deccan Nampally (HYB)", "city": "Hyderabad", "code": "HYB", "type": "railway_station", "state": "Telangana"},
+    {"name": "MGBS Central Bus Station", "city": "Hyderabad", "code": "MGBS", "type": "bus_station", "state": "Telangana"},
+    {"name": "Hyderabad", "city": "Hyderabad", "code": "HYD", "type": "city", "state": "Telangana"},
+
+    # Chennai
+    {"name": "Chennai International Airport (MAA)", "city": "Chennai", "code": "MAA", "type": "airport", "state": "Tamil Nadu"},
+    {"name": "Puratchi Thalaivar MGR Central (MAS)", "city": "Chennai", "code": "MAS", "type": "railway_station", "state": "Tamil Nadu"},
+    {"name": "Chennai Egmore (MS)", "city": "Chennai", "code": "MS", "type": "railway_station", "state": "Tamil Nadu"},
+    {"name": "CMBT Koyambedu Bus Terminal", "city": "Chennai", "code": "CMBT", "type": "bus_station", "state": "Tamil Nadu"},
+    {"name": "Chennai", "city": "Chennai", "code": "MAA", "type": "city", "state": "Tamil Nadu"},
+
+    # Kolkata
+    {"name": "Netaji Subhash Chandra Bose Airport (CCU)", "city": "Kolkata", "code": "CCU", "type": "airport", "state": "West Bengal"},
+    {"name": "Howrah Junction (HWH)", "city": "Kolkata", "code": "HWH", "type": "railway_station", "state": "West Bengal"},
+    {"name": "Sealdah (SDAH)", "city": "Kolkata", "code": "SDAH", "type": "railway_station", "state": "West Bengal"},
+    {"name": "Esplanade Bus Terminus", "city": "Kolkata", "code": "ESP", "type": "bus_station", "state": "West Bengal"},
+    {"name": "Kolkata", "city": "Kolkata", "code": "CCU", "type": "city", "state": "West Bengal"},
+
     # Ahmedabad
-    {"name": "Ahmedabad (Sardar Vallabhbhai Patel International Airport)", "city": "Ahmedabad", "code": "AMD", "type": "airport", "state": "Gujarat"},
-    {"name": "Ahmedabad Junction (Kalupur)", "city": "Ahmedabad", "code": "ADI", "type": "railway_station", "state": "Gujarat"},
+    {"name": "Sardar Vallabhbhai Patel Airport (AMD)", "city": "Ahmedabad", "code": "AMD", "type": "airport", "state": "Gujarat"},
+    {"name": "Ahmedabad Junction (ADI)", "city": "Ahmedabad", "code": "ADI", "type": "railway_station", "state": "Gujarat"},
+    {"name": "Geeta Mandir Central Bus Stand", "city": "Ahmedabad", "code": "GMD", "type": "bus_station", "state": "Gujarat"},
     {"name": "Ahmedabad", "city": "Ahmedabad", "code": "AMD", "type": "city", "state": "Gujarat"},
 
     # Jaipur
-    {"name": "Jaipur (Jaipur International Airport)", "city": "Jaipur", "code": "JAI", "type": "airport", "state": "Rajasthan"},
-    {"name": "Jaipur Junction", "city": "Jaipur", "code": "JP", "type": "railway_station", "state": "Rajasthan"},
+    {"name": "Jaipur International Airport (JAI)", "city": "Jaipur", "code": "JAI", "type": "airport", "state": "Rajasthan"},
+    {"name": "Jaipur Junction (JP)", "city": "Jaipur", "code": "JP", "type": "railway_station", "state": "Rajasthan"},
+    {"name": "Sindhi Camp Central Bus Stand", "city": "Jaipur", "code": "SCMP", "type": "bus_station", "state": "Rajasthan"},
     {"name": "Jaipur", "city": "Jaipur", "code": "JAI", "type": "city", "state": "Rajasthan"},
-
-    # Kochi / Cochin
-    {"name": "Kochi (Cochin International Airport)", "city": "Kochi", "code": "COK", "type": "airport", "state": "Kerala"},
-    {"name": "Ernakulam Junction (South)", "city": "Kochi", "code": "ERS", "type": "railway_station", "state": "Kerala"},
-    {"name": "Kochi", "city": "Kochi", "code": "COK", "type": "city", "state": "Kerala"},
 ]
+
 
 class LocationResolver:
     @staticmethod
-    def autocomplete(query: str, limit: int = 10) -> List[Dict[str, Any]]:
-        if not query or len(query.strip()) == 0:
-            return INDIAN_HUB_DATABASE[:limit]
+    def autocomplete(query: str, mode: str = "all", limit: int = 10) -> List[Dict[str, Any]]:
+        """Returns matching locations filtered by transport mode."""
+        q = query.lower().strip() if query else ""
+        type_filters = {
+            "train": ["railway_station", "city"],
+            "flight": ["airport", "city"],
+            "bus": ["bus_station", "city"],
+            "all": ["airport", "railway_station", "bus_station", "city"]
+        }
+        allowed_types = type_filters.get(mode.lower(), type_filters["all"])
 
-        q = query.lower().strip()
         matches = []
         for hub in INDIAN_HUB_DATABASE:
-            if (q in hub["name"].lower() or 
+            if hub["type"] not in allowed_types:
+                continue
+            if not q or (
+                q in hub["name"].lower() or 
                 q in hub["city"].lower() or 
-                q == hub["code"].lower()):
+                q == hub["code"].lower()
+            ):
                 matches.append(hub)
                 if len(matches) >= limit:
                     break
@@ -98,50 +115,51 @@ class LocationResolver:
 
     @staticmethod
     def get_iata_code(location_str: str) -> str:
-        """Resolves location string to IATA airport code for Flight APIs"""
-        q = location_str.lower().strip()
-        for hub in INDIAN_HUB_DATABASE:
-            if hub["type"] == "airport" and (q in hub["city"].lower() or q in hub["name"].lower() or q == hub["code"].lower()):
-                return hub["code"]
-        
-        # Default mapping fallbacks if unknown string
-        if "delhi" in q: return "DEL"
-        if "mumbai" in q: return "BOM"
-        if "bengaluru" in q or "bangalore" in q: return "BLR"
-        if "hyderabad" in q: return "HYD"
-        if "chennai" in q: return "MAA"
-        if "kolkata" in q: return "CCU"
-        if "pune" in q: return "PNQ"
-        if "goa" in q: return "GOI"
-        if "ahmedabad" in q: return "AMD"
-        if "jaipur" in q: return "JAI"
-        return "BOM" # fallback
+        loc = location_str.lower()
+        if "bom" in loc or "mumbai" in loc: return "BOM"
+        if "del" in loc or "delhi" in loc: return "DEL"
+        if "blr" in loc or "bengaluru" in loc or "bangalore" in loc: return "BLR"
+        if "hyd" in loc or "hyderabad" in loc: return "HYD"
+        if "maa" in loc or "chennai" in loc: return "MAA"
+        if "ccu" in loc or "kolkata" in loc: return "CCU"
+        if "pnq" in loc or "pune" in loc: return "PNQ"
+        if "gox" in loc or "mopa" in loc: return "GOX"
+        if "goi" in loc or "goa" in loc: return "GOI"
+        if "amd" in loc or "ahmedabad" in loc: return "AMD"
+        if "jai" in loc or "jaipur" in loc: return "JAI"
+        return "BOM"
 
     @staticmethod
     def get_station_code(location_str: str) -> str:
-        """Resolves location string to Railway Station Code for Indian Rail APIs"""
-        q = location_str.lower().strip()
-        for hub in INDIAN_HUB_DATABASE:
-            if hub["type"] == "railway_station" and (q in hub["city"].lower() or q in hub["name"].lower() or q == hub["code"].lower()):
-                return hub["code"]
-
-        if "mumbai" in q: return "CSMT"
-        if "delhi" in q: return "NDLS"
-        if "bengaluru" in q or "bangalore" in q: return "SBC"
-        if "hyderabad" in q: return "SC"
-        if "chennai" in q: return "MAS"
-        if "kolkata" in q: return "HWH"
-        if "pune" in q: return "PUNE"
-        if "goa" in q: return "MAO"
-        if "ahmedabad" in q: return "ADI"
-        if "jaipur" in q: return "JP"
-        return "NDLS"
+        loc = location_str.lower()
+        if "csmt" in loc: return "CSMT"
+        if "mmct" in loc or "mumbai central" in loc: return "MMCT"
+        if "ltt" in loc: return "LTT"
+        if "mumbai" in loc: return "CSMT"
+        if "pune" in loc: return "PUNE"
+        if "ndls" in loc or "new delhi" in loc or "delhi" in loc: return "NDLS"
+        if "nzm" in loc or "nizamuddin" in loc: return "NZM"
+        if "sbc" in loc or "bengaluru" in loc: return "SBC"
+        if "ypr" in loc or "yesvantpur" in loc: return "YPR"
+        if "sc" in loc or "secunderabad" in loc or "hyderabad" in loc: return "SC"
+        if "hyb" in loc: return "HYB"
+        if "mas" in loc or "chennai" in loc: return "MAS"
+        if "hwh" in loc or "howrah" in loc or "kolkata" in loc: return "HWH"
+        if "sdah" in loc or "sealdah" in loc: return "SDAH"
+        if "mao" in loc or "madgaon" in loc or "goa" in loc: return "MAO"
+        if "thvm" in loc or "thivim" in loc: return "THVM"
+        if "vsg" in loc or "vasco" in loc: return "VSG"
+        if "adi" in loc or "ahmedabad" in loc: return "ADI"
+        if "jp" in loc or "jaipur" in loc: return "JP"
+        return "CSMT"
 
     @staticmethod
     def get_city_name(location_str: str) -> str:
-        """Resolves location string to clean City Name for Bus APIs"""
-        q = location_str.lower().strip()
+        loc = location_str.lower()
+        for city in ["Mumbai", "Pune", "Goa", "Delhi", "Bengaluru", "Hyderabad", "Chennai", "Kolkata", "Ahmedabad", "Jaipur"]:
+            if city.lower() in loc:
+                return city
         for hub in INDIAN_HUB_DATABASE:
-            if q in hub["city"].lower() or q in hub["name"].lower() or q == hub["code"].lower():
+            if hub["code"].lower() in loc:
                 return hub["city"]
-        return location_str.title().strip()
+        return location_str.split()[0].replace(",", "").capitalize()

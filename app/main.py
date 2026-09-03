@@ -273,10 +273,51 @@ def get_dashboard_analytics(db: Session = Depends(get_db)):
     engine = DisruptionRecoveryEngine(db)
     return engine.get_dashboard_analytics()
 
+@app.get("/api/trains/live-status")
+def get_train_live_status(train_number: str = Query(..., description="Train number"), date: Optional[str] = None):
+    t_date = datetime.date.today()
+    if date:
+        try:
+            t_date = datetime.datetime.strptime(date, "%Y-%m-%d").date()
+        except Exception:
+            pass
+    return train_adapter.get_live_status(train_number, t_date)
+
+@app.get("/api/flights/live-status")
+def get_flight_live_status(flight_number: str = Query(..., description="Flight number"), date: Optional[str] = None):
+    t_date = datetime.date.today()
+    if date:
+        try:
+            t_date = datetime.datetime.strptime(date, "%Y-%m-%d").date()
+        except Exception:
+            pass
+    return flight_adapter.get_live_status(flight_number, t_date)
+
+@app.get("/api/locations/autocomplete")
+def location_autocomplete(query: str = Query(default=""), mode: str = Query(default="all")):
+    results = LocationResolver.autocomplete(query, mode=mode)
+    return {"query": query, "mode": mode, "results_count": len(results), "suggestions": results}
+
 @app.get("/api/stations/autocomplete")
 def station_autocomplete(query: str = Query(..., min_length=1)):
     results = LocationResolver.autocomplete(query)
     return {"query": query, "results_count": len(results), "suggestions": results}
+
+@app.get("/api/system/mode")
+def get_system_mode():
+    import os
+    is_demo = os.getenv("DEMO_MODE", "false").lower() == "true"
+    return {"demo_mode": is_demo, "live_mode": not is_demo}
+
+@app.post("/api/system/toggle-mode")
+def toggle_system_mode():
+    import os
+    import app.services.transport_adapters as ta
+    current = os.getenv("DEMO_MODE", "false").lower() == "true"
+    new_val = not current
+    os.environ["DEMO_MODE"] = "true" if new_val else "false"
+    ta.DEMO_MODE = new_val
+    return {"demo_mode": new_val, "live_mode": not new_val, "message": f"Switched to {'DEMO' if new_val else 'LIVE'} MODE"}
 
 @app.post("/api/search")
 def multi_modal_search(req: SearchRequest):

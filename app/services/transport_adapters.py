@@ -10,10 +10,31 @@ from app.services.location_resolver import LocationResolver
 # Load environment variables securely from .env
 load_dotenv()
 
-AOPAY_FLIGHT_API_KEY = os.getenv("AOPAY_FLIGHT_API_KEY") or os.getenv("AVIATIONSTACK_API_KEY")
-AOPAY_BUS_API_KEY = os.getenv("AOPAY_BUS_API_KEY") or os.getenv("AOPAY_API_KEY")
-INDIAN_RAIL_API_KEY = os.getenv("INDIAN_RAIL_API_KEY") or os.getenv("TRAIN_API_KEY")
-DEMO_MODE = os.getenv("DEMO_MODE", "true").lower() == "true"
+RAPIDAPI_KEY = os.getenv("RAPIDAPI_KEY")
+RAPIDAPI_HOST_TRAIN = os.getenv("RAPIDAPI_HOST_TRAIN", "indian-railway-irctc.p.rapidapi.com")
+RAPIDAPI_HOST_FLIGHT = os.getenv("RAPIDAPI_HOST_FLIGHT", "aerodatabox.p.rapidapi.com")
+RAPIDAPI_HOST_WEATHER = os.getenv("RAPIDAPI_HOST_WEATHER", "weather-api167.p.rapidapi.com")
+AVIATIONSTACK_API_KEY = os.getenv("AVIATIONSTACK_API_KEY")
+AOPAY_BUS_API_KEY = os.getenv("AOPAY_BUS_API_KEY")
+DEMO_MODE = os.getenv("DEMO_MODE", "false").lower() == "true"
+
+# Cache dictionary to prevent hammering external APIs unnecessarily
+API_CACHE: Dict[str, Dict[str, Any]] = {}
+CACHE_TTL_SECONDS = 300  # 5 minutes cache
+
+def _get_from_cache(cache_key: str) -> Optional[Any]:
+    if cache_key in API_CACHE:
+        entry = API_CACHE[cache_key]
+        if (datetime.datetime.now() - entry["timestamp"]).total_seconds() < CACHE_TTL_SECONDS:
+            return entry["data"]
+    return None
+
+def _save_to_cache(cache_key: str, data: Any):
+    API_CACHE[cache_key] = {
+        "timestamp": datetime.datetime.now(),
+        "data": data
+    }
+
 
 class BaseTransportAdapter(ABC):
     @abstractmethod
@@ -24,85 +45,228 @@ class BaseTransportAdapter(ABC):
     def get_live_status(self, vehicle_number: str, travel_date: datetime.date) -> Dict[str, Any]:
         pass
 
+
 class TrainServiceAdapter(BaseTransportAdapter):
     """
-    Indian Rail API Adapter for TrainBetweenStation, station autocomplete, and live train disruptions.
-    Integrates Cancelled, Rescheduled, Diverted, and Partially Cancelled trains.
+    Production-grade Indian Railway IRCTC API Adapter via RapidAPI.
+    Supports:
+    - Train live running status
+    - Train search between stations
+    - Train schedule and delay metrics
+    - Graceful degradation when offline or unconfigured
     """
     def __init__(self, api_key: Optional[str] = None):
-        self.api_key = api_key or INDIAN_RAIL_API_KEY
-        self.api_base_url = "https://api.indianrail.gov.in/v1" # Standard backend proxy endpoint
+        self.api_key = api_key or RAPIDAPI_KEY
+        self.api_host = RAPIDAPI_HOST_TRAIN
+        self.base_url = f"https://{self.api_host}"
+
+    def get_live_status(self, train_number: str, travel_date: datetime.date) -> Dict[str, Any]:
+        """
+        Queries Indian Railway IRCTC live running status for a given train number and departure date.
+        Endpoint: /api/trains/v1/train/status
+        """
+        clean_num = train_number.strip()
+        date_str = travel_date.strftime("%Y%m%d")
+        cache_key = f"train_status_{clean_num}_{date_str}"
+
+        cached = _get_from_cache(cache_key)
+        if cached:
+            return cached
+
+        # 1. Attempt live RapidAPI request if key is present
+        if self.api_key and not self.api_key.startswith("your_"):
+            try:
+                url = f"{self.base_url}/api/trains/v1/train/status"
+                params = {
+                    "departure_date": date_str,
+                    "isH5": "true",
+                    "client": "web",
+                    "deviceIdentifier": "Mozilla Firefox-138.0.0.0",
+                    "train_number": clean_num
+                }
+                headers = {
+                    "Content-Type": "application/json",
+                    "x-rapid-api": "rapid-api-database",
+                    "x-rapidapi-host": self.api_host,
+                    "x-rapidapi-key": self.api_key
+                }
+                resp = requests.get(url, params=params, headers=headers, timeout=6)
+                if resp.status_code == 200:
+                    data = resp.json()
+                    # Parse standard IRCTC payload
+                    status_info = self._parse_irctc_live_response(data, clean_num, travel_date)
+                    _save_to_cache(cache_key, status_info)
+                    return status_info
+                elif resp.status_code in [401, 403]:
+                    print(f"[TrainServiceAdapter] RapidAPI auth error {resp.status_code}")
+                elif resp.status_code == 429:
+                    print(f"[TrainServiceAdapter] RapidAPI rate limit reached (429)")
+            except Exception as ex:
+                print(f"[TrainServiceAdapter] Live API call exception: {ex}")
+
+        # 2. Check DEMO_MODE fallback
+        if DEMO_MODE:
+            demo_status = self._generate_demo_train_status(clean_num, travel_date)
+            return demo_status
+
+        # 3. Graceful fallback when API is unreachable and DEMO_MODE is false
+        return {
+            "vehicle_number": clean_num,
+            "carrier": "Indian Railways",
+            "name": f"Train {clean_num}",
+            "status": "Live data currently unavailable",
+            "is_live": False,
+            "delay_minutes": 0,
+            "current_station": "Telemetry Offline",
+            "message": "Live railway API service is currently unavailable or unconfigured.",
+            "data_source": "IRCTC RapidAPI (Offline)"
+        }
+
+    def _parse_irctc_live_response(self, data: Dict[str, Any], train_number: str, travel_date: datetime.date) -> Dict[str, Any]:
+        """Maps raw IRCTC RapidAPI JSON into standardized telemetry schema."""
+        train_name = data.get("train_name") or data.get("name") or f"Train {train_number}"
+        delay = data.get("delay_in_minutes") or data.get("delay") or 0
+        current_stn = data.get("current_station_name") or data.get("station_name") or "En Route"
+        is_terminated = data.get("is_terminated", False)
+        is_cancelled = data.get("is_cancelled", False)
+
+        status_str = "CANCELLED" if is_cancelled else ("ON TIME" if delay == 0 else f"DELAYED +{delay}m")
+        return {
+            "vehicle_number": train_number,
+            "carrier": "Indian Railways",
+            "name": train_name,
+            "status": status_str,
+            "is_live": True,
+            "delay_minutes": int(delay),
+            "current_station": current_stn,
+            "is_terminated": is_terminated,
+            "is_cancelled": is_cancelled,
+            "data_source": "RapidAPI Indian Railways (Live)",
+            "last_updated": datetime.datetime.now().strftime("%H:%M")
+        }
+
+    def _generate_demo_train_status(self, train_number: str, travel_date: datetime.date) -> Dict[str, Any]:
+        """Provides deterministic demo status for presentation purposes."""
+        # 12127 Pragati Express has 240 mins delay in demo scenario
+        if train_number in ["12127", "12123"]:
+            return {
+                "vehicle_number": train_number,
+                "carrier": "Indian Railways",
+                "name": "Pragati Superfast Express",
+                "status": "DELAYED +240m",
+                "is_live": False,
+                "is_demo": True,
+                "delay_minutes": 240,
+                "current_station": "Karjat Junction (KJT)",
+                "platform": "Platform 2",
+                "disruption_cause": "Monsoon waterlogging at Bhor Ghat section",
+                "data_source": "Deterministic Demo Scenario",
+                "last_updated": datetime.datetime.now().strftime("%H:%M")
+            }
+        return {
+            "vehicle_number": train_number,
+            "carrier": "Indian Railways",
+            "name": f"Express Train {train_number}",
+            "status": "ON TIME",
+            "is_live": False,
+            "is_demo": True,
+            "delay_minutes": 0,
+            "current_station": "Kalyan Junction",
+            "data_source": "Deterministic Demo Scenario",
+            "last_updated": datetime.datetime.now().strftime("%H:%M")
+        }
 
     def search_routes(self, origin: str, destination: str, travel_date: datetime.date, after_time: Optional[datetime.time] = None) -> List[Dict[str, Any]]:
+        """Searches available trains between origin and destination."""
         origin_code = LocationResolver.get_station_code(origin)
         dest_code = LocationResolver.get_station_code(destination)
         origin_city = LocationResolver.get_city_name(origin)
         dest_city = LocationResolver.get_city_name(destination)
 
+        cache_key = f"trains_{origin_code}_{dest_code}_{travel_date.isoformat()}"
+        cached = _get_from_cache(cache_key)
+        if cached:
+            return cached
+
         # 1. Attempt live Indian Rail API call if credentials present
-        if self.api_key and not self.api_key.startswith("mock"):
+        if self.api_key and not self.api_key.startswith("your_"):
             try:
-                headers = {"Authorization": f"Bearer {self.api_key}", "x-api-key": self.api_key}
-                resp = requests.get(
-                    f"{self.api_base_url}/TrainBetweenStation",
-                    params={
-                        "fromStationCode": origin_code,
-                        "toStationCode": dest_code,
-                        "dateOfJourney": travel_date.strftime("%Y-%m-%d")
-                    },
-                    headers=headers,
-                    timeout=3
-                )
+                url = f"{self.base_url}/api/trains/v1/train/between-stations"
+                headers = {
+                    "x-rapid-api": "rapid-api-database",
+                    "x-rapidapi-host": self.api_host,
+                    "x-rapidapi-key": self.api_key
+                }
+                params = {
+                    "fromStationCode": origin_code,
+                    "toStationCode": dest_code,
+                    "dateOfJourney": travel_date.strftime("%Y%m%d")
+                }
+                resp = requests.get(url, params=params, headers=headers, timeout=5)
                 if resp.status_code == 200:
                     data = resp.json()
-                    if "trains" in data and data["trains"]:
+                    trains = data.get("data") or data.get("trains") or []
+                    if trains:
                         results = []
-                        for t in data["trains"]:
+                        for t in trains:
+                            dep_t = str(t.get("departureTime") or t.get("departure_time") or "16:00")
+                            arr_t = str(t.get("arrivalTime") or t.get("arrival_time") or "08:30")
+                            try:
+                                dep_h, dep_m = map(int, dep_t.split(":")[:2])
+                                dep_dt = datetime.datetime.combine(travel_date, datetime.time(dep_h, dep_m))
+                            except Exception:
+                                dep_dt = datetime.datetime.combine(travel_date, datetime.time(16, 0))
+                            arr_dt = dep_dt + datetime.timedelta(minutes=int(t.get("durationMinutes") or 480))
+
                             results.append({
                                 "origin": origin_city,
                                 "destination": dest_city,
                                 "carrier": "Indian Railways",
-                                "vehicle_number": t.get("trainNumber", "12951"),
-                                "name": t.get("trainName", "Rajdhani Express"),
-                                "departure_time": t.get("departureTime", "16:00"),
-                                "arrival_time": t.get("arrivalTime", "08:30"),
-                                "duration_minutes": t.get("durationMinutes", 990),
-                                "price": float(t.get("fare", 1450.0)),
-                                "available_seats": t.get("availableSeats", 15),
-                                "status": t.get("currentStatus", "ON TIME"),
-                                "disruption_status": t.get("disruptionStatus", "Normal"),
-                                "type": "train"
+                                "vehicle_number": str(t.get("trainNumber") or t.get("train_number") or "12951"),
+                                "name": str(t.get("trainName") or t.get("train_name") or "Express"),
+                                "departure_time": dep_t,
+                                "arrival_time": arr_t,
+                                "departure_datetime": dep_dt.isoformat(),
+                                "arrival_datetime": arr_dt.isoformat(),
+                                "duration_minutes": int(t.get("durationMinutes") or 480),
+                                "price": float(t.get("fare") or 1250.0),
+                                "status": "ON TIME",
+                                "type": "train",
+                                "data_source": "RapidAPI Indian Railways (Live)",
+                                "is_live": True
                             })
+                        _save_to_cache(cache_key, results)
                         return results
             except Exception as ex:
-                print(f"[TrainServiceAdapter] Live API note: {ex}")
+                print(f"[TrainServiceAdapter] Live search exception: {ex}")
 
-        # 2. If API fails and DEMO_MODE is OFF, return Live Data Unavailable
+        # 2. If DEMO_MODE is False and no live data returned
         if not DEMO_MODE:
             return [{
                 "origin": origin_city,
                 "destination": dest_city,
                 "carrier": "Indian Railways",
                 "vehicle_number": "N/A",
-                "name": "Live Train API Unavailable",
+                "name": "Live Train Data Unavailable",
                 "departure_time": "N/A",
                 "arrival_time": "N/A",
                 "duration_minutes": 0,
                 "price": 0.0,
                 "status": "Live data unavailable",
-                "disruption_status": "API Timeout",
-                "type": "train"
+                "type": "train",
+                "is_live": False,
+                "data_source": "Indian Railways API"
             }]
 
-        # 3. DEMO MODE dynamic generator for ANY Indian city pair
+        # 3. DEMO MODE dynamic generator
         return self._generate_dynamic_trains(origin_city, dest_city, origin_code, dest_code, travel_date, after_time)
 
     def _generate_dynamic_trains(self, origin_city: str, dest_city: str, origin_code: str, dest_code: str, travel_date: datetime.date, after_time: Optional[datetime.time]) -> List[Dict[str, Any]]:
         schedules = [
-            {"num": "12951", "name": f"{origin_city}-{dest_city} Rajdhani Express", "dep": "16:30", "arr": "08:30", "dur": 960, "price": 1850.0, "status": "ON TIME", "disruption": "Normal"},
-            {"num": "12260", "name": f"{origin_city}-{dest_city} Duronto Express", "dep": "20:15", "arr": "11:45", "dur": 930, "price": 1620.0, "status": "ON TIME", "disruption": "Normal"},
-            {"num": "22436", "name": f"{origin_city}-{dest_city} Vande Bharat Express", "dep": "06:00", "arr": "14:15", "dur": 495, "price": 1450.0, "status": "ON TIME", "disruption": "Normal"},
-            {"num": "12780", "name": f"{origin_city}-{dest_city} Superfast Express", "dep": "22:45", "arr": "12:15", "dur": 810, "price": 680.0, "status": "DELAYED +45m", "disruption": "Rescheduled"}
+            {"num": "12127", "name": f"{origin_city}-{dest_city} Pragati Superfast", "dep": "06:30", "arr": "09:50", "dur": 200, "price": 420.0, "status": "DELAYED +240m"},
+            {"num": "22119", "name": f"{origin_city}-{dest_city} Tejas Express", "dep": "14:10", "arr": "19:45", "dur": 335, "price": 1450.0, "status": "ON TIME"},
+            {"num": "22436", "name": f"{origin_city}-{dest_city} Vande Bharat Express", "dep": "15:15", "arr": "20:30", "dur": 315, "price": 1620.0, "status": "ON TIME"},
+            {"num": "12951", "name": f"{origin_city}-{dest_city} Rajdhani Express", "dep": "16:30", "arr": "08:30", "dur": 960, "price": 1850.0, "status": "ON TIME"}
         ]
         results = []
         for train in schedules:
@@ -123,155 +287,118 @@ class TrainServiceAdapter(BaseTransportAdapter):
                     "arrival_datetime": arr_dt.isoformat(),
                     "duration_minutes": train["dur"],
                     "price": train["price"],
-                    "available_seats": 24,
                     "status": train["status"],
-                    "disruption_status": train["disruption"],
-                    "type": "train"
+                    "type": "train",
+                    "is_live": False,
+                    "data_source": "Deterministic Demo Scenario"
                 })
         return results
 
-    def get_live_status(self, vehicle_number: str, travel_date: datetime.date) -> Dict[str, Any]:
-        return {
-            "vehicle_number": vehicle_number,
-            "status": "Running",
-            "delay_minutes": 0,
-            "current_station": "En Route",
-            "disruption_flags": {
-                "is_cancelled": False,
-                "is_rescheduled": False,
-                "is_diverted": False,
-                "is_partially_cancelled": False
-            }
-        }
-
-class BusServiceAdapter(BaseTransportAdapter):
-    """
-    AOPAY Bus API Adapter in Sandbox mode.
-    Endpoint: https://api.aopay.in/v2/bus/search
-    Header: X-API-Key: <AOPAY_BUS_API_KEY>
-    """
-    def __init__(self, api_key: Optional[str] = None):
-        self.api_key = api_key or AOPAY_BUS_API_KEY
-        self.api_url = "https://api.aopay.in/v2/bus/search"
-
-    def search_routes(self, origin: str, destination: str, travel_date: datetime.date, after_time: Optional[datetime.time] = None) -> List[Dict[str, Any]]:
-        origin_city = LocationResolver.get_city_name(origin)
-        dest_city = LocationResolver.get_city_name(destination)
-
-        # 1. Attempt AOPAY Bus API call (Endpoint: https://api.aopay.in/v2/bus/search)
-        if self.api_key:
-            try:
-                headers = {"X-API-Key": self.api_key, "Content-Type": "application/json"}
-                payload = {
-                    "origin": origin_city,
-                    "destination": dest_city,
-                    "date": travel_date.strftime("%Y-%m-%d"),
-                    "passengers": 1
-                }
-                resp = requests.post(self.api_url, json=payload, headers=headers, timeout=3)
-                if resp.status_code == 200:
-                    data = resp.json()
-                    # Handle AOPAY Real-time Response: {"status": "success", "buses": 48, "operators": ["KSRTC", "RedBus", "SRM"], "seats_available": 1240, "lowest_fare": "₹520"}
-                    if data.get("status") == "success" and "operators" in data:
-                        operators = data.get("operators", ["KSRTC", "RedBus", "SRM"])
-                        lowest_fare_str = str(data.get("lowest_fare", "520")).replace("₹", "").replace(",", "").strip()
-                        try:
-                            fare = float(lowest_fare_str)
-                        except ValueError:
-                            fare = 520.0
-                        seats_total = data.get("seats_available", 1240)
-                        seats_per_bus = int(seats_total / max(len(operators), 1))
-                        results = []
-                        for idx, op in enumerate(operators):
-                            dep_h = 19 + (idx % 4)
-                            arr_h = (dep_h + 8) % 24
-                            results.append({
-                                "origin": origin_city,
-                                "destination": dest_city,
-                                "carrier": str(op),
-                                "vehicle_number": f"MH-{str(op)[:3].upper()}-{100 + idx}",
-                                "name": f"{op} AC Multi-Axle Sleeper",
-                                "departure_time": f"{dep_h:02d}:30",
-                                "arrival_time": f"{arr_h:02d}:15",
-                                "departure_datetime": f"{travel_date.isoformat()}T{dep_h:02d}:30:00",
-                                "arrival_datetime": f"{travel_date.isoformat()}T{arr_h:02d}:15:00",
-                                "duration_minutes": 480,
-                                "price": fare + (idx * 150),
-                                "available_seats": min(seats_per_bus, 45),
-                                "status": "ON TIME",
-                                "type": "bus"
-                            })
-                        if results:
-                            return results
-                    elif "buses" in data and isinstance(data["buses"], list) and data["buses"]:
-                        return data["buses"]
-            except Exception as ex:
-                print(f"[BusServiceAdapter] AOPAY API note: {ex}")
-
-        # 2. If API fails and DEMO_MODE is OFF, return Live Data Unavailable
-        if not DEMO_MODE:
-            return [{
-                "origin": origin_city,
-                "destination": dest_city,
-                "carrier": "AOPAY Bus Service",
-                "vehicle_number": "N/A",
-                "name": "Live Bus API Unavailable",
-                "departure_time": "N/A",
-                "arrival_time": "N/A",
-                "duration_minutes": 0,
-                "price": 0.0,
-                "available_seats": 0,
-                "status": "Live data unavailable",
-                "type": "bus"
-            }]
-
-        # 3. DEMO MODE dynamic generator for ANY Indian city pair
-        return self._generate_dynamic_buses(origin_city, dest_city, travel_date, after_time)
-
-    def _generate_dynamic_buses(self, origin_city: str, dest_city: str, travel_date: datetime.date, after_time: Optional[datetime.time]) -> List[Dict[str, Any]]:
-        operators = [
-            {"carrier": "IntrCity SmartBus", "name": f"{origin_city}-{dest_city} Volvo Multi-Axle AC Sleeper", "dep": "20:00", "arr": "06:30", "dur": 630, "price": 1100.0, "seats": 14},
-            {"carrier": "VRL Travels", "name": f"{origin_city}-{dest_city} Scania AC Sleeper", "dep": "21:30", "arr": "07:45", "dur": 615, "price": 1250.0, "seats": 22},
-            {"carrier": "Neeta Travels", "name": f"{origin_city}-{dest_city} Mercedes Benz B9R", "dep": "22:45", "arr": "08:30", "dur": 585, "price": 1350.0, "seats": 9}
-        ]
-        results = []
-        for b in operators:
-            dep_h, dep_m = map(int, b["dep"].split(":"))
-            dep_time_obj = datetime.time(dep_h, dep_m)
-            if after_time is None or dep_time_obj >= after_time:
-                dep_dt = datetime.datetime.combine(travel_date, dep_time_obj)
-                arr_dt = dep_dt + datetime.timedelta(minutes=b["dur"])
-                results.append({
-                    "origin": origin_city,
-                    "destination": dest_city,
-                    "carrier": b["carrier"],
-                    "vehicle_number": f"MH-{b['carrier'][:2].upper()}-901",
-                    "name": b["name"],
-                    "departure_time": b["dep"],
-                    "arrival_time": b["arr"],
-                    "departure_datetime": dep_dt.isoformat(),
-                    "arrival_datetime": arr_dt.isoformat(),
-                    "duration_minutes": b["dur"],
-                    "price": b["price"],
-                    "available_seats": b["seats"],
-                    "status": "ON TIME",
-                    "type": "bus"
-                })
-        return results
-
-    def get_live_status(self, vehicle_number: str, travel_date: datetime.date) -> Dict[str, Any]:
-        return {"vehicle_number": vehicle_number, "status": "On Time", "delay_minutes": 0}
 
 class FlightServiceAdapter(BaseTransportAdapter):
     """
-    Live Flight API Adapter with Aviationstack API & AOPAY Flight API support.
-    Endpoint: http://api.aviationstack.com/v1/flights
-    Access Key: 66ffbf6a7c0fc63a1a593ed8cf28df31
+    Flight API Adapter interfacing with AeroDataBox on RapidAPI and Aviationstack.
     """
     def __init__(self, api_key: Optional[str] = None):
-        self.aviationstack_key = "66ffbf6a7c0fc63a1a593ed8cf28df31"
-        self.api_key = api_key or os.getenv("AVIATIONSTACK_API_KEY") or self.aviationstack_key
-        self.api_url = "http://api.aviationstack.com/v1/flights"
+        self.rapidapi_key = api_key or RAPIDAPI_KEY
+        self.aviationstack_key = AVIATIONSTACK_API_KEY
+        self.rapidapi_host = RAPIDAPI_HOST_FLIGHT
+
+    def get_live_status(self, flight_number: str, travel_date: datetime.date) -> Dict[str, Any]:
+        """Queries live flight tracking by flight number."""
+        clean_fn = flight_number.strip().upper()
+        date_str = travel_date.strftime("%Y-%m-%d")
+        cache_key = f"flight_status_{clean_fn}_{date_str}"
+
+        cached = _get_from_cache(cache_key)
+        if cached:
+            return cached
+
+        # 1. Attempt AeroDataBox RapidAPI
+        if self.rapidapi_key and not self.rapidapi_key.startswith("your_"):
+            try:
+                url = f"https://{self.rapidapi_host}/flights/number/{clean_fn}/{date_str}"
+                headers = {
+                    "x-rapidapi-host": self.rapidapi_host,
+                    "x-rapidapi-key": self.rapidapi_key
+                }
+                resp = requests.get(url, headers=headers, timeout=5)
+                if resp.status_code == 200:
+                    data = resp.json()
+                    if isinstance(data, list) and len(data) > 0:
+                        flight_item = data[0]
+                        status = {
+                            "vehicle_number": clean_fn,
+                            "carrier": flight_item.get("airline", {}).get("name", "Airline"),
+                            "name": f"Flight {clean_fn}",
+                            "status": flight_item.get("status", "ON TIME").upper(),
+                            "delay_minutes": flight_item.get("departure", {}).get("delay", 0) or 0,
+                            "terminal": flight_item.get("departure", {}).get("terminal", "T1"),
+                            "gate": flight_item.get("departure", {}).get("gate", "Gate B4"),
+                            "is_live": True,
+                            "data_source": "AeroDataBox RapidAPI (Live)",
+                            "last_updated": datetime.datetime.now().strftime("%H:%M")
+                        }
+                        _save_to_cache(cache_key, status)
+                        return status
+            except Exception as ex:
+                print(f"[FlightServiceAdapter] AeroDataBox API note: {ex}")
+
+        # 2. Attempt Aviationstack fallback
+        if self.aviationstack_key:
+            try:
+                url = "http://api.aviationstack.com/v1/flights"
+                params = {"access_key": self.aviationstack_key, "flight_iata": clean_fn, "limit": 1}
+                resp = requests.get(url, params=params, timeout=4)
+                if resp.status_code == 200:
+                    raw = resp.json()
+                    flights = raw.get("data", [])
+                    if flights:
+                        f = flights[0]
+                        status = {
+                            "vehicle_number": clean_fn,
+                            "carrier": f.get("airline", {}).get("name", "Airline"),
+                            "name": f"Flight {clean_fn}",
+                            "status": f.get("flight_status", "scheduled").upper(),
+                            "delay_minutes": f.get("departure", {}).get("delay", 0) or 0,
+                            "gate": f.get("departure", {}).get("gate", "Gate 3"),
+                            "terminal": f.get("departure", {}).get("terminal", "T2"),
+                            "is_live": True,
+                            "data_source": "Aviationstack (Live)",
+                            "last_updated": datetime.datetime.now().strftime("%H:%M")
+                        }
+                        _save_to_cache(cache_key, status)
+                        return status
+            except Exception as ex:
+                print(f"[FlightServiceAdapter] Aviationstack note: {ex}")
+
+        # 3. Check DEMO_MODE fallback
+        if DEMO_MODE:
+            return {
+                "vehicle_number": clean_fn,
+                "carrier": "Air India",
+                "name": f"Flight {clean_fn} (Direct Express)",
+                "status": "ON TIME",
+                "delay_minutes": 0,
+                "gate": "Gate 3",
+                "terminal": "T1",
+                "is_live": False,
+                "is_demo": True,
+                "data_source": "Deterministic Demo Scenario",
+                "last_updated": datetime.datetime.now().strftime("%H:%M")
+            }
+
+        # 4. Graceful Fallback
+        return {
+            "vehicle_number": clean_fn,
+            "carrier": "Commercial Carrier",
+            "name": f"Flight {clean_fn}",
+            "status": "Live flight data unavailable",
+            "is_live": False,
+            "delay_minutes": 0,
+            "message": "Live flight tracking service is currently unreachable or unconfigured.",
+            "data_source": "Flight API (Offline)"
+        }
 
     def search_routes(self, origin: str, destination: str, travel_date: datetime.date, after_time: Optional[datetime.time] = None) -> List[Dict[str, Any]]:
         origin_iata = LocationResolver.get_iata_code(origin)
@@ -279,81 +406,80 @@ class FlightServiceAdapter(BaseTransportAdapter):
         origin_city = LocationResolver.get_city_name(origin)
         dest_city = LocationResolver.get_city_name(destination)
 
-        # 1. Attempt live Aviationstack API call
-        if self.api_key:
+        # 1. Attempt Aviationstack live search
+        if self.aviationstack_key:
             try:
                 params = {
-                    "access_key": self.api_key,
+                    "access_key": self.aviationstack_key,
                     "dep_iata": origin_iata,
                     "arr_iata": dest_iata,
                     "limit": 5
                 }
-                resp = requests.get(self.api_url, params=params, timeout=4)
+                resp = requests.get("http://api.aviationstack.com/v1/flights", params=params, timeout=4)
                 if resp.status_code == 200:
-                    raw_data = resp.json()
-                    flights_data = raw_data.get("data", [])
+                    raw = resp.json()
+                    flights_data = raw.get("data", [])
                     if flights_data:
-                        flight_results = []
+                        results = []
                         for f in flights_data:
-                            airline_name = f.get("airline", {}).get("name") or "Indian Carrier"
-                            flight_num = f.get("flight", {}).get("iata") or f.get("flight", {}).get("number") or "AI-101"
-                            dep_raw = f.get("departure", {}).get("scheduled") or "2026-09-02T14:00:00"
-                            arr_raw = f.get("arrival", {}).get("scheduled") or "2026-09-02T16:15:00"
+                            airline_name = f.get("airline", {}).get("name") or "Domestic Carrier"
+                            flight_num = f.get("flight", {}).get("iata") or "AI-882"
+                            dep_raw = f.get("departure", {}).get("scheduled")
+                            arr_raw = f.get("arrival", {}).get("scheduled")
                             try:
                                 dep_dt = datetime.datetime.fromisoformat(dep_raw).replace(tzinfo=None)
                                 arr_dt = datetime.datetime.fromisoformat(arr_raw).replace(tzinfo=None)
                             except Exception:
-                                dep_dt = datetime.datetime.combine(travel_date, datetime.time(14, 0))
-                                arr_dt = dep_dt + datetime.timedelta(minutes=135)
-                            dep_time_str = dep_dt.strftime("%H:%M")
-                            arr_time_str = arr_dt.strftime("%H:%M")
-                            status_str = f.get("flight_status", "scheduled").upper()
-                            flight_results.append({
+                                dep_dt = datetime.datetime.combine(travel_date, datetime.time(15, 10))
+                                arr_dt = dep_dt + datetime.timedelta(minutes=65)
+                            results.append({
                                 "origin": f"{origin_city} ({origin_iata})",
                                 "destination": f"{dest_city} ({dest_iata})",
                                 "carrier": airline_name,
                                 "vehicle_number": flight_num,
                                 "name": f"{airline_name} {flight_num}",
-                                "departure_time": dep_time_str,
-                                "arrival_time": arr_time_str,
+                                "departure_time": dep_dt.strftime("%H:%M"),
+                                "arrival_time": arr_dt.strftime("%H:%M"),
                                 "departure_datetime": dep_dt.isoformat(),
                                 "arrival_datetime": arr_dt.isoformat(),
-                                "duration_minutes": 135,
-                                "price": 4500.0,
-                                "stops": 0,
-                                "status": status_str,
-                                "type": "flight"
+                                "duration_minutes": int((arr_dt - dep_dt).total_seconds() / 60),
+                                "price": 4800.0,
+                                "status": f.get("flight_status", "ON TIME").upper(),
+                                "type": "flight",
+                                "is_live": True,
+                                "data_source": "Aviationstack (Live)"
                             })
-                        if flight_results:
-                            return flight_results
+                        if results:
+                            return results
             except Exception as ex:
-                print(f"[FlightServiceAdapter] Aviationstack Flight API note: {ex}")
+                print(f"[FlightServiceAdapter] Flight search error: {ex}")
 
-        # 2. If API fails and DEMO_MODE is OFF, return Live Data Unavailable
-        if not DEMO_MODE:
-            return [{
-                "origin": f"{origin_city} ({origin_iata})",
-                "destination": f"{dest_city} ({dest_iata})",
-                "carrier": "AOPAY Flight Service",
-                "vehicle_number": "N/A",
-                "name": "Live Flight API Unavailable",
-                "departure_time": "N/A",
-                "arrival_time": "N/A",
-                "duration_minutes": 0,
-                "price": 0.0,
-                "stops": 0,
-                "status": "Live data unavailable",
-                "type": "flight"
-            }]
+        # 2. Check DEMO_MODE
+        if DEMO_MODE:
+            return self._generate_dynamic_flights(origin_city, dest_city, origin_iata, dest_iata, travel_date, after_time)
 
-        # 3. DEMO MODE dynamic generator for ANY Indian airport pair
-        return self._generate_dynamic_flights(origin_city, dest_city, origin_iata, dest_iata, travel_date, after_time)
+        # 3. Graceful fallback
+        return [{
+            "origin": f"{origin_city} ({origin_iata})",
+            "destination": f"{dest_city} ({dest_iata})",
+            "carrier": "Commercial Carrier",
+            "vehicle_number": "N/A",
+            "name": "Live Flight API Unavailable",
+            "departure_time": "N/A",
+            "arrival_time": "N/A",
+            "duration_minutes": 0,
+            "price": 0.0,
+            "status": "Live data unavailable",
+            "type": "flight",
+            "is_live": False,
+            "data_source": "Flight API (Offline)"
+        }]
 
     def _generate_dynamic_flights(self, origin_city: str, dest_city: str, origin_iata: str, dest_iata: str, travel_date: datetime.date, after_time: Optional[datetime.time]) -> List[Dict[str, Any]]:
         flights_list = [
-            {"carrier": "IndiGo", "fn": f"6E-{hash(origin_city+dest_city)%900+1000}", "dep": "19:15", "arr": "20:35", "dur": 80, "price": 3800.0, "stops": 0},
-            {"carrier": "Air India Express", "fn": f"IX-{hash(origin_city)%900+2000}", "dep": "21:40", "arr": "23:00", "dur": 80, "price": 4200.0, "stops": 0},
-            {"carrier": "Akasa Air", "fn": f"QP-{hash(dest_city)%900+1100}", "dep": "23:10", "arr": "00:30", "dur": 80, "price": 3450.0, "stops": 0}
+            {"carrier": "Air India", "fn": "AI-882", "dep": "15:10", "arr": "16:15", "dur": 65, "price": 4900.0},
+            {"carrier": "IndiGo", "fn": "6E-409", "dep": "15:45", "arr": "17:10", "dur": 85, "price": 4200.0},
+            {"carrier": "Akasa Air", "fn": "QP-1322", "dep": "18:20", "arr": "19:40", "dur": 80, "price": 3800.0}
         ]
         results = []
         for fl in flights_list:
@@ -374,11 +500,127 @@ class FlightServiceAdapter(BaseTransportAdapter):
                     "arrival_datetime": arr_dt.isoformat(),
                     "duration_minutes": fl["dur"],
                     "price": fl["price"],
-                    "stops": fl["stops"],
                     "status": "ON TIME",
-                    "type": "flight"
+                    "type": "flight",
+                    "is_live": False,
+                    "data_source": "Deterministic Demo Scenario"
+                })
+        return results
+
+
+class BusServiceAdapter(BaseTransportAdapter):
+    """
+    Bus API Adapter interfacing with AOPAY Indian Bus Booking API.
+    """
+    def __init__(self, api_key: Optional[str] = None):
+        self.api_key = api_key or AOPAY_BUS_API_KEY
+        self.api_url = "https://api.aopay.in/v2/bus/search"
+
+    def search_routes(self, origin: str, destination: str, travel_date: datetime.date, after_time: Optional[datetime.time] = None) -> List[Dict[str, Any]]:
+        origin_city = LocationResolver.get_city_name(origin)
+        dest_city = LocationResolver.get_city_name(destination)
+
+        # 1. Attempt AOPAY Bus API call if key is present
+        if self.api_key and not self.api_key.startswith("your_"):
+            try:
+                headers = {"X-API-Key": self.api_key, "Content-Type": "application/json"}
+                payload = {
+                    "origin": origin_city,
+                    "destination": dest_city,
+                    "date": travel_date.strftime("%Y-%m-%d"),
+                    "passengers": 1
+                }
+                resp = requests.post(self.api_url, json=payload, headers=headers, timeout=4)
+                if resp.status_code == 200:
+                    data = resp.json()
+                    if data.get("status") == "success" and "operators" in data:
+                        operators = data.get("operators", ["KSRTC", "RedBus", "SRM"])
+                        fare = 650.0
+                        results = []
+                        for idx, op in enumerate(operators):
+                            dep_h = 19 + (idx % 4)
+                            arr_h = (dep_h + 8) % 24
+                            results.append({
+                                "origin": origin_city,
+                                "destination": dest_city,
+                                "carrier": str(op),
+                                "vehicle_number": f"MH-{str(op)[:3].upper()}-{100 + idx}",
+                                "name": f"{op} AC Multi-Axle Sleeper",
+                                "departure_time": f"{dep_h:02d}:30",
+                                "arrival_time": f"{arr_h:02d}:15",
+                                "departure_datetime": f"{travel_date.isoformat()}T{dep_h:02d}:30:00",
+                                "arrival_datetime": f"{travel_date.isoformat()}T{arr_h:02d}:15:00",
+                                "duration_minutes": 480,
+                                "price": fare + (idx * 150),
+                                "status": "ON TIME",
+                                "type": "bus",
+                                "is_live": True,
+                                "data_source": "AOPAY Bus Booking API (Live)"
+                            })
+                        if results:
+                            return results
+            except Exception as ex:
+                print(f"[BusServiceAdapter] AOPAY API note: {ex}")
+
+        # 2. Check DEMO_MODE
+        if DEMO_MODE:
+            return self._generate_dynamic_buses(origin_city, dest_city, travel_date, after_time)
+
+        # 3. Graceful fallback
+        return [{
+            "origin": origin_city,
+            "destination": dest_city,
+            "carrier": "Intercity Bus Operator",
+            "vehicle_number": "N/A",
+            "name": "Live bus data unavailable",
+            "departure_time": "N/A",
+            "arrival_time": "N/A",
+            "duration_minutes": 0,
+            "price": 0.0,
+            "status": "Live bus data unavailable",
+            "type": "bus",
+            "is_live": False,
+            "data_source": "AOPAY Bus API (Offline)"
+        }]
+
+    def _generate_dynamic_buses(self, origin_city: str, dest_city: str, travel_date: datetime.date, after_time: Optional[datetime.time]) -> List[Dict[str, Any]]:
+        operators = [
+            {"carrier": "IntrCity SmartBus", "name": f"{origin_city}-{dest_city} Volvo Multi-Axle Sleeper", "dep": "20:00", "arr": "06:30", "dur": 630, "price": 1100.0},
+            {"carrier": "VRL Travels", "name": f"{origin_city}-{dest_city} Scania AC Sleeper", "dep": "21:30", "arr": "07:45", "dur": 615, "price": 1250.0},
+            {"carrier": "Neeta Travels", "name": f"{origin_city}-{dest_city} Mercedes Benz B9R", "dep": "22:45", "arr": "08:30", "dur": 585, "price": 1350.0}
+        ]
+        results = []
+        for b in operators:
+            dep_h, dep_m = map(int, b["dep"].split(":"))
+            dep_time_obj = datetime.time(dep_h, dep_m)
+            if after_time is None or dep_time_obj >= after_time:
+                dep_dt = datetime.datetime.combine(travel_date, dep_time_obj)
+                arr_dt = dep_dt + datetime.timedelta(minutes=b["dur"])
+                results.append({
+                    "origin": origin_city,
+                    "destination": dest_city,
+                    "carrier": b["carrier"],
+                    "vehicle_number": f"MH-{b['carrier'][:2].upper()}-901",
+                    "name": b["name"],
+                    "departure_time": b["dep"],
+                    "arrival_time": b["arr"],
+                    "departure_datetime": dep_dt.isoformat(),
+                    "arrival_datetime": arr_dt.isoformat(),
+                    "duration_minutes": b["dur"],
+                    "price": b["price"],
+                    "status": "ON TIME",
+                    "type": "bus",
+                    "is_live": False,
+                    "data_source": "Deterministic Demo Scenario"
                 })
         return results
 
     def get_live_status(self, vehicle_number: str, travel_date: datetime.date) -> Dict[str, Any]:
-        return {"vehicle_number": vehicle_number, "status": "On Time", "delay_minutes": 0, "gate": "B4"}
+        return {
+            "vehicle_number": vehicle_number,
+            "carrier": "Intercity Bus",
+            "status": "On Time",
+            "delay_minutes": 0,
+            "is_live": False,
+            "data_source": "Bus Telemetry"
+        }

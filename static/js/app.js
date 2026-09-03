@@ -30,11 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Check live backend API connectivity
   checkBackendStatus(false);
 
-  // Initialize Settings Inputs
-  const keyGeminiEl = document.getElementById('key-gemini');
-  if (keyGeminiEl && typeof GEMINI_API_KEY !== 'undefined') {
-    keyGeminiEl.value = GEMINI_API_KEY;
-  }
+  // Settings initialization
   const savedProfile = localStorage.getItem('travelshield_traveler_profile');
   if (savedProfile) {
     try {
@@ -615,39 +611,19 @@ async function sendGeminiDrawerMessage() {
 
   let replyText = null;
 
-  // 3. Call Google Gemini 3.6 Flash API with user context
-  if (GEMINI_API_KEY && GEMINI_API_KEY !== "PASTE_YOUR_KEY_HERE") {
-    try {
-      const geminiEndpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${encodeURIComponent(GEMINI_API_KEY)}`;
-      const geminiRes = await fetch(geminiEndpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [{
-            role: 'user',
-            parts: [{
-              text: `You are TravelShield Gemini AI Disruption Concierge. 
-User's trip: Booking PNR YH892A, traveling from DEL to GOI via BOM.
-Disruption: Inbound flight AI 812 delayed 6h 30m, missed connection AI 492 to Goa.
-Downstream bookings: Radisson Blu GOI check-in at risk, Hertz rental car pending at GOI airport.
-Financial Exposure: $845.00 (₹76,500).
-Recovery Plans Available:
-1. The Sprinter (Score 95, Fastest, Partner flight reroute at 14:30 today, +$250)
-2. The Optimal (Score 82, Balanced, High-speed rail to Pune + Flight, +$150)
-3. The Economical (Score 68, Budget Saver, IntrCity sleeper coach, +$50 travel credit)
-Answer traveler with empathy, high intelligence, concise points, and actionable instructions.
-Traveler says: "${text}"`
-            }]
-          }]
-        })
-      });
-      if (geminiRes.ok) {
-        const geminiData = await geminiRes.json();
-        replyText = geminiData.candidates?.[0]?.content?.parts?.[0]?.text;
-      }
-    } catch (e) {
-      console.warn("Gemini drawer API error:", e);
+  // 3. Call backend AI Chat endpoint (/api/ai/chat)
+  try {
+    const res = await fetch('/api/ai/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ trip_id: currentTripId, user_message: text })
+    });
+    if (res.ok) {
+      const data = await res.json();
+      replyText = data.reply;
     }
+  } catch (e) {
+    console.warn("Backend chat unavailable:", e);
   }
 
   // 4. Fallback if offline or network failure
@@ -1186,11 +1162,8 @@ async function applyRecoveryPlan(planId) {
 }
 
 // ==============================================================
-// CHATBOT WIDGET API KEYS & CONFIGURATION
+// CHATBOT WIDGET — SECURE BACKEND PROXIED
 // ==============================================================
-const GEMINI_API_KEY = window.GEMINI_API_KEY || localStorage.getItem('gemini_api_key') || atob("QVEuQWI4Uk42THdXVlBZZmpmU01ISF9wT0pnQzlNaHV3UFhjYVh2QjNIRWoyd2YyMTBoalE=");
-const AVIATIONSTACK_API_KEY = "66ffbf6a7c0fc63a1a593ed8cf28df31";
-const AOPAY_BUS_API_URL = "https://api.aopay.in/v2/bus/search";
 
 async function sendChatMessage() {
   const input = document.getElementById('chat-input');
@@ -1211,54 +1184,20 @@ async function sendChatMessage() {
 
   let replyText = null;
 
-  // 1. If Gemini API Key is configured, query Google Gemini API directly (gemini-3.6-flash)
-  if (GEMINI_API_KEY && GEMINI_API_KEY !== "PASTE_YOUR_KEY_HERE") {
-    try {
-      const geminiEndpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${encodeURIComponent(GEMINI_API_KEY)}`;
-      const geminiRes = await fetch(geminiEndpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [{
-            role: 'user',
-            parts: [{
-              text: `You are TravelShield AI Disruption Concierge. Assist the traveler with their journey (Booking PNR: YH892A, DEL to GOI via BOM).
-Disruption: Inbound flight AI 812 / train delayed 6h 30m, connecting flight AI 492 missed.
-Downstream: Radisson Blu GOI check-in at risk, Hertz rental car pending.
-Recovery plans: 'The Sprinter' (Fastest flight reroute, Score 95), 'The Optimal' (High-speed rail + flight, Score 82), 'The Economical' (Overnight sleeper bus, Score 68).
-Keep your answer concise, helpful, reassuring, and under 3 sentences.
-User query: "${text}"`
-            }]
-          }]
-        })
-      });
-      if (geminiRes.ok) {
-        const geminiData = await geminiRes.json();
-        replyText = geminiData.candidates?.[0]?.content?.parts?.[0]?.text;
-      }
-    } catch (e) {
-      console.warn("Client-side Gemini API note:", e);
+  // Query secure backend proxy endpoint /api/ai/chat
+  try {
+    const res = await fetch('/api/ai/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ trip_id: currentTripId, user_message: text })
+    });
+    if (res.ok) {
+      const data = await res.json();
+      replyText = data.reply;
     }
-  }
-
-  // 2. Fallback to backend AI chat API (/api/ai/chat)
-  if (!replyText) {
-    try {
-      const res = await fetch('/api/ai/chat', {
-        method: 'POST',
-        headers: getAuthHeaders(),
-        body: JSON.stringify({ trip_id: currentTripId, user_message: text })
-      });
-      if (res.ok) {
-        const data = await res.json();
-        replyText = data.reply;
-      }
-    } catch (err) {
-      // fallback
-    }
-  }
-
-  // 3. Fallback to smart local concierge rules
+  } catch (err) {
+    console.warn("Backend chat unavailable:", err);
+  // Fallback to smart local concierge rules if backend is unreachable
   if (!replyText) {
     const lower = text.toLowerCase();
     if (lower.includes("delay") || lower.includes("disrupt") || lower.includes("cancel")) {

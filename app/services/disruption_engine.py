@@ -6,6 +6,7 @@ from app.models import (
     ItemType, TransportType, User, PreferenceTier
 )
 from app.services.transport_adapters import TrainServiceAdapter, BusServiceAdapter, FlightServiceAdapter
+from app.services.location_resolver import LocationResolver
 
 class DisruptionRecoveryEngine:
     MIN_CONNECTION_BUFFER_MINUTES = 30 # Minimum safe connection buffer between legs
@@ -118,14 +119,41 @@ class DisruptionRecoveryEngine:
 
         self.db.commit()
 
+        # Calculate Disruption Severity
+        is_cancelled = (disruption_type == "cancellation")
+        has_missed = len(missed_connections) > 0
+        severity = self.calculate_disruption_severity(delay_minutes, has_missed, is_cancelled)
+
         return {
             "disrupted_item_id": disrupted_item.id,
             "disrupted_title": disrupted_item.title,
             "disruption_type": disruption_type,
             "delay_minutes": delay_minutes,
+            "severity": severity,
+            "new_estimated_arrival": current_estimated_location_arrival.isoformat() if not is_cancelled else "Cancelled",
+            "missed_connections_count": len(missed_connections),
             "missed_connections": missed_connections,
-            "affected_downstream": affected_downstream
+            "affected_downstream_count": len(affected_downstream),
+            "affected_downstream": affected_downstream,
+            "recovery_required": (len(missed_connections) > 0 or is_cancelled or delay_minutes >= 60)
         }
+
+    @staticmethod
+    def calculate_disruption_severity(delay_minutes: int, has_missed_connection: bool = False, is_cancelled: bool = False) -> str:
+        """
+        Disruption severity system:
+        - CRITICAL: Cancellation, stranded traveler, or missed connection
+        - HIGH: Delay >= 90 mins or major downstream risk
+        - MEDIUM: Delay 30-90 mins
+        - LOW: Delay < 30 mins
+        """
+        if is_cancelled or (has_missed_connection and delay_minutes >= 180):
+            return "CRITICAL"
+        if has_missed_connection or delay_minutes >= 90:
+            return "HIGH"
+        if delay_minutes >= 30:
+            return "MEDIUM"
+        return "LOW"
 
     def generate_recovery_plans(self, trip_id: int, disruption_id: int) -> List[RecoveryPlan]:
         """
@@ -157,13 +185,32 @@ class DisruptionRecoveryEngine:
         bus_alts_dir = self.bus_adapter.search_routes(origin, final_destination, travel_date)
         train_alts_dir = self.train_adapter.search_routes(origin, final_destination, travel_date)
 
+        # Filter usable routes or generate valid candidates
+        def _get_usable(alts, fallback_fn, *args):
+            usable = [a for a in alts if a and a.get("vehicle_number") not in ["N/A", None] and a.get("departure_datetime")]
+            if not usable:
+                return fallback_fn(*args)
+            return usable
+
+        origin_iata = LocationResolver.get_iata_code(origin)
+        dest_iata = LocationResolver.get_iata_code(final_destination)
+        mid_code = LocationResolver.get_station_code(midpoint)
+        dest_code = LocationResolver.get_station_code(final_destination)
+        orig_code = LocationResolver.get_station_code(origin)
+
+        valid_buses_mid = _get_usable(bus_alts_mid, self.bus_adapter._generate_dynamic_buses, midpoint, final_destination, travel_date, after_midpoint_time)
+        valid_buses_dir = _get_usable(bus_alts_dir, self.bus_adapter._generate_dynamic_buses, origin, final_destination, travel_date, None)
+        valid_flights_dir = _get_usable(flight_alts_dir, self.flight_adapter._generate_dynamic_flights, origin, final_destination, origin_iata, dest_iata, travel_date, None)
+        valid_trains_mid = _get_usable(train_alts_mid, self.train_adapter._generate_dynamic_trains, midpoint, final_destination, mid_code, dest_code, travel_date, after_midpoint_time)
+        valid_trains_dir = _get_usable(train_alts_dir, self.train_adapter._generate_dynamic_trains, origin, final_destination, orig_code, dest_code, travel_date, None)
+
         # Clean existing recovery plans for this disruption
         self.db.query(RecoveryPlan).filter(RecoveryPlan.disruption_id == disruption_id).delete()
 
         generated_plans = []
 
         # --- PLAN 1: Budget Volvo Sleeper / Replacement Bus from Midpoint (Pune -> Goa) ---
-        best_bus_mid = bus_alts_mid[0] if bus_alts_mid else (bus_alts_dir[0] if bus_alts_dir else None)
+        best_bus_mid = valid_buses_mid[0] if valid_buses_mid else (valid_buses_dir[0] if valid_buses_dir else None)
         if best_bus_mid:
             actions_1 = [
                 {
@@ -213,7 +260,7 @@ class DisruptionRecoveryEngine:
             generated_plans.append(plan1)
 
         # --- PLAN 2: Express Direct Flight / Speed Recovery (Mumbai / Pune -> Goa Direct) ---
-        best_flight = flight_alts_dir[0] if flight_alts_dir else (train_alts_mid[0] if train_alts_mid else None)
+        best_flight = valid_flights_dir[0] if valid_flights_dir else None
         if best_flight:
             actions_2 = [
                 {
@@ -263,7 +310,7 @@ class DisruptionRecoveryEngine:
             generated_plans.append(plan2)
 
         # --- PLAN 3: Overnight Superfast Express Train / Morning Combo ---
-        best_train_mid = train_alts_mid[0] if train_alts_mid else (train_alts_dir[0] if train_alts_dir else None)
+        best_train_mid = valid_trains_mid[0] if valid_trains_mid else (valid_trains_dir[0] if valid_trains_dir else None)
         if best_train_mid:
             actions_3 = [
                 {
@@ -318,32 +365,65 @@ class DisruptionRecoveryEngine:
         saved_plans = self.db.query(RecoveryPlan).filter(RecoveryPlan.disruption_id == disruption_id).all()
         return saved_plans
 
-    def _calculate_scores(self, cost_diff: float, delay_minutes: int, transfers: int, feasibility: float, preservation: float, pref_tier: str) -> Dict[str, float]:
-        cost_score = max(0.0, 100.0 - max(0.0, cost_diff / 100.0 * 1.5))
-        delay_score = max(0.0, 100.0 - (delay_minutes / 60.0 * 10.0))
-        transfer_score = max(50.0, 100.0 - (transfers * 15.0))
+    def _calculate_scores(
+        self,
+        cost_diff: float,
+        delay_minutes: int,
+        transfers: int,
+        feasibility: float = 95.0,
+        preservation: float = 90.0,
+        pref_tier: str = "balanced",
+        travel_duration_minutes: int = 180,
+        custom_weights: Optional[Dict[str, float]] = None
+    ) -> Dict[str, float]:
+        """
+        Calculates Recovery Score (0-100) using the weighted formula:
+        - 30% Arrival Time
+        - 25% Reliability
+        - 20% Travel Duration
+        - 15% Cost
+        - 10% Number of Transfers
+        Architecture supports custom weight overrides.
+        """
+        arrival_score = max(0.0, min(100.0, 100.0 - (delay_minutes / 60.0 * 12.0)))
+        reliability_score = max(0.0, min(100.0, feasibility))
+        duration_score = max(20.0, min(100.0, 100.0 - (travel_duration_minutes / 60.0 * 5.0)))
+        cost_score = max(0.0, min(100.0, 100.0 - max(0.0, cost_diff / 80.0 * 1.5)))
+        transfer_score = max(30.0, min(100.0, 100.0 - (transfers * 18.0)))
 
-        if pref_tier == PreferenceTier.BUDGET.value:
-            w_cost, w_delay, w_trans, w_feas, w_pres = 0.40, 0.15, 0.10, 0.15, 0.20
-        elif pref_tier == PreferenceTier.SPEED.value:
-            w_cost, w_delay, w_trans, w_feas, w_pres = 0.10, 0.40, 0.15, 0.15, 0.20
-        else: # BALANCED
-            w_cost, w_delay, w_trans, w_feas, w_pres = 0.25, 0.25, 0.15, 0.15, 0.20
+        # Default weights from specification
+        weights = custom_weights or {
+            "arrival": 0.30,
+            "reliability": 0.25,
+            "duration": 0.20,
+            "cost": 0.15,
+            "transfers": 0.10
+        }
+
+        # Fine-tune slightly for explicit traveler preference if no custom weights provided
+        if not custom_weights:
+            if pref_tier == PreferenceTier.BUDGET.value:
+                weights = {"arrival": 0.20, "reliability": 0.20, "duration": 0.15, "cost": 0.35, "transfers": 0.10}
+            elif pref_tier == PreferenceTier.SPEED.value:
+                weights = {"arrival": 0.40, "reliability": 0.20, "duration": 0.25, "cost": 0.05, "transfers": 0.10}
 
         overall = (
-            cost_score * w_cost +
-            delay_score * w_delay +
-            transfer_score * w_trans +
-            feasibility * w_feas +
-            preservation * w_pres
+            arrival_score * weights["arrival"] +
+            reliability_score * weights["reliability"] +
+            duration_score * weights["duration"] +
+            cost_score * weights["cost"] +
+            transfer_score * weights["transfers"]
         )
 
         return {
+            "arrival_score": round(arrival_score, 1),
+            "reliability_score": round(reliability_score, 1),
+            "duration_score": round(duration_score, 1),
             "cost_score": round(cost_score, 1),
-            "delay_score": round(delay_score, 1),
+            "transfer_score": round(transfer_score, 1),
             "feasibility": round(feasibility, 1),
             "preservation": round(preservation, 1),
-            "overall": round(overall, 1)
+            "overall": round(min(100.0, max(0.0, overall)), 1)
         }
 
     def apply_recovery_plan(self, trip_id: int, plan_id: int) -> Trip:
