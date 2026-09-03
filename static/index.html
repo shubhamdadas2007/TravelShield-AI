@@ -3,40 +3,69 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AeroRoute AI — Intelligent Travel Disruption Recovery</title>
+  <title>AeroRoute AI — Intelligent Travel Disruption Recovery Dashboard</title>
   
-  <!-- Google Fonts: Inter & Outfit -->
+  <!-- Google Fonts: Plus Jakarta Sans & Inter -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
   <style>
-    /* -------------------------------------------------------------
-       1. ROOT VARIABLES & PALETTE (AEROROUTE AI DESIGN SYSTEM)
-    ------------------------------------------------------------- */
+    /* =============================================================
+       1. VISUAL DIRECTION & PALETTE (SPECIFICATION)
+       - Primary: Deep navy / indigo (#0f172a / #312e81 / #4338ca)
+       - Background: Off-white / light gray (#f8fafc)
+       - Success: Green (#10b981)
+       - Warning: Amber (#f59e0b)
+       - Disruption: Red (#ef4444)
+       - Recovery: Blue / indigo (#2563eb / #4f46e5)
+    ============================================================= */
     :root {
-      --bg-page: #f0f4f9;
+      --primary: #0f172a;
+      --primary-indigo: #4338ca;
+      --primary-hover: #1e1b4b;
+      
+      --bg-body: #f8fafc;
       --bg-card: #ffffff;
-      --border-subtle: #e2e8f0;
-      --border-light: #f1f5f9;
+      --bg-surface: #f1f5f9;
+      --bg-subtle: #f8fafc;
+      
+      --border: #e2e8f0;
+      --border-focus: #cbd5e1;
+
       --text-main: #0f172a;
       --text-muted: #64748b;
-      --text-light: #94a3b8;
-      
-      --accent-primary: #0f172a;
-      --accent-blue: #2563eb;
-      --accent-red: #ef4444;
-      --accent-green: #10b981;
-      --accent-amber: #f59e0b;
+      --text-sub: #94a3b8;
 
-      --sidebar-width: 250px;
-      --topbar-height: 70px;
-      --radius-card: 18px;
+      --success-bg: #ecfdf5;
+      --success-text: #065f46;
+      --success-border: #a7f3d0;
+      --success-solid: #10b981;
+
+      --warning-bg: #fffbeb;
+      --warning-text: #92400e;
+      --warning-border: #fde68a;
+      --warning-solid: #f59e0b;
+
+      --danger-bg: #fef2f2;
+      --danger-text: #991b1b;
+      --danger-border: #fecaca;
+      --danger-solid: #ef4444;
+
+      --recovery-bg: #eef2ff;
+      --recovery-text: #3730a3;
+      --recovery-border: #c7d2fe;
+      --recovery-solid: #4f46e5;
+
+      --sidebar-width: 260px;
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
       --radius-pill: 9999px;
-      --radius-sm: 10px;
 
-      --shadow-card: 0 4px 20px rgba(15, 23, 42, 0.03);
-      --shadow-float: 0 12px 32px rgba(15, 23, 42, 0.08);
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+      --shadow-card: 0 4px 16px rgba(15, 23, 42, 0.04);
+      --shadow-hover: 0 10px 25px rgba(15, 23, 42, 0.08);
     }
 
     *, *::before, *::after {
@@ -47,12 +76,17 @@
 
     body {
       min-height: 100vh;
-      background: var(--bg-page);
+      background: var(--bg-body);
       color: var(--text-main);
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       -webkit-font-smoothing: antialiased;
-      overflow-x: hidden;
       display: flex;
+      overflow-x: hidden;
+    }
+
+    h1, h2, h3, h4, .brand-title {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      letter-spacing: -0.02em;
     }
 
     button {
@@ -65,1683 +99,1524 @@
       color: inherit;
       text-decoration: none;
     }
-    input, textarea, select {
-      font-family: inherit;
-    }
 
-    /* -------------------------------------------------------------
-       2. SIDEBAR NAVIGATION (EXACT SCREENSHOT STYLE)
-    ------------------------------------------------------------- */
+    /* =============================================================
+       2. SIDEBAR NAVIGATION
+    ============================================================= */
     #sidebar {
       width: var(--sidebar-width);
-      background: #f8fafc;
-      border-right: 1px solid #e9eef4;
+      background: #ffffff;
+      border-right: 1px solid var(--border);
       height: 100vh;
       position: fixed;
       left: 0;
       top: 0;
       display: flex;
       flex-direction: column;
-      padding: 1.75rem 1.25rem;
+      padding: 1.5rem 1rem;
       z-index: 50;
-      box-shadow: 2px 0 15px rgba(0, 0, 0, 0.015);
     }
 
-    .brand-container {
+    .brand-box {
       display: flex;
       align-items: center;
       gap: 0.75rem;
-      padding: 0.25rem 0.75rem 2rem 0.75rem;
+      padding: 0.5rem 0.75rem 1.75rem 0.75rem;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 1.25rem;
     }
-    .brand-icon-wrap {
-      width: 34px;
-      height: 34px;
+    .brand-icon {
+      width: 36px;
+      height: 36px;
       border-radius: var(--radius-sm);
-      background: #ffffff;
-      border: 1px solid #e2e8f0;
+      background: var(--primary);
+      color: #ffffff;
       display: flex;
       align-items: center;
       justify-content: center;
-      color: var(--text-main);
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+      flex-shrink: 0;
     }
-    .brand-text {
-      font-family: 'Outfit', sans-serif;
+    .brand-title {
       font-size: 1.15rem;
+      font-weight: 800;
+      color: var(--primary);
+    }
+    .brand-badge {
+      font-size: 0.65rem;
       font-weight: 700;
-      letter-spacing: -0.01em;
-      color: var(--text-main);
+      background: var(--recovery-bg);
+      color: var(--recovery-text);
+      padding: 0.15rem 0.45rem;
+      border-radius: var(--radius-pill);
+      margin-left: auto;
     }
 
-    .nav-list {
+    .nav-menu {
+      list-style: none;
       display: flex;
       flex-direction: column;
-      gap: 0.4rem;
-      list-style: none;
+      gap: 0.35rem;
+      flex: 1;
     }
-
-    .nav-item-btn {
+    .nav-btn {
       width: 100%;
       display: flex;
       align-items: center;
       gap: 0.85rem;
       padding: 0.75rem 1rem;
-      border-radius: 12px;
+      border-radius: var(--radius-md);
       font-size: 0.9rem;
       font-weight: 500;
       color: var(--text-muted);
-      transition: all 0.2s ease;
+      transition: all 0.15s ease;
       text-align: left;
     }
-    .nav-item-btn:hover {
-      background: #f1f5f9;
+    .nav-btn:hover {
+      background: var(--bg-surface);
       color: var(--text-main);
     }
-    .nav-item-btn.active {
-      background: #f1f5f9;
-      color: var(--text-main);
-      font-weight: 600;
+    .nav-btn.active {
+      background: var(--bg-surface);
+      color: var(--primary);
+      font-weight: 700;
     }
-    .nav-icon {
+    .nav-btn svg {
       width: 20px;
       height: 20px;
       flex-shrink: 0;
-      opacity: 0.85;
     }
-    .nav-item-btn.active .nav-icon {
-      opacity: 1;
+    .badge-alert-count {
+      margin-left: auto;
+      background: var(--danger-solid);
+      color: #ffffff;
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 0.15rem 0.5rem;
+      border-radius: var(--radius-pill);
     }
 
-    .sidebar-footer {
+    /* Demo Quick Switcher Box in Sidebar */
+    .demo-flow-box {
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 1rem;
       margin-top: auto;
-      padding: 1rem 0.5rem;
-      border-top: 1px solid #e9eef4;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
     }
-    .live-status-pill {
+    .demo-flow-title {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.5rem;
       display: flex;
       align-items: center;
       gap: 0.4rem;
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      font-weight: 500;
     }
-    .pulse-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: var(--accent-green);
-      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+    .demo-stepper-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+    .demo-step-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      padding: 0.4rem 0.6rem;
+      border-radius: var(--radius-sm);
+      text-align: left;
+      transition: all 0.15s ease;
+    }
+    .demo-step-btn:hover {
+      background: #ffffff;
+      color: var(--primary);
+    }
+    .demo-step-btn.current {
+      background: var(--primary);
+      color: #ffffff;
     }
 
-    /* -------------------------------------------------------------
-       3. MAIN LAYOUT & TOPBAR
-    ------------------------------------------------------------- */
-    #main-content {
+    /* =============================================================
+       3. MAIN CONTENT LAYOUT
+    ============================================================= */
+    #main-wrap {
       margin-left: var(--sidebar-width);
       flex: 1;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
-      padding: 0 2rem 3rem 2rem;
+      padding: 1.5rem 2.25rem 3rem 2.25rem;
     }
 
-    .topbar {
-      height: var(--topbar-height);
+    .top-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      position: sticky;
-      top: 0;
-      background: rgba(240, 244, 249, 0.85);
-      backdrop-filter: blur(10px);
-      z-index: 40;
-      margin-bottom: 0.5rem;
+      margin-bottom: 1.75rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border);
     }
-
-    .monitored-badge {
-      display: inline-flex;
+    .header-breadcrumb {
+      display: flex;
       align-items: center;
       gap: 0.5rem;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+    .breadcrumb-active {
+      color: var(--text-main);
+      font-weight: 600;
+    }
+
+    .header-right-tools {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .live-status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
       background: #ffffff;
-      border: 1px solid #e2e8f0;
+      border: 1px solid var(--border);
+      padding: 0.45rem 1rem;
       border-radius: var(--radius-pill);
-      padding: 0.5rem 1.15rem;
       font-size: 0.825rem;
-      font-weight: 500;
-      color: #334155;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+      font-weight: 600;
+      color: var(--text-main);
+      box-shadow: var(--shadow-sm);
     }
-    .monitored-badge-dot {
-      width: 7px;
-      height: 7px;
+    .status-dot-green {
+      width: 8px;
+      height: 8px;
       border-radius: 50%;
-      background: var(--accent-green);
+      background: var(--success-solid);
+      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
     }
 
-    .topbar-actions {
-      display: flex;
-      align-items: center;
-      gap: 1.25rem;
-    }
-    .topbar-icon-btn {
-      width: 38px;
-      height: 38px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #334155;
-      transition: background 0.2s ease;
-      position: relative;
-    }
-    .topbar-icon-btn:hover {
-      background: #e2e8f0;
-    }
-    .notif-badge-indicator {
-      position: absolute;
-      top: 6px;
-      right: 6px;
-      width: 7px;
-      height: 7px;
-      background: var(--accent-red);
-      border-radius: 50%;
-    }
-
-    .user-avatar-btn {
+    .avatar-wrap {
       width: 38px;
       height: 38px;
       border-radius: 50%;
       overflow: hidden;
       border: 2px solid #ffffff;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-      cursor: pointer;
+      box-shadow: var(--shadow-sm);
     }
-    .user-avatar-img {
+    .avatar-wrap img {
       width: 100%;
       height: 100%;
       object-fit: cover;
     }
 
-    /* -------------------------------------------------------------
-       4. SCREEN CONTAINER
-    ------------------------------------------------------------- */
-    .app-screen {
+    /* Screen Visibility */
+    .screen-view {
       display: none;
       flex-direction: column;
-      gap: 1.25rem;
-      animation: fadeIn 0.25s ease;
+      gap: 1.5rem;
+      animation: fadeIn 0.2s ease;
     }
-    .app-screen.active {
+    .screen-view.active {
       display: flex;
     }
 
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(6px); }
+      from { opacity: 0; transform: translateY(4px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
-    /* -------------------------------------------------------------
-       5. DASHBOARD SCREEN (SCREEN 1: EXACT MATCH TO SCREENSHOT)
-    ------------------------------------------------------------- */
-    /* Critical Alert Card */
-    .critical-alert-card {
+    /* =============================================================
+       4. UI COMPONENTS: CARDS, BADGES, BUTTONS
+    ============================================================= */
+    .card {
       background: var(--bg-card);
-      border-radius: var(--radius-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      box-shadow: var(--shadow-card);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.65rem 1.25rem;
+      border-radius: var(--radius-md);
+      font-size: 0.875rem;
+      font-weight: 600;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+    .btn-primary {
+      background: var(--primary);
+      color: #ffffff;
+    }
+    .btn-primary:hover {
+      background: var(--primary-hover);
+    }
+    .btn-recovery {
+      background: var(--primary-indigo);
+      color: #ffffff;
+    }
+    .btn-recovery:hover {
+      background: #3730a3;
+    }
+    .btn-outline {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      color: var(--text-main);
+    }
+    .btn-outline:hover {
+      background: var(--bg-surface);
+      border-color: var(--border-focus);
+    }
+
+    /* Status Badges */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.25rem 0.65rem;
+      border-radius: var(--radius-pill);
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .badge-danger {
+      background: var(--danger-bg);
+      color: var(--danger-text);
+      border: 1px solid var(--danger-border);
+    }
+    .badge-warning {
+      background: var(--warning-bg);
+      color: var(--warning-text);
+      border: 1px solid var(--warning-border);
+    }
+    .badge-success {
+      background: var(--success-bg);
+      color: var(--success-text);
+      border: 1px solid var(--success-border);
+    }
+    .badge-recovery {
+      background: var(--recovery-bg);
+      color: var(--recovery-text);
+      border: 1px solid var(--recovery-border);
+    }
+
+    /* =============================================================
+       5. SCREEN 1: DASHBOARD
+    ============================================================= */
+    /* Disruption Alert Card */
+    .disruption-alert-card {
+      background: #ffffff;
+      border-left: 5px solid var(--danger-solid);
+      border-top: 1px solid var(--border);
+      border-right: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      border-radius: var(--radius-lg);
       padding: 1.5rem 1.75rem;
       box-shadow: var(--shadow-card);
-      border: 1px solid rgba(226, 232, 240, 0.8);
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 1.5rem;
     }
-    .critical-left {
-      display: flex;
-      align-items: center;
-      gap: 1.25rem;
-    }
-    .warning-icon-box {
-      width: 48px;
-      height: 48px;
-      border-radius: 14px;
-      background: #f8fafc;
-      border: 1px solid #e2e8f0;
+    .alert-icon-wrap {
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-md);
+      background: var(--danger-bg);
+      color: var(--danger-solid);
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #0f172a;
       flex-shrink: 0;
     }
-    .critical-header-line {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      margin-bottom: 0.35rem;
-    }
-    .priority-badge {
-      font-size: 0.825rem;
-      font-weight: 800;
-      letter-spacing: 0.04em;
-      color: var(--text-main);
-      text-transform: uppercase;
-    }
-    .id-tag {
-      background: #cbd5e1;
-      color: #1e293b;
-      font-size: 0.725rem;
-      font-weight: 700;
-      border-radius: 6px;
-      padding: 0.2rem 0.55rem;
-      font-family: monospace;
-    }
-    .critical-description {
-      font-size: 0.925rem;
-      color: #334155;
-      font-weight: 400;
-      line-height: 1.45;
-    }
-
-    .btn-find-recovery {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.65rem;
-      background: #ffffff;
-      border: 1px solid #e2e8f0;
-      border-radius: 12px;
-      padding: 0.85rem 1.35rem;
-      font-size: 0.875rem;
-      font-weight: 600;
-      color: var(--text-main);
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
-      transition: all 0.2s ease;
-      flex-shrink: 0;
-    }
-    .btn-find-recovery:hover {
-      background: #f8fafc;
-      border-color: #cbd5e1;
-      transform: translateX(2px);
-    }
-
-    /* 3 Summary / Status Cards */
-    .summary-cards-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1.25rem;
-    }
-    .summary-card {
-      background: var(--bg-card);
-      border-radius: var(--radius-card);
-      padding: 1.5rem 1.65rem;
-      box-shadow: var(--shadow-card);
-      border: 1px solid rgba(226, 232, 240, 0.8);
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      min-height: 190px;
-    }
-    .summary-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 0.85rem;
-    }
-    .summary-title {
-      font-size: 0.78rem;
-      font-weight: 700;
-      letter-spacing: 0.05em;
-      color: #475569;
-      text-transform: uppercase;
-    }
-    .summary-header-icon {
-      width: 18px;
-      height: 18px;
-      color: #64748b;
-    }
-    .summary-main-val {
+    .alert-main-title {
       font-size: 1.05rem;
       font-weight: 700;
       color: var(--text-main);
-      margin-bottom: 0.35rem;
-    }
-    .summary-subtext {
-      font-size: 0.825rem;
-      color: var(--text-muted);
-      line-height: 1.45;
-    }
-    .summary-footer {
-      border-top: 1px solid #f1f5f9;
-      padding-top: 0.85rem;
-      margin-top: 1rem;
-    }
-    .summary-footer-link {
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: var(--text-main);
       display: flex;
       align-items: center;
-      gap: 0.35rem;
-      transition: color 0.2s ease;
+      gap: 0.65rem;
     }
-    .summary-footer-link:hover {
-      color: var(--accent-blue);
-    }
-
-    /* Main Lower Split Grid */
-    .dashboard-lower-grid {
-      display: grid;
-      grid-template-columns: 1.75fr 1fr;
-      gap: 1.25rem;
-      align-items: stretch;
-    }
-
-    /* Left Card: Active Itineraries */
-    .itineraries-card {
-      background: var(--bg-card);
-      border-radius: var(--radius-card);
-      padding: 1.75rem;
-      box-shadow: var(--shadow-card);
-      border: 1px solid rgba(226, 232, 240, 0.8);
-      display: flex;
-      flex-direction: column;
-    }
-    .card-title-row {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      margin-bottom: 1.5rem;
-    }
-    .card-heading {
-      font-size: 1.15rem;
-      font-weight: 700;
-      color: var(--text-main);
-      letter-spacing: -0.01em;
-    }
-    .card-subheading {
-      font-size: 0.825rem;
-      color: var(--text-muted);
-      margin-top: 0.2rem;
-    }
-    .view-all-btn {
-      font-size: 0.85rem;
-      font-weight: 700;
-      color: var(--text-main);
-      cursor: pointer;
-    }
-    .view-all-btn:hover {
-      text-decoration: underline;
-    }
-
-    .itinerary-list {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-    }
-    .itinerary-item {
-      background: #ffffff;
-      border: 1px solid #f1f5f9;
-      border-radius: 14px;
-      padding: 1.15rem 1.35rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      transition: all 0.2s ease;
-    }
-    .itinerary-item:hover {
-      border-color: #e2e8f0;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
-    }
-    .item-left {
-      display: flex;
-      align-items: center;
-      gap: 1.25rem;
-    }
-    .item-icon-box {
-      width: 44px;
-      height: 44px;
-      border-radius: 12px;
-      background: #f8fafc;
-      border: 1px solid #f1f5f9;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--text-main);
-      flex-shrink: 0;
-    }
-    .item-route-title {
-      font-size: 0.95rem;
-      font-weight: 600;
-      color: var(--text-main);
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-    .status-delayed {
-      font-weight: 700;
-      color: #0f172a;
-    }
-    .status-ontime {
-      font-weight: 700;
-      color: #0f172a;
-    }
-    .item-telemetry {
-      font-size: 0.825rem;
-      color: var(--text-muted);
-      margin-top: 0.25rem;
-    }
-    .delay-red {
-      color: #ef4444;
-      font-weight: 600;
-    }
-
-    .item-right {
-      display: flex;
-      align-items: center;
-      gap: 1.5rem;
-    }
-    .risk-label-critical {
-      font-size: 0.85rem;
-      font-weight: 700;
-      color: var(--text-main);
-    }
-    .status-label-normal {
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: var(--text-main);
-    }
-    .btn-item-action {
-      background: #ffffff;
-      border: 1px solid #e2e8f0;
-      border-radius: 10px;
-      padding: 0.55rem 1.15rem;
-      font-size: 0.825rem;
-      font-weight: 600;
-      color: var(--text-main);
-      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.02);
-      transition: all 0.2s ease;
-    }
-    .btn-item-action:hover {
-      background: #f8fafc;
-      border-color: #cbd5e1;
-    }
-
-    /* Right Card: AeroRoute Copilot */
-    .copilot-card {
-      background: var(--bg-card);
-      border-radius: var(--radius-card);
-      padding: 1.75rem;
-      box-shadow: var(--shadow-card);
-      border: 1px solid rgba(226, 232, 240, 0.8);
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      gap: 1.25rem;
-    }
-    .copilot-header {
-      display: flex;
-      align-items: center;
-      gap: 0.85rem;
-    }
-    .copilot-icon-box {
-      width: 38px;
-      height: 38px;
-      border-radius: 10px;
-      background: #f1f5f9;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--text-main);
-    }
-    .copilot-title {
-      font-size: 0.95rem;
-      font-weight: 700;
-      color: var(--text-main);
-    }
-    .copilot-subtitle {
-      font-size: 0.775rem;
-      color: var(--text-muted);
-    }
-
-    .recommendations-feed {
-      display: flex;
-      flex-direction: column;
-      gap: 0.85rem;
-    }
-    .recom-box {
-      background: #f8fafc;
-      border: 1px solid #f1f5f9;
-      border-radius: 14px;
-      padding: 1.15rem;
-    }
-    .recom-title {
-      font-size: 0.875rem;
-      font-weight: 700;
-      color: var(--text-main);
-      display: flex;
-      align-items: center;
-      gap: 0.45rem;
-      margin-bottom: 0.35rem;
-    }
-    .recom-desc {
-      font-size: 0.825rem;
-      color: var(--text-muted);
-      line-height: 1.45;
-    }
-
-    .btn-execute-all {
-      background: #f1f5f9;
-      border: 1px solid #e2e8f0;
-      border-radius: 12px;
-      padding: 0.85rem;
-      font-size: 0.85rem;
-      font-weight: 700;
-      color: var(--text-main);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-      transition: all 0.2s ease;
-      margin-top: 0.5rem;
-    }
-    .btn-execute-all:hover {
-      background: #e2e8f0;
-      border-color: #cbd5e1;
-    }
-
-    /* -------------------------------------------------------------
-       6. RECOVERY PLANS SCREEN (SCREEN 2 & 3)
-    ------------------------------------------------------------- */
-    .section-title-wrap {
-      margin-bottom: 0.5rem;
-    }
-    .section-headline {
-      font-size: 1.6rem;
-      font-weight: 800;
-      font-family: 'Outfit', sans-serif;
-      color: var(--text-main);
-    }
-    .section-subheadline {
+    .alert-sub-desc {
       font-size: 0.9rem;
-      color: var(--text-muted);
-      margin-top: 0.25rem;
+      color: #475569;
+      margin-top: 0.35rem;
     }
 
-    .plans-grid {
+    /* Summary Metric Cards */
+    .metrics-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 1.25rem;
     }
-    .plan-card {
+    .metric-card {
       background: var(--bg-card);
-      border-radius: var(--radius-card);
-      border: 2px solid transparent;
-      box-shadow: var(--shadow-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
       padding: 1.5rem;
+      box-shadow: var(--shadow-card);
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      transition: all 0.25s ease;
+    }
+    .metric-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.775rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.75rem;
+    }
+    .metric-value {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: var(--text-main);
+      margin-bottom: 0.25rem;
+    }
+    .metric-caption {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+    .metric-link {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--primary-indigo);
+      margin-top: 1rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
       cursor: pointer;
     }
-    .plan-card:hover {
-      transform: translateY(-3px);
-      box-shadow: var(--shadow-float);
-    }
-    .plan-card.selected {
-      border-color: #4f46e5;
-      background: #fafbff;
+    .metric-link:hover {
+      text-decoration: underline;
     }
 
-    .plan-badge-row {
+    /* Quick Trips Preview Grid */
+    .dashboard-two-col {
+      display: grid;
+      grid-template-columns: 1.7fr 1fr;
+      gap: 1.25rem;
+    }
+    .trip-preview-row {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 0.75rem;
+      padding: 1rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      background: #ffffff;
+      margin-top: 0.75rem;
+      transition: border-color 0.2s;
     }
-    .plan-type-pill {
-      font-size: 0.725rem;
+    .trip-preview-row:hover {
+      border-color: var(--border-focus);
+    }
+
+    /* =============================================================
+       6. SCREEN 2: CHRONOLOGICAL TRIP DETAILS (TIMELINE)
+    ============================================================= */
+    .timeline-container {
+      position: relative;
+      padding-left: 2rem;
+      margin-top: 1.5rem;
+    }
+    .timeline-container::before {
+      content: "";
+      position: absolute;
+      left: 19px;
+      top: 15px;
+      bottom: 25px;
+      width: 2px;
+      background: var(--border);
+    }
+
+    .timeline-step {
+      position: relative;
+      margin-bottom: 2rem;
+    }
+    .timeline-step:last-child {
+      margin-bottom: 0;
+    }
+
+    .timeline-node-icon {
+      position: absolute;
+      left: -2rem;
+      top: 0;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: #ffffff;
+      border: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      z-index: 2;
+    }
+    .timeline-node-icon.danger {
+      border-color: var(--danger-solid);
+      background: var(--danger-bg);
+      color: var(--danger-solid);
+    }
+    .timeline-node-icon.warning {
+      border-color: var(--warning-solid);
+      background: var(--warning-bg);
+      color: var(--warning-solid);
+    }
+    .timeline-node-icon.success {
+      border-color: var(--success-solid);
+      background: var(--success-bg);
+      color: var(--success-solid);
+    }
+    .timeline-node-icon.recovery {
+      border-color: var(--primary-indigo);
+      background: var(--recovery-bg);
+      color: var(--primary-indigo);
+    }
+
+    .timeline-card {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 1.25rem 1.5rem;
+      margin-left: 1.25rem;
+      box-shadow: var(--shadow-sm);
+    }
+    .timeline-card.disrupted {
+      border-color: var(--danger-border);
+      background: #fffafa;
+    }
+    .timeline-card.missed-conn {
+      border-color: var(--warning-border);
+      background: #fffdf5;
+    }
+    .timeline-card.recovered {
+      border-color: var(--recovery-border);
+      background: #fafbff;
+    }
+
+    .timeline-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.5rem;
+    }
+    .timeline-time {
+      font-size: 0.8rem;
       font-weight: 700;
+      color: var(--text-muted);
       text-transform: uppercase;
-      letter-spacing: 0.04em;
-      padding: 0.25rem 0.65rem;
-      border-radius: 6px;
     }
-    .pill-speed { background: #fee2e2; color: #991b1b; }
-    .pill-balanced { background: #e0e7ff; color: #3730a3; }
-    .pill-budget { background: #dcfce7; color: #166534; }
-
-    .score-badge {
-      font-size: 0.85rem;
-      font-weight: 800;
-      color: #0f172a;
-    }
-
-    .plan-title {
-      font-size: 1.15rem;
+    .timeline-title {
+      font-size: 1.05rem;
       font-weight: 700;
       color: var(--text-main);
-      margin-bottom: 0.35rem;
     }
-    .plan-summary {
-      font-size: 0.825rem;
+    .timeline-meta {
+      font-size: 0.85rem;
       color: var(--text-muted);
-      line-height: 1.45;
-      margin-bottom: 1rem;
+      margin-top: 0.25rem;
+    }
+    .disruption-callout {
+      margin-top: 0.75rem;
+      padding: 0.65rem 0.85rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.825rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .disruption-callout.red {
+      background: var(--danger-bg);
+      color: var(--danger-text);
+    }
+    .disruption-callout.amber {
+      background: var(--warning-bg);
+      color: var(--warning-text);
+    }
+    .disruption-callout.blue {
+      background: var(--recovery-bg);
+      color: var(--recovery-text);
     }
 
-    .plan-stats-table {
+    /* =============================================================
+       7. SCREEN 3: RECOVERY CENTER (COMPARABLE CARDS & AI PANEL)
+    ============================================================= */
+    .recovery-plans-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.25rem;
+      margin-bottom: 1.5rem;
+    }
+    .recovery-card {
+      background: #ffffff;
+      border: 2px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      box-shadow: var(--shadow-card);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: all 0.2s ease;
+      position: relative;
+    }
+    .recovery-card:hover {
+      box-shadow: var(--shadow-hover);
+    }
+    .recovery-card.recommended {
+      border-color: var(--primary-indigo);
+      background: #fafbff;
+    }
+
+    .recommended-flag {
+      position: absolute;
+      top: -12px;
+      left: 1.5rem;
+      background: var(--primary-indigo);
+      color: #ffffff;
+      font-size: 0.725rem;
+      font-weight: 800;
+      padding: 0.25rem 0.75rem;
+      border-radius: var(--radius-pill);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .plan-name-header {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: var(--text-main);
+      margin-bottom: 0.25rem;
+    }
+    .plan-sequence-tag {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .plan-metrics-table {
       background: #f8fafc;
-      border-radius: 12px;
-      padding: 0.75rem 1rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 0.85rem;
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 0.5rem;
+      gap: 0.75rem;
       margin-bottom: 1.25rem;
     }
-    .stat-entry-label {
-      font-size: 0.725rem;
-      font-weight: 600;
+    .metric-unit-label {
+      font-size: 0.7rem;
+      font-weight: 700;
       color: var(--text-muted);
       text-transform: uppercase;
     }
-    .stat-entry-val {
+    .metric-unit-val {
       font-size: 0.95rem;
-      font-weight: 700;
+      font-weight: 800;
       color: var(--text-main);
       margin-top: 0.1rem;
     }
 
-    .btn-select-plan {
-      width: 100%;
-      padding: 0.75rem;
-      border-radius: 10px;
-      font-size: 0.85rem;
-      font-weight: 600;
-      text-align: center;
-      transition: all 0.2s ease;
+    .plan-impact-summary {
+      font-size: 0.825rem;
+      color: #475569;
+      line-height: 1.45;
+      margin-bottom: 1.25rem;
     }
-    .btn-plan-inactive {
+
+    /* AI Explanation Compact Panel */
+    .ai-explanation-panel {
       background: #ffffff;
-      border: 1px solid #e2e8f0;
-      color: var(--text-main);
-    }
-    .btn-plan-active {
-      background: #4f46e5;
-      color: #ffffff;
-      border: 1px solid #4f46e5;
-    }
-
-    /* -------------------------------------------------------------
-       7. ACTIVE TRIPS SCREEN (SCREEN 4)
-    ------------------------------------------------------------- */
-    .trip-card {
-      background: var(--bg-card);
-      border-radius: var(--radius-card);
-      padding: 1.75rem;
-      box-shadow: var(--shadow-card);
-      border: 1px solid rgba(226, 232, 240, 0.8);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--primary-indigo);
+      border-radius: var(--radius-md);
+      padding: 1.25rem 1.5rem;
       display: flex;
-      flex-direction: column;
       gap: 1.25rem;
+      align-items: flex-start;
     }
-    .trip-card-header {
+    .ai-brain-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-sm);
+      background: var(--recovery-bg);
+      color: var(--primary-indigo);
       display: flex;
-      justify-content: space-between;
       align-items: center;
-    }
-
-    .legs-timeline {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      padding: 1.25rem 0;
-      overflow-x: auto;
-    }
-    .leg-node {
-      background: #f8fafc;
-      border: 1px solid #e2e8f0;
-      border-radius: 14px;
-      padding: 1rem 1.25rem;
-      min-width: 210px;
+      justify-content: center;
       flex-shrink: 0;
     }
-    .leg-node.disrupted {
-      border-color: #ef4444;
-      background: #fef2f2;
+    .ai-explanation-title {
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: var(--text-main);
+      margin-bottom: 0.4rem;
     }
-    .leg-connector {
-      width: 30px;
-      height: 2px;
-      background: #cbd5e1;
-      flex-shrink: 0;
-    }
-
-    /* -------------------------------------------------------------
-       8. SETTINGS SCREEN
-    ------------------------------------------------------------- */
-    .settings-grid {
+    .ai-explanation-list {
+      list-style: none;
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 1.25rem;
+      gap: 0.65rem 1.5rem;
+      font-size: 0.85rem;
+      color: #334155;
     }
-    .settings-card {
-      background: var(--bg-card);
-      border-radius: var(--radius-card);
-      padding: 1.75rem;
-      box-shadow: var(--shadow-card);
-      border: 1px solid rgba(226, 232, 240, 0.8);
-    }
-    .toggle-row {
+    .ai-explanation-list li {
       display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0.85rem 0;
-      border-bottom: 1px solid #f1f5f9;
-    }
-    .toggle-row:last-child {
-      border-bottom: none;
-    }
-
-    /* Switch */
-    .switch {
-      position: relative;
-      display: inline-block;
-      width: 44px;
-      height: 24px;
-      flex-shrink: 0;
-    }
-    .switch input { opacity: 0; width: 0; height: 0; }
-    .slider {
-      position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
-      background-color: #cbd5e1;
-      transition: .3s;
-      border-radius: 24px;
-    }
-    .slider:before {
-      position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px;
-      background-color: white;
-      transition: .3s;
-      border-radius: 50%;
-    }
-    input:checked + .slider { background-color: #0f172a; }
-    input:checked + .slider:before { transform: translateX(20px); }
-
-    /* -------------------------------------------------------------
-       9. AEROROUTE COPILOT DRAWER (GEMINI AI CHAT)
-    ------------------------------------------------------------- */
-    #copilot-drawer {
-      position: fixed;
-      right: -420px;
-      top: 0;
-      width: 400px;
-      height: 100vh;
-      background: #ffffff;
-      box-shadow: -4px 0 30px rgba(0, 0, 0, 0.1);
-      z-index: 100;
-      display: flex;
-      flex-direction: column;
-      transition: right 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    #copilot-drawer.open {
-      right: 0;
-    }
-    .drawer-header {
-      padding: 1.25rem 1.5rem;
-      border-bottom: 1px solid #e2e8f0;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-    .drawer-body {
-      flex: 1;
-      padding: 1.5rem;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-    }
-    .chat-bubble {
-      padding: 0.85rem 1.15rem;
-      border-radius: 14px;
-      font-size: 0.875rem;
-      line-height: 1.5;
-      max-width: 85%;
-    }
-    .chat-bot {
-      background: #f1f5f9;
-      color: #0f172a;
-      align-self: flex-start;
-      border-bottom-left-radius: 4px;
-    }
-    .chat-user {
-      background: #0f172a;
-      color: #ffffff;
-      align-self: flex-end;
-      border-bottom-right-radius: 4px;
-    }
-    .drawer-footer {
-      padding: 1rem 1.5rem;
-      border-top: 1px solid #e2e8f0;
-      display: flex;
+      align-items: flex-start;
       gap: 0.5rem;
     }
-    .drawer-input {
-      flex: 1;
-      padding: 0.75rem 1rem;
-      border: 1px solid #e2e8f0;
-      border-radius: 10px;
-      outline: none;
-      font-size: 0.875rem;
-    }
-    .drawer-send-btn {
-      background: #0f172a;
-      color: #ffffff;
-      padding: 0.75rem 1.15rem;
-      border-radius: 10px;
-      font-size: 0.875rem;
-      font-weight: 600;
+    .check-bullet {
+      color: var(--success-solid);
+      font-weight: 800;
     }
 
-    /* -------------------------------------------------------------
-       10. TOAST NOTIFICATION
-    ------------------------------------------------------------- */
-    #toast-notification {
+    /* =============================================================
+       8. TOAST NOTIFICATION
+    ============================================================= */
+    #toast {
       position: fixed;
       bottom: 2rem;
       right: 2rem;
-      background: #0f172a;
+      background: var(--primary);
       color: #ffffff;
       padding: 0.85rem 1.35rem;
-      border-radius: 12px;
+      border-radius: var(--radius-md);
       font-size: 0.875rem;
-      font-weight: 500;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+      font-weight: 600;
+      box-shadow: var(--shadow-hover);
       z-index: 200;
       display: flex;
       align-items: center;
       gap: 0.65rem;
       transform: translateY(100px);
       opacity: 0;
-      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
     }
-    #toast-notification.show {
+    #toast.show {
       transform: translateY(0);
       opacity: 1;
     }
 
-    /* -------------------------------------------------------------
-       11. RESPONSIVE BREAKPOINTS
-    ------------------------------------------------------------- */
+    /* Responsive */
     @media (max-width: 1024px) {
-      .summary-cards-grid {
-        grid-template-columns: 1fr;
-      }
-      .dashboard-lower-grid {
-        grid-template-columns: 1fr;
-      }
-      .plans-grid {
-        grid-template-columns: 1fr;
-      }
-      .settings-grid {
-        grid-template-columns: 1fr;
-      }
+      .recovery-plans-grid { grid-template-columns: 1fr; }
+      .metrics-grid { grid-template-columns: 1fr; }
+      .dashboard-two-col { grid-template-columns: 1fr; }
+      .ai-explanation-list { grid-template-columns: 1fr; }
     }
     @media (max-width: 768px) {
-      #sidebar {
-        transform: translateX(-100%);
-      }
-      #sidebar.mobile-open {
-        transform: translateX(0);
-      }
-      #main-content {
-        margin-left: 0;
-        padding: 0 1rem 2rem 1rem;
-      }
-      .critical-alert-card {
-        flex-direction: column;
-        align-items: flex-start;
-      }
+      #sidebar { transform: translateX(-100%); }
+      #main-wrap { margin-left: 0; padding: 1rem; }
     }
   </style>
 </head>
 <body>
 
   <!-- =============================================================
-       SIDEBAR NAVIGATION
+       LEFT SIDEBAR (DESKTOP NAVIGATION)
   ============================================================= -->
   <aside id="sidebar">
-    <!-- Brand Logo -->
-    <div class="brand-container">
-      <div class="brand-icon-wrap">
+    <div class="brand-box">
+      <div class="brand-icon">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
           <path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/>
         </svg>
       </div>
-      <span class="brand-text">AeroRoute AI</span>
+      <div>
+        <div class="brand-title">AeroRoute AI</div>
+        <div style="font-size: 0.725rem; color: var(--text-muted); font-weight: 500;">TravelShield Engine</div>
+      </div>
     </div>
 
-    <!-- Navigation Items -->
-    <nav>
-      <ul class="nav-list">
-        <li>
-          <button class="nav-item-btn active" onclick="switchNav('dashboard', this)">
-            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="3" y="3" width="7" height="7"></rect>
-              <rect x="14" y="3" width="7" height="7"></rect>
-              <rect x="14" y="14" width="7" height="7"></rect>
-              <rect x="3" y="14" width="7" height="7"></rect>
-            </svg>
-            <span>Dashboard</span>
-          </button>
-        </li>
-        <li>
-          <button class="nav-item-btn" onclick="switchNav('trips', this)">
-            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M22 2L11 13"></path>
-              <path d="M22 2l-7 20-4-9-9-4 20-7z"></path>
-            </svg>
-            <span>Active Trips</span>
-          </button>
-        </li>
-        <li>
-          <button class="nav-item-btn" onclick="switchNav('disruptions', this)">
-            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
-              <line x1="12" y1="9" x2="12" y2="13"></line>
-              <line x1="12" y1="17" x2="12.01" y2="17"></line>
-            </svg>
-            <span>Disruption Center</span>
-          </button>
-        </li>
-        <li>
-          <button class="nav-item-btn" onclick="switchNav('recovery', this)">
-            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="23 4 23 10 17 10"></polyline>
-              <polyline points="1 20 1 14 7 14"></polyline>
-              <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
-            </svg>
-            <span>Recovery Plans</span>
-          </button>
-        </li>
-        <li>
-          <button class="nav-item-btn" onclick="switchNav('itineraries', this)">
-            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="6" cy="19" r="3"></circle>
-              <path d="M9 19h8.5a3.5 3.5 0 0 0 0-7h-11a3.5 3.5 0 0 1 0-7H15"></path>
-              <circle cx="18" cy="5" r="3"></circle>
-            </svg>
-            <span>Itineraries</span>
-          </button>
-        </li>
-        <li>
-          <button class="nav-item-btn" onclick="switchNav('settings', this)">
-            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="3"></circle>
-              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
-            </svg>
-            <span>Settings</span>
-          </button>
-        </li>
-      </ul>
-    </nav>
+    <ul class="nav-menu">
+      <li>
+        <button class="nav-btn active" id="nav-dashboard" onclick="showScreen('dashboard')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="7" height="7"></rect>
+            <rect x="14" y="3" width="7" height="7"></rect>
+            <rect x="14" y="14" width="7" height="7"></rect>
+            <rect x="3" y="14" width="7" height="7"></rect>
+          </svg>
+          <span>Dashboard</span>
+        </button>
+      </li>
+      <li>
+        <button class="nav-btn" id="nav-trip-details" onclick="showScreen('trip-details')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polyline points="12 6 12 12 16 14"></polyline>
+          </svg>
+          <span>Trip Timeline</span>
+        </button>
+      </li>
+      <li>
+        <button class="nav-btn" id="nav-recovery" onclick="showScreen('recovery')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="23 4 23 10 17 10"></polyline>
+            <polyline points="1 20 1 14 7 14"></polyline>
+            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+          </svg>
+          <span>Recovery Center</span>
+          <span class="badge-alert-count">3</span>
+        </button>
+      </li>
+      <li>
+        <button class="nav-btn" id="nav-updated-itinerary" onclick="showScreen('updated-itinerary')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+          </svg>
+          <span>Updated Route</span>
+        </button>
+      </li>
+      <li>
+        <button class="nav-btn" id="nav-settings" onclick="showScreen('settings')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+          </svg>
+          <span>Settings</span>
+        </button>
+      </li>
+    </ul>
 
-    <!-- Sidebar Footer -->
-    <div class="sidebar-footer">
-      <div class="live-status-pill">
-        <span class="pulse-dot"></span>
-        <span>Telemetry Live</span>
+    <!-- Hackathon Judge Quick Walkthrough Stepper -->
+    <div class="demo-flow-box">
+      <div class="demo-flow-title">
+        <span>⚡</span>
+        <span>Judge Demo Flow</span>
       </div>
-      <span style="font-size: 0.725rem; color: #94a3b8; font-weight: 600;">v2.4.0</span>
+      <div class="demo-stepper-list">
+        <button class="demo-step-btn" id="step-btn-1" onclick="executeDemoStep(1)">
+          <span>1.</span> Normal Itinerary
+        </button>
+        <button class="demo-step-btn" id="step-btn-2" onclick="executeDemoStep(2)">
+          <span>2.</span> Disruption Detected
+        </button>
+        <button class="demo-step-btn" id="step-btn-3" onclick="executeDemoStep(3)">
+          <span>3.</span> Recovery Center
+        </button>
+        <button class="demo-step-btn" id="step-btn-4" onclick="executeDemoStep(4)">
+          <span>4.</span> Resolved Route
+        </button>
+      </div>
     </div>
   </aside>
 
   <!-- =============================================================
        MAIN VIEW CONTAINER
   ============================================================= -->
-  <div id="main-content">
+  <main id="main-wrap">
     <!-- Topbar Header -->
-    <header class="topbar">
-      <div class="monitored-badge">
-        <span class="monitored-badge-dot"></span>
-        <span>All Systems Monitored</span>
+    <header class="top-header">
+      <div class="header-breadcrumb">
+        <span>AeroRoute Command</span>
+        <span>/</span>
+        <span class="breadcrumb-active" id="breadcrumb-current">Dashboard</span>
       </div>
 
-      <div class="topbar-actions">
-        <button class="topbar-icon-btn" onclick="showToast('🔍 Global Search Active', 'info')" aria-label="Search">
-          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="11" cy="11" r="8"></circle>
-            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-          </svg>
-        </button>
+      <div class="header-right-tools">
+        <div class="live-status-pill">
+          <span class="status-dot-green"></span>
+          <span>Telemetry Live &middot; All Systems Monitored</span>
+        </div>
 
-        <button class="topbar-icon-btn" onclick="showToast('🔔 1 Critical Alert: Train 12127 Delayed', 'info')" aria-label="Notifications">
-          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
-            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
-          </svg>
-          <span class="notif-badge-indicator"></span>
-        </button>
-
-        <div class="user-avatar-btn" onclick="toggleCopilot()" title="Toggle AeroRoute Copilot">
-          <img class="user-avatar-img" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80" alt="Jenny Wilson">
+        <div class="avatar-wrap">
+          <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80" alt="Jenny Wilson">
         </div>
       </div>
     </header>
 
     <!-- ===========================================================
-         SCREEN 1: DASHBOARD (EXACT SCREENSHOT LAYOUT)
+         SCREEN 1: DASHBOARD
     =========================================================== -->
-    <section id="screen-dashboard" class="app-screen active">
-      <!-- Critical Priority Alert Banner -->
-      <div class="critical-alert-card">
-        <div class="critical-left">
-          <div class="warning-icon-box">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <section id="screen-dashboard" class="screen-view active">
+      <!-- Active Disruption Banner -->
+      <div class="disruption-alert-card" id="dash-alert-banner">
+        <div style="display: flex; align-items: center; gap: 1.25rem;">
+          <div class="alert-icon-wrap">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
               <line x1="12" y1="9" x2="12" y2="13"></line>
               <line x1="12" y1="17" x2="12.01" y2="17"></line>
             </svg>
           </div>
           <div>
-            <div class="critical-header-line">
-              <span class="priority-badge">CRITICAL PRIORITY</span>
-              <span class="id-tag">ID: DIS-8942-IN</span>
+            <div class="alert-main-title">
+              <span>Train delayed by 4 hours</span>
+              <span class="badge badge-danger">CRITICAL PRIORITY</span>
+              <span style="font-size: 0.75rem; color: var(--text-muted); font-family: monospace;">ID: DIS-8942-IN</span>
             </div>
-            <p class="critical-description">
-              Train 12127 Mumbai-Pune Delayed by 4 hours. Your Pune &rarr; Goa bus connection will be missed.
+            <p class="alert-sub-desc">
+              Train 12127 Mumbai-Pune delayed by 240 mins. <b>Your Pune &rarr; Goa bus connection will be missed.</b>
             </p>
           </div>
         </div>
 
-        <button class="btn-find-recovery" onclick="switchNav('recovery')">
+        <button class="btn btn-recovery" onclick="showScreen('recovery')">
           <span>Find Recovery Plan</span>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="5" y1="12" x2="19" y2="12"></line>
-            <polyline points="12 5 19 12 12 19"></polyline>
-          </svg>
+          <span>&rarr;</span>
         </button>
       </div>
 
-      <!-- 3 Summary Status Cards -->
-      <div class="summary-cards-grid">
-        <!-- Card 1: UPCOMING TRIPS -->
-        <div class="summary-card">
+      <!-- 3 Key Metric Status Cards -->
+      <div class="metrics-grid">
+        <div class="metric-card">
           <div>
-            <div class="summary-header">
-              <span class="summary-title">UPCOMING TRIPS</span>
-              <svg class="summary-header-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M2 22h20"></path>
-                <path d="M19 13l-4-4-5 1-2-2-2 1 1.5 3L4 14l-2 2 7 1 4 4 1.5-1-1-3 5-1 3.5 3.5L21 18l-2-5z"></path>
+            <div class="metric-top">
+              <span>Upcoming Trips</span>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22 2L11 13"></path>
+                <path d="M22 2l-7 20-4-9-9-4 20-7z"></path>
               </svg>
             </div>
-            <div class="summary-main-val">2 Active Journeys</div>
-            <div class="summary-subtext">Mumbai to Goa via Pune &middot; Delhi to Bengaluru</div>
+            <div class="metric-value">2 Active Journeys</div>
+            <div class="metric-caption">Mumbai to Goa via Pune &middot; Delhi to Bengaluru</div>
           </div>
-          <div class="summary-footer">
-            <a href="#" class="summary-footer-link" onclick="switchNav('trips'); return false;">
-              <span>View full itinerary</span>
-              <span>&rsaquo;</span>
-            </a>
-          </div>
+          <a class="metric-link" onclick="showScreen('trip-details')">
+            <span>View timeline breakdown</span>
+            <span>&rsaquo;</span>
+          </a>
         </div>
 
-        <!-- Card 2: DISRUPTION STATUS -->
-        <div class="summary-card">
+        <div class="metric-card">
           <div>
-            <div class="summary-header">
-              <span class="summary-title">DISRUPTION STATUS</span>
-              <svg class="summary-header-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <div class="metric-top">
+              <span>Disruption Status</span>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <circle cx="12" cy="12" r="10"></circle>
                 <line x1="12" y1="16" x2="12" y2="12"></line>
                 <line x1="12" y1="8" x2="12.01" y2="8"></line>
               </svg>
             </div>
-            <div class="summary-main-val">85% Impact Score</div>
-            <div class="summary-subtext">1 connection severely affected</div>
+            <div class="metric-value" style="color: var(--danger-solid);">85% Impact Score</div>
+            <div class="metric-caption">1 connection severely affected &middot; Requires immediate recovery</div>
           </div>
-          <div class="summary-footer">
-            <span style="font-size: 0.85rem; font-weight: 700; color: #0f172a;">Requires immediate action</span>
-          </div>
+          <span class="badge badge-danger" style="margin-top: 1rem; align-self: flex-start;">Missed Connection Imminent</span>
         </div>
 
-        <!-- Card 3: AI RECOVERY STATUS -->
-        <div class="summary-card">
+        <div class="metric-card">
           <div>
-            <div class="summary-header">
-              <span class="summary-title">AI RECOVERY STATUS</span>
-              <svg class="summary-header-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M9 18h6"></path>
-                <path d="M10 22h4"></path>
-                <path d="M12 2a7 7 0 0 0-7 7c0 2.38 1.19 4.47 3 5.74V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 0 0-7-7z"></path>
+            <div class="metric-top">
+              <span>AI Recovery Status</span>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="23 4 23 10 17 10"></polyline>
+                <polyline points="1 20 1 14 7 14"></polyline>
+                <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
               </svg>
             </div>
-            <div class="summary-main-val">3 Alternatives Found</div>
-            <div class="summary-subtext">Optimized for cost, speed, and minimum schedule disruption.</div>
+            <div class="metric-value" style="color: var(--primary-indigo);">3 Alternatives Found</div>
+            <div class="metric-caption">Optimized for cost, speed, and preserving Radisson Blu resort stay.</div>
           </div>
-          <div class="summary-footer">
-            <a href="#" class="summary-footer-link" onclick="switchNav('recovery'); return false;">
-              <span>Review AI suggestions</span>
-              <span>&rsaquo;</span>
-            </a>
-          </div>
+          <a class="metric-link" onclick="showScreen('recovery')">
+            <span>Review AI suggestions</span>
+            <span>&rsaquo;</span>
+          </a>
         </div>
       </div>
 
-      <!-- Main Lower Split Grid -->
-      <div class="dashboard-lower-grid">
-        <!-- Left: Active Itineraries -->
-        <div class="itineraries-card">
-          <div class="card-title-row">
-            <div>
-              <h2 class="card-heading">Active Itineraries</h2>
-              <p class="card-subheading">Real-time telemetry and schedule tracking</p>
-            </div>
-            <a class="view-all-btn" onclick="switchNav('itineraries')">View All</a>
+      <!-- Quick Access Trips -->
+      <div class="card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+          <div>
+            <h2 style="font-size: 1.15rem; font-weight: 700;">Active Trips &amp; Itineraries</h2>
+            <p style="font-size: 0.85rem; color: var(--text-muted);">Real-time telemetry and schedule tracking</p>
           </div>
+          <button class="btn btn-outline" style="font-size: 0.8rem; padding: 0.4rem 0.85rem;" onclick="showScreen('trip-details')">
+            Open Full Timeline &rarr;
+          </button>
+        </div>
 
-          <div class="itinerary-list">
-            <!-- Item 1: Mumbai to Goa Delayed -->
-            <div class="itinerary-item">
-              <div class="item-left">
-                <div class="item-icon-box">
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <rect x="4" y="3" width="16" height="16" rx="2"></rect>
-                    <path d="M4 11h16"></path>
-                    <path d="M12 3v8"></path>
-                    <path d="M8 19l-2 3"></path>
-                    <path d="M16 19l2 3"></path>
-                  </svg>
-                </div>
-                <div>
-                  <div class="item-route-title">
-                    <span>Mumbai &rarr; Pune &rarr; Goa</span>
-                    <span class="status-delayed">Delayed</span>
-                  </div>
-                  <div class="item-telemetry">
-                    Train 12127 &middot; Departure 06:30 AM &middot; <span class="delay-red">+240m delay</span>
-                  </div>
-                </div>
-              </div>
-
-              <div class="item-right">
-                <span class="risk-label-critical">Critical Risk</span>
-                <button class="btn-item-action" onclick="showItemDetails('train')">Details</button>
+        <div class="trip-preview-row">
+          <div style="display: flex; align-items: center; gap: 1rem;">
+            <div style="width: 40px; height: 40px; border-radius: var(--radius-sm); background: var(--danger-bg); color: var(--danger-solid); display: flex; align-items: center; justify-content: center; font-size: 1.25rem;">
+              🚆
+            </div>
+            <div>
+              <div style="font-weight: 700; font-size: 0.95rem;">Mumbai &rarr; Pune &rarr; Goa</div>
+              <div style="font-size: 0.825rem; color: var(--text-muted); margin-top: 0.2rem;">
+                Train 12127 &middot; Dep 06:30 AM &middot; <span style="color: var(--danger-solid); font-weight: 700;">+240m delay</span>
               </div>
             </div>
-
-            <!-- Item 2: Delhi to Bengaluru On Time -->
-            <div class="itinerary-item">
-              <div class="item-left">
-                <div class="item-icon-box">
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/>
-                  </svg>
-                </div>
-                <div>
-                  <div class="item-route-title">
-                    <span>Delhi (DEL) &rarr; Bengaluru (BLR)</span>
-                    <span class="status-ontime">On Time</span>
-                  </div>
-                  <div class="item-telemetry">
-                    Flight 6E-652 &middot; Departure 02:15 PM &middot; Gate B4
-                  </div>
-                </div>
-              </div>
-
-              <div class="item-right">
-                <span class="status-label-normal">Normal</span>
-                <button class="btn-item-action" onclick="showItemDetails('flight')">Manage</button>
-              </div>
-            </div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 1rem;">
+            <span class="badge badge-danger">Critical Risk</span>
+            <button class="btn btn-recovery" style="padding: 0.45rem 0.95rem; font-size: 0.8rem;" onclick="showScreen('recovery')">Recover</button>
           </div>
         </div>
 
-        <!-- Right: AeroRoute Copilot -->
-        <div class="copilot-card">
-          <div>
-            <div class="copilot-header">
-              <div class="copilot-icon-box">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M12 2a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2 2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"></path>
-                  <rect x="4" y="8" width="16" height="12" rx="2"></rect>
-                  <circle cx="9" cy="13" r="1"></circle>
-                  <circle cx="15" cy="13" r="1"></circle>
-                </svg>
-              </div>
-              <div>
-                <div class="copilot-title">AeroRoute Copilot</div>
-                <div class="copilot-subtitle">Active Intelligence Feed</div>
-              </div>
+        <div class="trip-preview-row">
+          <div style="display: flex; align-items: center; gap: 1rem;">
+            <div style="width: 40px; height: 40px; border-radius: var(--radius-sm); background: var(--success-bg); color: var(--success-solid); display: flex; align-items: center; justify-content: center; font-size: 1.25rem;">
+              ✈️
             </div>
-
-            <div class="recommendations-feed" style="margin-top: 1.25rem;">
-              <div class="recom-box">
-                <div class="recom-title">
-                  <span>⚡</span>
-                  <span>Instant Reroute Available</span>
-                </div>
-                <p class="recom-desc">
-                  Cab transfer from Pune station to airport recommended to catch alternative flight AI-882.
-                </p>
-              </div>
-
-              <div class="recom-box">
-                <div class="recom-title">
-                  <span>🛡</span>
-                  <span>Insurance Auto-Claim</span>
-                </div>
-                <p class="recom-desc">
-                  Delay exceeds 3 hours threshold. Zero-click compensation protocol is staged.
-                </p>
+            <div>
+              <div style="font-weight: 700; font-size: 0.95rem;">Delhi (DEL) &rarr; Bengaluru (BLR)</div>
+              <div style="font-size: 0.825rem; color: var(--text-muted); margin-top: 0.2rem;">
+                Flight 6E-652 &middot; Dep 02:15 PM &middot; Gate B4
               </div>
             </div>
           </div>
-
-          <button class="btn-execute-all" onclick="executeAllRecommendations()">
-            <span>Execute All Recommendations</span>
-            <span>⚡</span>
-          </button>
+          <div style="display: flex; align-items: center; gap: 1rem;">
+            <span class="badge badge-success">On Time</span>
+            <button class="btn btn-outline" style="padding: 0.45rem 0.95rem; font-size: 0.8rem;" onclick="triggerToast('Flight 6E-652 is operating normally. Gate B4 verified.')">Details</button>
+          </div>
         </div>
       </div>
     </section>
 
     <!-- ===========================================================
-         SCREEN 2: RECOVERY PLANS
+         SCREEN 2: CHRONOLOGICAL TRIP DETAILS (MUMBAI -> GOA)
     =========================================================== -->
-    <section id="screen-recovery" class="app-screen">
-      <div class="section-title-wrap">
-        <h1 class="section-headline">Recovery Command Center</h1>
-        <p class="section-subheadline">AI-generated multimodal recovery alternatives ranked by speed, comfort, and cost efficiency.</p>
+    <section id="screen-trip-details" class="screen-view">
+      <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+        <div>
+          <h1 style="font-size: 1.6rem; font-weight: 800; color: var(--primary);">Trip Details: Mumbai to Goa</h1>
+          <p style="font-size: 0.9rem; color: var(--text-muted); margin-top: 0.2rem;">
+            Chronological multi-modal journey schedule with real-time disruption monitoring.
+          </p>
+        </div>
+        <button class="btn btn-recovery" onclick="showScreen('recovery')">
+          ⚡ Review 3 Recovery Plans
+        </button>
       </div>
 
-      <div class="plans-grid">
-        <!-- Plan 1: The Sprinter -->
-        <div class="plan-card selected" id="card-plan-1" onclick="selectPlan(1)">
-          <div>
-            <div class="plan-badge-row">
-              <span class="plan-type-pill pill-speed">Fastest Arrival</span>
-              <span class="score-badge">95% Match</span>
+      <div class="card">
+        <div class="timeline-container">
+          <!-- Step 1: Mumbai Origin -->
+          <div class="timeline-step">
+            <div class="timeline-node-icon">📍</div>
+            <div class="timeline-card">
+              <div class="timeline-card-header">
+                <span class="timeline-time">06:00 AM &middot; Origin</span>
+                <span class="badge badge-success">Departed</span>
+              </div>
+              <div class="timeline-title">Mumbai (CSMT Station)</div>
+              <div class="timeline-meta">Traveler checked-in and boarded at Platform 4.</div>
             </div>
-            <h3 class="plan-title">The Sprinter</h3>
-            <p class="plan-summary">Fast-track airport transfer via private cab + direct Flight AI-882 to Dabolim Airport Goa.</p>
+          </div>
 
-            <div class="plan-stats-table">
-              <div>
-                <div class="stat-entry-label">ARRIVAL DELAY</div>
-                <div class="stat-entry-val" style="color: #10b981;">+45 mins</div>
+          <!-- Step 2: 🚆 Train Disruption -->
+          <div class="timeline-step">
+            <div class="timeline-node-icon danger">🚆</div>
+            <div class="timeline-card disrupted">
+              <div class="timeline-card-header">
+                <span class="timeline-time">06:30 AM &middot; Leg 1</span>
+                <span class="badge badge-danger">4h Delay (+240m)</span>
               </div>
-              <div>
-                <div class="stat-entry-label">ESTIMATED COST</div>
-                <div class="stat-entry-val">$118 / ₹9,800</div>
-              </div>
-              <div>
-                <div class="stat-entry-label">MODE TRANSFERS</div>
-                <div class="stat-entry-val">Cab + Flight</div>
-              </div>
-              <div>
-                <div class="stat-entry-label">HOTEL SYNC</div>
-                <div class="stat-entry-val" style="color: #10b981;">Protected</div>
+              <div class="timeline-title">Train 12127 (Pragati Superfast Express)</div>
+              <div class="timeline-meta">Provider: Indian Railways &middot; Route: CSMT Mumbai &rarr; Pune Junction</div>
+              <div class="disruption-callout red">
+                <span>⚠️</span>
+                <span>Severe monsoon waterlogging at Karjat section. Expected arrival in Pune postponed from 09:50 AM to 01:50 PM.</span>
               </div>
             </div>
           </div>
 
-          <button class="btn-select-plan btn-plan-active" id="btn-plan-1">
-            ✓ Active Selected Plan
+          <!-- Step 3: Pune Junction Station -->
+          <div class="timeline-step">
+            <div class="timeline-node-icon warning">📍</div>
+            <div class="timeline-card missed-conn">
+              <div class="timeline-card-header">
+                <span class="timeline-time">01:50 PM (Estimated)</span>
+                <span class="badge badge-warning">Missed Layover</span>
+              </div>
+              <div class="timeline-title">Pune Junction Transit Hub</div>
+              <div class="timeline-meta">Scheduled connection buffer of 1h 40m has expired due to train delay.</div>
+            </div>
+          </div>
+
+          <!-- Step 4: 🚌 Connecting Bus -->
+          <div class="timeline-step">
+            <div class="timeline-node-icon danger">🚌</div>
+            <div class="timeline-card disrupted">
+              <div class="timeline-card-header">
+                <span class="timeline-time">11:30 AM &middot; Leg 2</span>
+                <span class="badge badge-danger">Connection Missed</span>
+              </div>
+              <div class="timeline-title">IntrCity SmartBus AC Multi-Axle</div>
+              <div class="timeline-meta">Provider: IntrCity SmartBus &middot; Swargate Pune &rarr; Panaji Goa</div>
+              <div class="disruption-callout red">
+                <span>❌</span>
+                <span>Bus departed Swargate on schedule at 11:30 AM. You will not be in Pune in time. Ticket is forfeit without rerouting.</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 5: Goa Arrival & 🏨 Hotel -->
+          <div class="timeline-step">
+            <div class="timeline-node-icon warning">🏨</div>
+            <div class="timeline-card missed-conn">
+              <div class="timeline-card-header">
+                <span class="timeline-time">03:00 PM &middot; Destination</span>
+                <span class="badge badge-warning">Forfeiture Risk</span>
+              </div>
+              <div class="timeline-title">Radisson Blu Resort Goa (Cavelossim Beach)</div>
+              <div class="timeline-meta">Booking Ref: RBG-44921 &middot; 2 Nights Deluxe Pool View ($420 total)</div>
+              <div class="disruption-callout amber">
+                <span>🛡️</span>
+                <span>Late check-in policy requires front-desk notification before 06:00 PM or room will be released to standby pool.</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 6: 🎟️ Activity -->
+          <div class="timeline-step">
+            <div class="timeline-node-icon">🎟️</div>
+            <div class="timeline-card">
+              <div class="timeline-card-header">
+                <span class="timeline-time">09:00 AM Next Day &middot; Activity</span>
+                <span class="badge badge-success">Scheduled</span>
+              </div>
+              <div class="timeline-title">Dudhsagar Waterfalls Guided Trek &amp; Jeep Safari</div>
+              <div class="timeline-meta">Provider: Goa Outdoor Adventures &middot; Departure from resort lobby</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===========================================================
+         SCREEN 3: RECOVERY CENTER (COMPARABLE CARDS & AI PANEL)
+    =========================================================== -->
+    <section id="screen-recovery" class="screen-view">
+      <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+        <div>
+          <h1 style="font-size: 1.6rem; font-weight: 800; color: var(--primary);">Recovery Command Center</h1>
+          <p style="font-size: 0.9rem; color: var(--text-muted); margin-top: 0.2rem;">
+            Comparable recovery alternatives generated by TravelShield AI engine.
+          </p>
+        </div>
+        <div style="display: flex; gap: 0.5rem;">
+          <span class="badge badge-recovery">3 Alternatives Evaluated</span>
+          <span class="badge badge-success">Radisson Hold Staged</span>
+        </div>
+      </div>
+
+      <!-- 3 Comparable Plan Cards -->
+      <div class="recovery-plans-grid">
+        <!-- Card 1: Recommended The Sprinter -->
+        <div class="recovery-card recommended" id="plan-card-1">
+          <div class="recommended-flag">★ AI Recommended</div>
+          <div>
+            <div class="plan-name-header">The Sprinter</div>
+            <div class="plan-sequence-tag">
+              <span>🚕 Private Cab</span>
+              <span>&rarr;</span>
+              <span>✈️ Flight AI-882</span>
+            </div>
+
+            <div class="plan-metrics-table">
+              <div>
+                <div class="metric-unit-label">Total Delay</div>
+                <div class="metric-unit-val" style="color: var(--success-solid);">+45 mins</div>
+              </div>
+              <div>
+                <div class="metric-unit-label">Recovery Score</div>
+                <div class="metric-unit-val" style="color: var(--primary-indigo);">95 / 100</div>
+              </div>
+              <div>
+                <div class="metric-unit-label">Departure</div>
+                <div class="metric-unit-val">02:30 PM</div>
+              </div>
+              <div>
+                <div class="metric-unit-label">Goa Arrival</div>
+                <div class="metric-unit-val">04:15 PM</div>
+              </div>
+              <div>
+                <div class="metric-unit-label">Cost / Fare</div>
+                <div class="metric-unit-val">$118 / ₹9,800</div>
+              </div>
+              <div>
+                <div class="metric-unit-label">Transfers</div>
+                <div class="metric-unit-val">1 Quick Transfer</div>
+              </div>
+            </div>
+
+            <p class="plan-impact-summary">
+              <b>Itinerary Impact:</b> Arrives in Goa by 04:15 PM. Hotel check-in preserved without late fee. All evening plans and next morning's trek intact.
+            </p>
+          </div>
+
+          <button class="btn btn-recovery" style="width: 100%;" onclick="applyPlan('The Sprinter')">
+            Select &amp; Apply Recommendation
           </button>
         </div>
 
-        <!-- Plan 2: The Optimal -->
-        <div class="plan-card" id="card-plan-2" onclick="selectPlan(2)">
+        <!-- Card 2: The Optimal -->
+        <div class="recovery-card" id="plan-card-2">
           <div>
-            <div class="plan-badge-row">
-              <span class="plan-type-pill pill-balanced">Balanced Value</span>
-              <span class="score-badge">89% Match</span>
+            <div class="plan-name-header">The Optimal</div>
+            <div class="plan-sequence-tag">
+              <span>🚆 Vande Bharat</span>
+              <span>&rarr;</span>
+              <span>🚌 Overnight Sleeper</span>
             </div>
-            <h3 class="plan-title">The Optimal</h3>
-            <p class="plan-summary">Vande Bharat Express transfer to Pune junction + overnight AC sleeper luxury bus to Panaji.</p>
 
-            <div class="plan-stats-table">
+            <div class="plan-metrics-table">
               <div>
-                <div class="stat-entry-label">ARRIVAL DELAY</div>
-                <div class="stat-entry-val" style="color: #f59e0b;">+180 mins</div>
+                <div class="metric-unit-label">Total Delay</div>
+                <div class="metric-unit-val" style="color: var(--warning-solid);">+180 mins</div>
               </div>
               <div>
-                <div class="stat-entry-label">ESTIMATED COST</div>
-                <div class="stat-entry-val">$48 / ₹3,950</div>
+                <div class="metric-unit-label">Recovery Score</div>
+                <div class="metric-unit-val">89 / 100</div>
               </div>
               <div>
-                <div class="stat-entry-label">MODE TRANSFERS</div>
-                <div class="stat-entry-val">Train + Bus</div>
+                <div class="metric-unit-label">Departure</div>
+                <div class="metric-unit-val">03:15 PM</div>
               </div>
               <div>
-                <div class="stat-entry-label">HOTEL SYNC</div>
-                <div class="stat-entry-val" style="color: #10b981;">Protected</div>
+                <div class="metric-unit-label">Goa Arrival</div>
+                <div class="metric-unit-val">08:30 PM</div>
+              </div>
+              <div>
+                <div class="metric-unit-label">Cost / Fare</div>
+                <div class="metric-unit-val">$48 / ₹3,950</div>
+              </div>
+              <div>
+                <div class="metric-unit-label">Transfers</div>
+                <div class="metric-unit-val">1 Hub Transfer</div>
               </div>
             </div>
+
+            <p class="plan-impact-summary">
+              <b>Itinerary Impact:</b> Arrives late evening. Autonomous hotel hold protocol notified Radisson front desk. Room held successfully.
+            </p>
           </div>
 
-          <button class="btn-select-plan btn-plan-inactive" id="btn-plan-2">
+          <button class="btn btn-outline" style="width: 100%;" onclick="applyPlan('The Optimal')">
             Select This Plan
           </button>
         </div>
 
-        <!-- Plan 3: The Economical -->
-        <div class="plan-card" id="card-plan-3" onclick="selectPlan(3)">
+        <!-- Card 3: The Economical -->
+        <div class="recovery-card" id="plan-card-3">
           <div>
-            <div class="plan-badge-row">
-              <span class="plan-type-pill pill-budget">Budget Saver</span>
-              <span class="score-badge">81% Match</span>
+            <div class="plan-name-header">The Economical</div>
+            <div class="plan-sequence-tag">
+              <span>🚌 Direct Sleeper Bus</span>
             </div>
-            <h3 class="plan-title">The Economical</h3>
-            <p class="plan-summary">Direct AOPAY partner intercity bus from Mumbai Borivali directly to Mapusa Goa.</p>
 
-            <div class="plan-stats-table">
+            <div class="plan-metrics-table">
               <div>
-                <div class="stat-entry-label">ARRIVAL DELAY</div>
-                <div class="stat-entry-val" style="color: #64748b;">+290 mins</div>
+                <div class="metric-unit-label">Total Delay</div>
+                <div class="metric-unit-val" style="color: var(--text-muted);">+290 mins</div>
               </div>
               <div>
-                <div class="stat-entry-label">ESTIMATED COST</div>
-                <div class="stat-entry-val">$24 / ₹1,999</div>
+                <div class="metric-unit-label">Recovery Score</div>
+                <div class="metric-unit-val">81 / 100</div>
               </div>
               <div>
-                <div class="stat-entry-label">MODE TRANSFERS</div>
-                <div class="stat-entry-val">Direct Bus</div>
+                <div class="metric-unit-label">Departure</div>
+                <div class="metric-unit-val">04:00 PM</div>
               </div>
               <div>
-                <div class="stat-entry-label">HOTEL SYNC</div>
-                <div class="stat-entry-val" style="color: #10b981;">Protected</div>
+                <div class="metric-unit-label">Goa Arrival</div>
+                <div class="metric-unit-val">11:15 PM</div>
+              </div>
+              <div>
+                <div class="metric-unit-label">Cost / Fare</div>
+                <div class="metric-unit-val">$24 / ₹1,999</div>
+              </div>
+              <div>
+                <div class="metric-unit-label">Transfers</div>
+                <div class="metric-unit-val">0 (Direct)</div>
               </div>
             </div>
+
+            <p class="plan-impact-summary">
+              <b>Itinerary Impact:</b> Minimal out-of-pocket expense. Arrives near midnight; dinner forfeited but hotel check-in protected.
+            </p>
           </div>
 
-          <button class="btn-select-plan btn-plan-inactive" id="btn-plan-3">
+          <button class="btn btn-outline" style="width: 100%;" onclick="applyPlan('The Economical')">
             Select This Plan
           </button>
         </div>
       </div>
-    </section>
 
-    <!-- ===========================================================
-         SCREEN 3: ACTIVE TRIPS & ITINERARIES
-    =========================================================== -->
-    <section id="screen-trips" class="app-screen">
-      <div class="section-title-wrap">
-        <h1 class="section-headline">Active Trips & Telemetry</h1>
-        <p class="section-subheadline">Live GPS tracking and disruption monitoring across all connected legs.</p>
-      </div>
-
-      <div class="trip-card">
-        <div class="trip-card-header">
-          <div>
-            <span style="font-size: 0.75rem; font-weight: 700; color: #64748b; text-transform: uppercase;">BOOKING REF: YH-8942</span>
-            <h2 style="font-size: 1.25rem; font-weight: 700; color: #0f172a; margin-top: 0.2rem;">Mumbai to Goa Leisure Journey</h2>
-          </div>
-          <span style="background: #fee2e2; color: #991b1b; padding: 0.35rem 0.75rem; border-radius: 8px; font-size: 0.8rem; font-weight: 700;">
-            1 Disrupted Connection
-          </span>
-        </div>
-
-        <div class="legs-timeline">
-          <div class="leg-node disrupted">
-            <span style="font-size: 0.7rem; font-weight: 700; color: #ef4444; text-transform: uppercase;">LEG 1 &middot; CRITICAL DELAY</span>
-            <div style="font-weight: 700; font-size: 0.95rem; margin-top: 0.3rem;">Train 12127 (Pragati Exp)</div>
-            <div style="font-size: 0.8rem; color: #64748b; margin-top: 0.2rem;">CSMT Mumbai &rarr; Pune Jn</div>
-            <div style="font-size: 0.8rem; color: #ef4444; font-weight: 600; margin-top: 0.4rem;">Delayed by 240 mins (Monsoon block)</div>
-          </div>
-
-          <div class="leg-connector"></div>
-
-          <div class="leg-node">
-            <span style="font-size: 0.7rem; font-weight: 700; color: #64748b; text-transform: uppercase;">LEG 2 &middot; REPLACEMENT FLIGHT</span>
-            <div style="font-weight: 700; font-size: 0.95rem; margin-top: 0.3rem;">Flight AI-882 (Air India)</div>
-            <div style="font-size: 0.8rem; color: #64748b; margin-top: 0.2rem;">PNQ Pune &rarr; GOI Goa</div>
-            <div style="font-size: 0.8rem; color: #10b981; font-weight: 600; margin-top: 0.4rem;">✓ On-Time &middot; Gate 3 &middot; Seat 12F</div>
-          </div>
-
-          <div class="leg-connector"></div>
-
-          <div class="leg-node">
-            <span style="font-size: 0.7rem; font-weight: 700; color: #64748b; text-transform: uppercase;">DOWNSTREAM &middot; PROTECTED</span>
-            <div style="font-weight: 700; font-size: 0.95rem; margin-top: 0.3rem;">Radisson Blu Resort Goa</div>
-            <div style="font-size: 0.8rem; color: #64748b; margin-top: 0.2rem;">Cavelossim Beach</div>
-            <div style="font-size: 0.8rem; color: #10b981; font-weight: 600; margin-top: 0.4rem;">Late Check-in Verified ($210 saved)</div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ===========================================================
-         SCREEN 4: SETTINGS & COPILOT INTELLIGENCE
-    =========================================================== -->
-    <section id="screen-settings" class="app-screen">
-      <div class="section-title-wrap">
-        <h1 class="section-headline">Settings & Automation Rules</h1>
-        <p class="section-subheadline">Configure autonomous multi-modal disruption recovery and instant claim processing.</p>
-      </div>
-
-      <div class="settings-grid">
-        <div class="settings-card">
-          <h3 style="font-size: 1.05rem; font-weight: 700; margin-bottom: 1rem;">⚡ Autonomous Recovery Toggles</h3>
-          
-          <div class="toggle-row">
-            <div>
-              <div style="font-weight: 600; font-size: 0.875rem;">Autonomous Multi-Modal Rerouting</div>
-              <div style="font-size: 0.775rem; color: #64748b;">Automatically reserves replacement travel when delay > 45m</div>
-            </div>
-            <label class="switch">
-              <input type="checkbox" checked onchange="showToast('Rerouting setting saved', 'info')">
-              <span class="slider"></span>
-            </label>
-          </div>
-
-          <div class="toggle-row">
-            <div>
-              <div style="font-weight: 600; font-size: 0.875rem;">Hotel Check-In Protection</div>
-              <div style="font-size: 0.775rem; color: #64748b;">Notifies hotels of late arrivals to avoid booking forfeiture</div>
-            </div>
-            <label class="switch">
-              <input type="checkbox" checked onchange="showToast('Hotel protection active', 'info')">
-              <span class="slider"></span>
-            </label>
-          </div>
-
-          <div class="toggle-row">
-            <div>
-              <div style="font-weight: 600; font-size: 0.875rem;">Rental Car Hold Sync</div>
-              <div style="font-size: 0.775rem; color: #64748b;">Extends vehicle reservation window at destination airport</div>
-            </div>
-            <label class="switch">
-              <input type="checkbox" checked onchange="showToast('Rental hold active', 'info')">
-              <span class="slider"></span>
-            </label>
-          </div>
-        </div>
-
-        <div class="settings-card">
-          <h3 style="font-size: 1.05rem; font-weight: 700; margin-bottom: 1rem;">🛡 Insurance & Passenger Charter</h3>
-
-          <div class="toggle-row">
-            <div>
-              <div style="font-weight: 600; font-size: 0.875rem;">Zero-Click DGCA Auto-Claim</div>
-              <div style="font-size: 0.775rem; color: #64748b;">Automatically files statutory delay compensation for >3h delays</div>
-            </div>
-            <label class="switch">
-              <input type="checkbox" checked onchange="showToast('Auto-claim enabled', 'info')">
-              <span class="slider"></span>
-            </label>
-          </div>
-
-          <div class="toggle-row">
-            <div>
-              <div style="font-weight: 600; font-size: 0.875rem;">WhatsApp Real-Time Concierge</div>
-              <div style="font-size: 0.775rem; color: #64748b;">Direct recovery approvals delivered straight to your WhatsApp</div>
-            </div>
-            <label class="switch">
-              <input type="checkbox" checked onchange="showToast('WhatsApp sync active', 'info')">
-              <span class="slider"></span>
-            </label>
-          </div>
-
-          <div class="toggle-row">
-            <div>
-              <div style="font-weight: 600; font-size: 0.875rem;">Gemini 3.6 Flash Intelligence</div>
-              <div style="font-size: 0.775rem; color: #64748b;">Real-time natural language assistant and route re-planner</div>
-            </div>
-            <label class="switch">
-              <input type="checkbox" checked onchange="showToast('AI engine connected', 'info')">
-              <span class="slider"></span>
-            </label>
-          </div>
-        </div>
-      </div>
-    </section>
-  </div>
-
-  <!-- =============================================================
-       AEROROUTE COPILOT DRAWER (GEMINI CHAT ASSISTANT)
-  ============================================================= -->
-  <div id="copilot-drawer">
-    <div class="drawer-header">
-      <div style="display: flex; align-items: center; gap: 0.65rem;">
-        <div style="width: 28px; height: 28px; border-radius: 8px; background: #0f172a; color: white; display: flex; align-items: center; justify-content: center;">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <!-- AI Explanation Compact Panel -->
+      <div class="ai-explanation-panel">
+        <div class="ai-brain-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M12 2a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2 2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"></path>
             <rect x="4" y="8" width="16" height="12" rx="2"></rect>
           </svg>
         </div>
-        <div>
-          <b style="font-size: 0.95rem;">AeroRoute Copilot</b>
-          <div style="font-size: 0.75rem; color: #10b981;">Online &middot; Gemini 3.6 Flash</div>
+        <div style="flex: 1;">
+          <div class="ai-explanation-title">Why "The Sprinter" is Recommended?</div>
+          <ul class="ai-explanation-list">
+            <li>
+              <span class="check-bullet">✓</span>
+              <span><b>Itinerary Preservation:</b> Arriving at 04:15 PM keeps your check-in and evening plans completely intact.</span>
+            </li>
+            <li>
+              <span class="check-bullet">✓</span>
+              <span><b>Downstream Value Protection:</b> Prevents $420 hotel forfeiture and protects tomorrow morning's non-refundable trek.</span>
+            </li>
+            <li>
+              <span class="check-bullet">✓</span>
+              <span><b>Minimal Trade-Off:</b> Higher initial airfare ($118) is offset by DGCA statutory delay claim against the railroad ($120).</span>
+            </li>
+            <li>
+              <span class="check-bullet">✓</span>
+              <span><b>Comfort Margin:</b> 50-minute dedicated cab ensures smooth transit from Pune station to PNQ airport gate.</span>
+            </li>
+          </ul>
         </div>
       </div>
-      <button onclick="toggleCopilot()" style="font-size: 1.25rem; color: #64748b;">&times;</button>
-    </div>
+    </section>
 
-    <div class="drawer-body" id="drawer-body">
-      <div class="chat-bubble chat-bot">
-        Hello Jenny! I've diagnosed your Mumbai &rarr; Pune train delay (+240 mins). Your connecting bus to Goa will be missed. Would you like me to hold your seat on Flight AI-882?
+    <!-- ===========================================================
+         SCREEN 4: UPDATED ITINERARY (POST-RECOVERY RESOLVED)
+    =========================================================== -->
+    <section id="screen-updated-itinerary" class="screen-view">
+      <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+        <div>
+          <div style="display: flex; align-items: center; gap: 0.65rem;">
+            <h1 style="font-size: 1.6rem; font-weight: 800; color: var(--primary);">Updated Journey: Mumbai to Goa</h1>
+            <span class="badge badge-success">✓ Disruption Resolved</span>
+          </div>
+          <p style="font-size: 0.9rem; color: var(--text-muted); margin-top: 0.2rem;">
+            Replacement route active. All downstream reservations held and confirmed.
+          </p>
+        </div>
+
+        <button class="btn btn-outline" onclick="showScreen('dashboard')">
+          &larr; Back to Dashboard
+        </button>
       </div>
-    </div>
 
-    <div class="drawer-footer">
-      <input type="text" id="copilot-input" class="drawer-input" placeholder="Ask Copilot anything…" onkeydown="if(event.key==='Enter') sendCopilotMsg()">
-      <button class="drawer-send-btn" onclick="sendCopilotMsg()">Send</button>
-    </div>
-  </div>
+      <div class="card">
+        <div class="timeline-container">
+          <!-- Leg 1: Train Disrupted but Managed -->
+          <div class="timeline-step">
+            <div class="timeline-node-icon warning">🚆</div>
+            <div class="timeline-card">
+              <div class="timeline-card-header">
+                <span class="timeline-time">06:30 AM &middot; In Transit</span>
+                <span class="badge badge-warning">Delayed (+240m)</span>
+              </div>
+              <div class="timeline-title">Train 12127 (Pragati Superfast Express)</div>
+              <div class="timeline-meta">CSMT Mumbai &rarr; Pune Jn &middot; Estimated arrival: 01:50 PM</div>
+            </div>
+          </div>
+
+          <!-- Highlighted Replacement Leg 1: Cab Transfer -->
+          <div class="timeline-step">
+            <div class="timeline-node-icon recovery">🚕</div>
+            <div class="timeline-card recovered">
+              <div class="timeline-card-header">
+                <span class="timeline-time">01:55 PM &middot; REPLACEMENT LEG A</span>
+                <span class="badge badge-recovery">✓ Autonomous Cab Hold</span>
+              </div>
+              <div class="timeline-title">Uber Executive Station-to-Airport Transfer</div>
+              <div class="timeline-meta">Pune Junction &rarr; Pune International Airport (PNQ Terminal 1) &middot; Driver Assigned</div>
+              <div class="disruption-callout blue">
+                <span>🚕</span>
+                <span>Driver waiting at Station Exit Gate 2. ETA to Airport Gate: 25 minutes.</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Highlighted Replacement Leg 2: Flight AI-882 -->
+          <div class="timeline-step">
+            <div class="timeline-node-icon recovery">✈️</div>
+            <div class="timeline-card recovered">
+              <div class="timeline-card-header">
+                <span class="timeline-time">03:10 PM &middot; REPLACEMENT LEG B</span>
+                <span class="badge badge-recovery">✓ Boarding Pass Issued</span>
+              </div>
+              <div class="timeline-title">Flight AI-882 (Air India Express)</div>
+              <div class="timeline-meta">PNQ Pune &rarr; GOI Dabolim Goa &middot; Seat 14A (Window) &middot; Gate 3</div>
+              <div class="disruption-callout blue">
+                <span>✈️</span>
+                <span>Flight is on schedule. Expected touchdown at Goa Dabolim: 04:15 PM (net delay reduced to only 45 mins!).</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Leg 3: Radisson Hotel Protected -->
+          <div class="timeline-step">
+            <div class="timeline-node-icon success">🏨</div>
+            <div class="timeline-card">
+              <div class="timeline-card-header">
+                <span class="timeline-time">05:00 PM &middot; Destination</span>
+                <span class="badge badge-success">✓ Late Check-In Verified</span>
+              </div>
+              <div class="timeline-title">Radisson Blu Resort Goa (Cavelossim)</div>
+              <div class="timeline-meta">Hotel confirmed reservation hold until 11:00 PM. No cancellation penalties.</div>
+            </div>
+          </div>
+
+          <!-- Leg 4: Activity Protected -->
+          <div class="timeline-step">
+            <div class="timeline-node-icon success">🎟️</div>
+            <div class="timeline-card">
+              <div class="timeline-card-header">
+                <span class="timeline-time">09:00 AM Next Day &middot; Activity</span>
+                <span class="badge badge-success">✓ Schedule Intact</span>
+              </div>
+              <div class="timeline-title">Dudhsagar Waterfalls Guided Trek</div>
+              <div class="timeline-meta">Pickup scheduled from resort lobby at 09:00 AM.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===========================================================
+         SCREEN 5: SETTINGS
+    =========================================================== -->
+    <section id="screen-settings" class="screen-view">
+      <div style="margin-bottom: 0.5rem;">
+        <h1 style="font-size: 1.6rem; font-weight: 800; color: var(--primary);">System Configuration &amp; Policies</h1>
+        <p style="font-size: 0.9rem; color: var(--text-muted); margin-top: 0.2rem;">
+          Autonomous rerouting rules, compensation claims, and traveler credentials.
+        </p>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem;">
+        <div class="card">
+          <h3 style="font-size: 1.05rem; font-weight: 700; margin-bottom: 1rem;">⚡ Autonomous Recovery Rules</h3>
+          <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.25rem;">
+            When delay duration exceeds threshold, TravelShield autonomous engine triggers instant bookings.
+          </p>
+
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.85rem 0; border-bottom: 1px solid var(--border);">
+            <div>
+              <div style="font-weight: 600; font-size: 0.875rem;">Autonomous Rebooking Protocol</div>
+              <div style="font-size: 0.775rem; color: var(--text-muted);">Triggers when delay > 45 minutes</div>
+            </div>
+            <span class="badge badge-success">Enabled</span>
+          </div>
+
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.85rem 0; border-bottom: 1px solid var(--border);">
+            <div>
+              <div style="font-weight: 600; font-size: 0.875rem;">Hotel Forfeiture Protection</div>
+              <div style="font-size: 0.775rem; color: var(--text-muted);">Sends automated delayed arrival notice to front desk</div>
+            </div>
+            <span class="badge badge-success">Enabled</span>
+          </div>
+
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.85rem 0;">
+            <div>
+              <div style="font-weight: 600; font-size: 0.875rem;">Zero-Click DGCA Rail Claim</div>
+              <div style="font-size: 0.775rem; color: var(--text-muted);">Files delay refund automatically for >3h train delay</div>
+            </div>
+            <span class="badge badge-success">Enabled</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3 style="font-size: 1.05rem; font-weight: 700; margin-bottom: 1rem;">👤 Traveler Profile</h3>
+          <div style="display: flex; flex-direction: column; gap: 0.85rem; font-size: 0.875rem;">
+            <div>
+              <span style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">PRIMARY TRAVELER</span>
+              <div style="font-weight: 700; font-size: 0.95rem; margin-top: 0.15rem;">Jenny Wilson</div>
+            </div>
+            <div>
+              <span style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">FREQUENT FLYER / RAIL LOYALTY</span>
+              <div style="font-weight: 600; margin-top: 0.15rem;">Air India Flying Returns: AI-98241098 &middot; IRCTC: 771829</div>
+            </div>
+            <div>
+              <span style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">SEAT &amp; MEAL PREFERENCE</span>
+              <div style="font-weight: 600; margin-top: 0.15rem;">Window Seat &middot; Vegetarian (Hindu / Jain)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
 
   <!-- Toast Notification element -->
-  <div id="toast-notification">
-    <span id="toast-icon">⚡</span>
-    <span id="toast-text">Action executed successfully</span>
+  <div id="toast">
+    <span id="toast-icon">✓</span>
+    <span id="toast-msg">Action performed</span>
   </div>
 
   <!-- =============================================================
-       SCRIPTS
+       JAVASCRIPT LOGIC
   ============================================================= -->
   <script>
-    // Navigation handler
-    function switchNav(screenId, btnEl) {
-      document.querySelectorAll('.app-screen').forEach(s => s.classList.remove('active'));
-      const targetScreen = document.getElementById(`screen-${screenId}`) || document.getElementById('screen-dashboard');
-      if (targetScreen) targetScreen.classList.add('active');
+    const screenTitles = {
+      'dashboard': 'Dashboard Overview',
+      'trip-details': 'Trip Timeline (Mumbai → Goa)',
+      'recovery': 'Recovery Command Center',
+      'updated-itinerary': 'Resolved Journey Route',
+      'settings': 'Settings & Automation'
+    };
 
-      document.querySelectorAll('.nav-item-btn').forEach(b => b.classList.remove('active'));
-      if (btnEl) {
-        btnEl.classList.add('active');
-      } else {
-        const matchingBtn = Array.from(document.querySelectorAll('.nav-item-btn')).find(b => b.innerText.toLowerCase().includes(screenId));
-        if (matchingBtn) matchingBtn.classList.add('active');
-      }
+    function showScreen(screenId) {
+      document.querySelectorAll('.screen-view').forEach(s => s.classList.remove('active'));
+      const target = document.getElementById(`screen-${screenId}`);
+      if (target) target.classList.add('active');
+
+      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+      const activeNav = document.getElementById(`nav-${screenId}`);
+      if (activeNav) activeNav.classList.add('active');
+
+      const breadcrumb = document.getElementById('breadcrumb-current');
+      if (breadcrumb) breadcrumb.innerText = screenTitles[screenId] || 'Dashboard';
+
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    // Plan selection
-    function selectPlan(planNumber) {
-      [1, 2, 3].forEach(n => {
-        const card = document.getElementById(`card-plan-${n}`);
-        const btn = document.getElementById(`btn-plan-${n}`);
-        if (n === planNumber) {
-          card.classList.add('selected');
-          btn.className = 'btn-select-plan btn-plan-active';
-          btn.innerText = '✓ Active Selected Plan';
-        } else {
-          card.classList.remove('selected');
-          btn.className = 'btn-select-plan btn-plan-inactive';
-          btn.innerText = 'Select This Plan';
-        }
-      });
-      const names = {1: 'The Sprinter (Flight AI-882)', 2: 'The Optimal (Vande Bharat + Bus)', 3: 'The Economical (Intercity Bus)'};
-      showToast(`Selected ${names[planNumber]}! Disruption recovery activated.`, 'success');
-    }
+    // Interactive Demo Flow for Judges
+    function executeDemoStep(stepNumber) {
+      document.querySelectorAll('.demo-step-btn').forEach(b => b.classList.remove('current'));
+      const btn = document.getElementById(`step-btn-1` ? `step-btn-${stepNumber}` : null);
+      if (btn) btn.classList.add('current');
 
-    // Execute All Recommendations
-    function executeAllRecommendations() {
-      showToast('⚡ Executing: Reroute via Flight AI-882 confirmed & DGCA Claim Filed!', 'success');
-      setTimeout(() => {
-        showToast('🛡 Hotel check-in extended at Radisson Blu Resort Goa.', 'info');
-      }, 1500);
-    }
-
-    // Show Details modal
-    function showItemDetails(type) {
-      if (type === 'train') {
-        showToast('🚆 Train 12127: CSMT to Pune Jn, Status: +240m delay due to monsoon track obstruction.', 'info');
-      } else {
-        showToast('✈ Flight 6E-652: DEL to BLR, Status: On Time, Gate B4, Boarding 01:45 PM.', 'info');
+      if (stepNumber === 1) {
+        showScreen('dashboard');
+        triggerToast('Step 1: Normal itinerary with active telemetry.');
+      } else if (stepNumber === 2) {
+        showScreen('trip-details');
+        triggerToast('Step 2: Train delay (+240m) causes missed bus connection.');
+      } else if (stepNumber === 3) {
+        showScreen('recovery');
+        triggerToast('Step 3: AI evaluates 3 comparable recovery plans.');
+      } else if (stepNumber === 4) {
+        showScreen('updated-itinerary');
+        triggerToast('Step 4: Reroute applied! Net delay reduced to 45m.');
       }
     }
 
-    // Copilot Drawer
-    function toggleCopilot() {
-      const drawer = document.getElementById('copilot-drawer');
-      drawer.classList.toggle('open');
-    }
-
-    function sendCopilotMsg() {
-      const input = document.getElementById('copilot-input');
-      const text = input.value.trim();
-      if (!text) return;
-
-      const body = document.getElementById('drawer-body');
-      const userBubble = document.createElement('div');
-      userBubble.className = 'chat-bubble chat-user';
-      userBubble.innerText = text;
-      body.appendChild(userBubble);
-      input.value = '';
-      body.scrollTop = body.scrollHeight;
-
-      // Simulated Gemini 3.6 Flash Response
+    function applyPlan(planName) {
+      triggerToast(`✓ Selected "${planName}"! Updating itinerary with Flight AI-882...`);
       setTimeout(() => {
-        const botBubble = document.createElement('div');
-        botBubble.className = 'chat-bubble chat-bot';
-        if (text.toLowerCase().includes('plan') || text.toLowerCase().includes('flight')) {
-          botBubble.innerText = "I recommend 'The Sprinter' option: Cab from Pune station to PNQ airport, connecting to Flight AI-882. It gets you to Goa with only 45 minutes net delay, and keeps your Radisson Blu check-in intact.";
-        } else if (text.toLowerCase().includes('claim') || text.toLowerCase().includes('money')) {
-          botBubble.innerText = "Because Train 12127 is delayed by 4 hours, statutory compensation protocol allows us to auto-claim ₹10,000 / $120. I have staged the ticket numbers YH-8942.";
-        } else {
-          botBubble.innerText = "Telemetry and weather monitoring show skies clearing over Goa. All downstream reservations (hotel & Hertz car) have been confirmed on hold.";
-        }
-        body.appendChild(botBubble);
-        body.scrollTop = body.scrollHeight;
-      }, 700);
+        showScreen('updated-itinerary');
+        triggerToast(`✓ Itinerary Updated! Hotel late check-in verified at Radisson Blu.`);
+      }, 750);
     }
 
-    // Toast helper
-    let toastTimeout = null;
-    function showToast(msg, type = 'info') {
-      const toast = document.getElementById('toast-notification');
-      const icon = document.getElementById('toast-icon');
-      const text = document.getElementById('toast-text');
-
-      icon.innerText = type === 'success' ? '✓' : (type === 'error' ? '⚠' : 'ℹ');
-      text.innerText = msg;
+    let toastTimer = null;
+    function triggerToast(text) {
+      const toast = document.getElementById('toast');
+      const toastMsg = document.getElementById('toast-msg');
+      toastMsg.innerText = text;
       toast.classList.add('show');
-
-      if (toastTimeout) clearTimeout(toastTimeout);
-      toastTimeout = setTimeout(() => {
+      if (toastTimer) clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => {
         toast.classList.remove('show');
       }, 3500);
     }
