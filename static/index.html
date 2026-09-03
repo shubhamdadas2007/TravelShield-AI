@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AeroRoute AI — Intelligent Travel Disruption Recovery Dashboard</title>
+  <title>AeroRoute AI — Travel Disruption Recovery Dashboard</title>
   
   <!-- Google Fonts: Plus Jakarta Sans & Inter -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -12,60 +12,54 @@
 
   <style>
     /* =============================================================
-       1. VISUAL DIRECTION & PALETTE (SPECIFICATION)
-       - Primary: Deep navy / indigo (#0f172a / #312e81 / #4338ca)
-       - Background: Off-white / light gray (#f8fafc)
-       - Success: Green (#10b981)
-       - Warning: Amber (#f59e0b)
-       - Disruption: Red (#ef4444)
-       - Recovery: Blue / indigo (#2563eb / #4f46e5)
+       1. VISUAL DIRECTION & GLASSMORPHISM DESIGN SYSTEM
     ============================================================= */
     :root {
       --primary: #0f172a;
       --primary-indigo: #4338ca;
       --primary-hover: #1e1b4b;
       
-      --bg-body: #f8fafc;
-      --bg-card: #ffffff;
-      --bg-surface: #f1f5f9;
-      --bg-subtle: #f8fafc;
-      
-      --border: #e2e8f0;
-      --border-focus: #cbd5e1;
-
       --text-main: #0f172a;
-      --text-muted: #64748b;
-      --text-sub: #94a3b8;
+      --text-muted: #475569;
+      --text-sub: #64748b;
 
-      --success-bg: #ecfdf5;
+      /* Glassmorphic Surfaces */
+      --glass-bg: rgba(255, 255, 255, 0.75);
+      --glass-bg-subtle: rgba(255, 255, 255, 0.60);
+      --glass-bg-elevated: rgba(255, 255, 255, 0.88);
+      --glass-border: rgba(255, 255, 255, 0.85);
+      --glass-border-subtle: rgba(226, 232, 240, 0.65);
+      
+      --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.06);
+      --glass-shadow-hover: 0 14px 38px 0 rgba(31, 38, 135, 0.12);
+      --glass-blur: blur(18px);
+
+      /* Semantic status */
+      --success-bg: rgba(236, 253, 245, 0.85);
       --success-text: #065f46;
-      --success-border: #a7f3d0;
+      --success-border: rgba(167, 243, 208, 0.8);
       --success-solid: #10b981;
 
-      --warning-bg: #fffbeb;
+      --warning-bg: rgba(255, 251, 235, 0.85);
       --warning-text: #92400e;
-      --warning-border: #fde68a;
+      --warning-border: rgba(253, 230, 138, 0.8);
       --warning-solid: #f59e0b;
 
-      --danger-bg: #fef2f2;
+      --danger-bg: rgba(254, 242, 242, 0.88);
       --danger-text: #991b1b;
-      --danger-border: #fecaca;
+      --danger-border: rgba(254, 202, 202, 0.85);
       --danger-solid: #ef4444;
 
-      --recovery-bg: #eef2ff;
+      --recovery-bg: rgba(238, 242, 255, 0.88);
       --recovery-text: #3730a3;
-      --recovery-border: #c7d2fe;
+      --recovery-border: rgba(199, 210, 254, 0.85);
       --recovery-solid: #4f46e5;
 
       --sidebar-width: 260px;
-      --radius-sm: 8px;
-      --radius-md: 12px;
-      --radius-lg: 16px;
+      --radius-sm: 10px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
       --radius-pill: 9999px;
-
-      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
-      --shadow-card: 0 4px 16px rgba(15, 23, 42, 0.04);
-      --shadow-hover: 0 10px 25px rgba(15, 23, 42, 0.08);
     }
 
     *, *::before, *::after {
@@ -74,14 +68,54 @@
       padding: 0;
     }
 
+    /* Vibrant Mesh Gradient with Frosted Ambient Orbs for Glass Effect */
     body {
       min-height: 100vh;
-      background: var(--bg-body);
+      background-color: #f1f5f9;
+      background-image: 
+        radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.16) 0px, transparent 50%),
+        radial-gradient(at 100% 0%, rgba(56, 189, 248, 0.18) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(129, 140, 248, 0.14) 0px, transparent 50%),
+        radial-gradient(at 0% 100%, rgba(14, 165, 233, 0.15) 0px, transparent 50%),
+        radial-gradient(at 50% 50%, rgba(248, 250, 252, 0.7) 0px, transparent 65%);
+      background-attachment: fixed;
+      background-size: cover;
       color: var(--text-main);
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       -webkit-font-smoothing: antialiased;
       display: flex;
       overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Ambient Floating Light Orbs behind glass */
+    .ambient-glow {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(90px);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .glow-1 {
+      width: 450px;
+      height: 450px;
+      background: radial-gradient(circle, rgba(99, 102, 241, 0.22) 0%, rgba(99, 102, 241, 0) 70%);
+      top: -100px;
+      left: 15%;
+    }
+    .glow-2 {
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(56, 189, 248, 0.20) 0%, rgba(56, 189, 248, 0) 70%);
+      bottom: -100px;
+      right: 5%;
+    }
+    .glow-3 {
+      width: 350px;
+      height: 350px;
+      background: radial-gradient(circle, rgba(236, 72, 153, 0.12) 0%, rgba(236, 72, 153, 0) 70%);
+      top: 40%;
+      left: 45%;
     }
 
     h1, h2, h3, h4, .brand-title {
@@ -101,12 +135,14 @@
     }
 
     /* =============================================================
-       2. SIDEBAR NAVIGATION
+       2. GLASSMORPHIC SIDEBAR
     ============================================================= */
     #sidebar {
       width: var(--sidebar-width);
-      background: #ffffff;
-      border-right: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.78);
+      backdrop-filter: blur(24px) saturate(180%);
+      -webkit-backdrop-filter: blur(24px) saturate(180%);
+      border-right: 1px solid var(--glass-border);
       height: 100vh;
       position: fixed;
       left: 0;
@@ -115,6 +151,7 @@
       flex-direction: column;
       padding: 1.5rem 1rem;
       z-index: 50;
+      box-shadow: 4px 0 28px rgba(31, 38, 135, 0.04);
     }
 
     .brand-box {
@@ -122,12 +159,12 @@
       align-items: center;
       gap: 0.75rem;
       padding: 0.5rem 0.75rem 1.75rem 0.75rem;
-      border-bottom: 1px solid var(--border);
+      border-bottom: 1px solid rgba(226, 232, 240, 0.8);
       margin-bottom: 1.25rem;
     }
     .brand-icon {
-      width: 36px;
-      height: 36px;
+      width: 38px;
+      height: 38px;
       border-radius: var(--radius-sm);
       background: var(--primary);
       color: #ffffff;
@@ -135,27 +172,19 @@
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
     }
     .brand-title {
       font-size: 1.15rem;
       font-weight: 800;
       color: var(--primary);
     }
-    .brand-badge {
-      font-size: 0.65rem;
-      font-weight: 700;
-      background: var(--recovery-bg);
-      color: var(--recovery-text);
-      padding: 0.15rem 0.45rem;
-      border-radius: var(--radius-pill);
-      margin-left: auto;
-    }
 
     .nav-menu {
       list-style: none;
       display: flex;
       flex-direction: column;
-      gap: 0.35rem;
+      gap: 0.4rem;
       flex: 1;
     }
     .nav-btn {
@@ -163,22 +192,26 @@
       display: flex;
       align-items: center;
       gap: 0.85rem;
-      padding: 0.75rem 1rem;
+      padding: 0.8rem 1rem;
       border-radius: var(--radius-md);
       font-size: 0.9rem;
-      font-weight: 500;
+      font-weight: 600;
       color: var(--text-muted);
-      transition: all 0.15s ease;
+      transition: all 0.2s ease;
       text-align: left;
+      position: relative;
     }
     .nav-btn:hover {
-      background: var(--bg-surface);
-      color: var(--text-main);
+      background: rgba(255, 255, 255, 0.8);
+      color: var(--primary);
+      transform: translateX(2px);
     }
     .nav-btn.active {
-      background: var(--bg-surface);
-      color: var(--primary);
+      background: #ffffff;
+      color: var(--primary-indigo);
       font-weight: 700;
+      box-shadow: 0 4px 14px rgba(31, 38, 135, 0.08);
+      border: 1px solid rgba(226, 232, 240, 0.8);
     }
     .nav-btn svg {
       width: 20px;
@@ -190,22 +223,25 @@
       background: var(--danger-solid);
       color: #ffffff;
       font-size: 0.7rem;
-      font-weight: 700;
+      font-weight: 800;
       padding: 0.15rem 0.5rem;
       border-radius: var(--radius-pill);
+      box-shadow: 0 2px 6px rgba(239, 68, 68, 0.3);
     }
 
-    /* Demo Quick Switcher Box in Sidebar */
+    /* Stepper Box in Sidebar */
     .demo-flow-box {
-      background: #f8fafc;
-      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(14px);
+      border: 1px solid var(--glass-border);
       border-radius: var(--radius-md);
       padding: 1rem;
       margin-top: auto;
+      box-shadow: 0 4px 16px rgba(31, 38, 135, 0.04);
     }
     .demo-flow-title {
       font-size: 0.75rem;
-      font-weight: 700;
+      font-weight: 800;
       color: var(--text-muted);
       text-transform: uppercase;
       letter-spacing: 0.05em;
@@ -226,22 +262,23 @@
       font-size: 0.8rem;
       font-weight: 600;
       color: var(--text-muted);
-      padding: 0.4rem 0.6rem;
+      padding: 0.45rem 0.65rem;
       border-radius: var(--radius-sm);
       text-align: left;
       transition: all 0.15s ease;
     }
     .demo-step-btn:hover {
-      background: #ffffff;
+      background: rgba(255, 255, 255, 0.9);
       color: var(--primary);
     }
     .demo-step-btn.current {
       background: var(--primary);
       color: #ffffff;
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.2);
     }
 
     /* =============================================================
-       3. MAIN CONTENT LAYOUT
+       3. MAIN CONTENT CONTAINER
     ============================================================= */
     #main-wrap {
       margin-left: var(--sidebar-width);
@@ -250,15 +287,23 @@
       display: flex;
       flex-direction: column;
       padding: 1.5rem 2.25rem 3rem 2.25rem;
+      position: relative;
+      z-index: 10;
     }
 
+    /* Frosted Topbar Header */
     .top-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
       margin-bottom: 1.75rem;
-      padding-bottom: 1rem;
-      border-bottom: 1px solid var(--border);
+      padding: 0.75rem 1.25rem;
+      border-radius: var(--radius-lg);
+      background: rgba(255, 255, 255, 0.70);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border);
+      box-shadow: var(--glass-shadow);
     }
     .header-breadcrumb {
       display: flex;
@@ -266,10 +311,11 @@
       gap: 0.5rem;
       font-size: 0.85rem;
       color: var(--text-muted);
+      font-weight: 500;
     }
     .breadcrumb-active {
-      color: var(--text-main);
-      font-weight: 600;
+      color: var(--primary);
+      font-weight: 700;
     }
 
     .header-right-tools {
@@ -281,21 +327,21 @@
       display: inline-flex;
       align-items: center;
       gap: 0.45rem;
-      background: #ffffff;
-      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.85);
+      border: 1px solid var(--glass-border);
       padding: 0.45rem 1rem;
       border-radius: var(--radius-pill);
       font-size: 0.825rem;
       font-weight: 600;
       color: var(--text-main);
-      box-shadow: var(--shadow-sm);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
     }
     .status-dot-green {
       width: 8px;
       height: 8px;
       border-radius: 50%;
       background: var(--success-solid);
-      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.25);
     }
 
     .avatar-wrap {
@@ -304,7 +350,7 @@
       border-radius: 50%;
       overflow: hidden;
       border: 2px solid #ffffff;
-      box-shadow: var(--shadow-sm);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
     }
     .avatar-wrap img {
       width: 100%;
@@ -317,26 +363,28 @@
       display: none;
       flex-direction: column;
       gap: 1.5rem;
-      animation: fadeIn 0.2s ease;
+      animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
     }
     .screen-view.active {
       display: flex;
     }
 
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(4px); }
+      from { opacity: 0; transform: translateY(6px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
     /* =============================================================
-       4. UI COMPONENTS: CARDS, BADGES, BUTTONS
+       4. GLASSMORPHIC CARDS, BUTTONS & BADGES
     ============================================================= */
     .card {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border);
       border-radius: var(--radius-lg);
-      padding: 1.5rem;
-      box-shadow: var(--shadow-card);
+      padding: 1.65rem;
+      box-shadow: var(--glass-shadow);
     }
 
     .btn {
@@ -344,38 +392,44 @@
       align-items: center;
       justify-content: center;
       gap: 0.5rem;
-      padding: 0.65rem 1.25rem;
+      padding: 0.7rem 1.35rem;
       border-radius: var(--radius-md);
       font-size: 0.875rem;
-      font-weight: 600;
+      font-weight: 700;
       transition: all 0.2s ease;
       cursor: pointer;
     }
     .btn-primary {
       background: var(--primary);
       color: #ffffff;
+      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.2);
     }
     .btn-primary:hover {
       background: var(--primary-hover);
+      transform: translateY(-1px);
     }
     .btn-recovery {
       background: var(--primary-indigo);
       color: #ffffff;
+      box-shadow: 0 4px 16px rgba(79, 70, 229, 0.3);
     }
     .btn-recovery:hover {
       background: #3730a3;
+      transform: translateY(-1px);
     }
     .btn-outline {
-      background: #ffffff;
-      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--glass-border);
       color: var(--text-main);
     }
     .btn-outline:hover {
-      background: var(--bg-surface);
-      border-color: var(--border-focus);
+      background: #ffffff;
+      border-color: rgba(203, 213, 225, 0.9);
+      transform: translateY(-1px);
     }
 
-    /* Status Badges */
+    /* Badges */
     .badge {
       display: inline-flex;
       align-items: center;
@@ -411,24 +465,25 @@
     /* =============================================================
        5. SCREEN 1: DASHBOARD
     ============================================================= */
-    /* Disruption Alert Card */
     .disruption-alert-card {
-      background: #ffffff;
-      border-left: 5px solid var(--danger-solid);
-      border-top: 1px solid var(--border);
-      border-right: 1px solid var(--border);
-      border-bottom: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border-left: 6px solid var(--danger-solid);
+      border-top: 1px solid var(--glass-border);
+      border-right: 1px solid var(--glass-border);
+      border-bottom: 1px solid var(--glass-border);
       border-radius: var(--radius-lg);
-      padding: 1.5rem 1.75rem;
-      box-shadow: var(--shadow-card);
+      padding: 1.65rem 1.85rem;
+      box-shadow: var(--glass-shadow);
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 1.5rem;
     }
     .alert-icon-wrap {
-      width: 44px;
-      height: 44px;
+      width: 48px;
+      height: 48px;
       border-radius: var(--radius-md);
       background: var(--danger-bg);
       color: var(--danger-solid);
@@ -436,50 +491,59 @@
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
+      border: 1px solid var(--danger-border);
     }
     .alert-main-title {
-      font-size: 1.05rem;
-      font-weight: 700;
+      font-size: 1.1rem;
+      font-weight: 800;
       color: var(--text-main);
       display: flex;
       align-items: center;
       gap: 0.65rem;
     }
     .alert-sub-desc {
-      font-size: 0.9rem;
-      color: #475569;
+      font-size: 0.92rem;
+      color: var(--text-muted);
       margin-top: 0.35rem;
+      line-height: 1.45;
     }
 
-    /* Summary Metric Cards */
+    /* 3 Summary Metric Cards */
     .metrics-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 1.25rem;
     }
     .metric-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border);
       border-radius: var(--radius-lg);
-      padding: 1.5rem;
-      box-shadow: var(--shadow-card);
+      padding: 1.5rem 1.65rem;
+      box-shadow: var(--glass-shadow);
       display: flex;
       flex-direction: column;
       justify-content: space-between;
+      transition: all 0.25s ease;
+    }
+    .metric-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--glass-shadow-hover);
     }
     .metric-top {
       display: flex;
       justify-content: space-between;
       align-items: center;
       font-size: 0.775rem;
-      font-weight: 700;
-      color: var(--text-muted);
+      font-weight: 800;
+      color: var(--text-sub);
       text-transform: uppercase;
       letter-spacing: 0.05em;
       margin-bottom: 0.75rem;
     }
     .metric-value {
-      font-size: 1.15rem;
+      font-size: 1.2rem;
       font-weight: 800;
       color: var(--text-main);
       margin-bottom: 0.25rem;
@@ -487,7 +551,7 @@
     .metric-caption {
       font-size: 0.85rem;
       color: var(--text-muted);
-      line-height: 1.4;
+      line-height: 1.45;
     }
     .metric-link {
       font-size: 0.85rem;
@@ -503,25 +567,23 @@
       text-decoration: underline;
     }
 
-    /* Quick Trips Preview Grid */
-    .dashboard-two-col {
-      display: grid;
-      grid-template-columns: 1.7fr 1fr;
-      gap: 1.25rem;
-    }
+    /* Quick Trips Preview */
     .trip-preview-row {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 1rem;
-      border: 1px solid var(--border);
+      padding: 1.15rem 1.25rem;
+      border: 1px solid rgba(255, 255, 255, 0.9);
       border-radius: var(--radius-md);
-      background: #ffffff;
+      background: rgba(255, 255, 255, 0.65);
+      backdrop-filter: blur(12px);
       margin-top: 0.75rem;
-      transition: border-color 0.2s;
+      transition: all 0.2s ease;
     }
     .trip-preview-row:hover {
-      border-color: var(--border-focus);
+      background: rgba(255, 255, 255, 0.9);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 18px rgba(31, 38, 135, 0.06);
     }
 
     /* =============================================================
@@ -539,7 +601,7 @@
       top: 15px;
       bottom: 25px;
       width: 2px;
-      background: var(--border);
+      background: rgba(203, 213, 225, 0.8);
     }
 
     .timeline-step {
@@ -554,16 +616,18 @@
       position: absolute;
       left: -2rem;
       top: 0;
-      width: 40px;
-      height: 40px;
+      width: 42px;
+      height: 42px;
       border-radius: 50%;
-      background: #ffffff;
-      border: 2px solid var(--border);
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(8px);
+      border: 2px solid var(--glass-border);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.1rem;
+      font-size: 1.15rem;
       z-index: 2;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
     }
     .timeline-node-icon.danger {
       border-color: var(--danger-solid);
@@ -587,24 +651,26 @@
     }
 
     .timeline-card {
-      background: #ffffff;
-      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.75);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border);
       border-radius: var(--radius-md);
-      padding: 1.25rem 1.5rem;
+      padding: 1.35rem 1.6rem;
       margin-left: 1.25rem;
-      box-shadow: var(--shadow-sm);
+      box-shadow: var(--glass-shadow);
     }
     .timeline-card.disrupted {
       border-color: var(--danger-border);
-      background: #fffafa;
+      background: rgba(254, 242, 242, 0.85);
     }
     .timeline-card.missed-conn {
       border-color: var(--warning-border);
-      background: #fffdf5;
+      background: rgba(255, 251, 235, 0.85);
     }
     .timeline-card.recovered {
       border-color: var(--recovery-border);
-      background: #fafbff;
+      background: rgba(245, 247, 255, 0.9);
     }
 
     .timeline-card-header {
@@ -615,13 +681,14 @@
     }
     .timeline-time {
       font-size: 0.8rem;
-      font-weight: 700;
-      color: var(--text-muted);
+      font-weight: 800;
+      color: var(--text-sub);
       text-transform: uppercase;
+      letter-spacing: 0.04em;
     }
     .timeline-title {
       font-size: 1.05rem;
-      font-weight: 700;
+      font-weight: 800;
       color: var(--text-main);
     }
     .timeline-meta {
@@ -630,8 +697,8 @@
       margin-top: 0.25rem;
     }
     .disruption-callout {
-      margin-top: 0.75rem;
-      padding: 0.65rem 0.85rem;
+      margin-top: 0.85rem;
+      padding: 0.75rem 1rem;
       border-radius: var(--radius-sm);
       font-size: 0.825rem;
       font-weight: 600;
@@ -640,16 +707,19 @@
       gap: 0.5rem;
     }
     .disruption-callout.red {
-      background: var(--danger-bg);
+      background: rgba(254, 226, 226, 0.9);
       color: var(--danger-text);
+      border: 1px solid rgba(252, 165, 165, 0.8);
     }
     .disruption-callout.amber {
-      background: var(--warning-bg);
+      background: rgba(254, 243, 199, 0.9);
       color: var(--warning-text);
+      border: 1px solid rgba(253, 230, 138, 0.8);
     }
     .disruption-callout.blue {
-      background: var(--recovery-bg);
+      background: rgba(224, 231, 255, 0.9);
       color: var(--recovery-text);
+      border: 1px solid rgba(199, 210, 254, 0.8);
     }
 
     /* =============================================================
@@ -662,23 +732,27 @@
       margin-bottom: 1.5rem;
     }
     .recovery-card {
-      background: #ffffff;
-      border: 2px solid var(--border);
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border: 2px solid var(--glass-border);
       border-radius: var(--radius-lg);
-      padding: 1.5rem;
-      box-shadow: var(--shadow-card);
+      padding: 1.65rem;
+      box-shadow: var(--glass-shadow);
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      transition: all 0.2s ease;
+      transition: all 0.25s ease;
       position: relative;
     }
     .recovery-card:hover {
-      box-shadow: var(--shadow-hover);
+      box-shadow: var(--glass-shadow-hover);
+      transform: translateY(-2px);
     }
     .recovery-card.recommended {
-      border-color: var(--primary-indigo);
-      background: #fafbff;
+      border-color: rgba(79, 70, 229, 0.9);
+      background: rgba(245, 247, 255, 0.92);
+      box-shadow: 0 14px 40px 0 rgba(79, 70, 229, 0.15);
     }
 
     .recommended-flag {
@@ -693,18 +767,19 @@
       border-radius: var(--radius-pill);
       letter-spacing: 0.05em;
       text-transform: uppercase;
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.35);
     }
 
     .plan-name-header {
-      font-size: 1.15rem;
+      font-size: 1.2rem;
       font-weight: 800;
       color: var(--text-main);
       margin-bottom: 0.25rem;
     }
     .plan-sequence-tag {
       font-size: 0.8rem;
-      font-weight: 600;
-      color: var(--text-muted);
+      font-weight: 700;
+      color: var(--text-sub);
       margin-bottom: 1.25rem;
       display: flex;
       align-items: center;
@@ -712,8 +787,8 @@
     }
 
     .plan-metrics-table {
-      background: #f8fafc;
-      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.75);
+      border: 1px solid var(--glass-border);
       border-radius: var(--radius-md);
       padding: 0.85rem;
       display: grid;
@@ -723,12 +798,12 @@
     }
     .metric-unit-label {
       font-size: 0.7rem;
-      font-weight: 700;
-      color: var(--text-muted);
+      font-weight: 800;
+      color: var(--text-sub);
       text-transform: uppercase;
     }
     .metric-unit-val {
-      font-size: 0.95rem;
+      font-size: 1rem;
       font-weight: 800;
       color: var(--text-main);
       margin-top: 0.1rem;
@@ -736,25 +811,28 @@
 
     .plan-impact-summary {
       font-size: 0.825rem;
-      color: #475569;
+      color: var(--text-muted);
       line-height: 1.45;
       margin-bottom: 1.25rem;
     }
 
     /* AI Explanation Compact Panel */
     .ai-explanation-panel {
-      background: #ffffff;
-      border: 1px solid var(--border);
-      border-left: 4px solid var(--primary-indigo);
-      border-radius: var(--radius-md);
-      padding: 1.25rem 1.5rem;
+      background: var(--glass-bg-elevated);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border);
+      border-left: 5px solid var(--primary-indigo);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem 1.75rem;
       display: flex;
       gap: 1.25rem;
       align-items: flex-start;
+      box-shadow: var(--glass-shadow);
     }
     .ai-brain-icon {
-      width: 36px;
-      height: 36px;
+      width: 40px;
+      height: 40px;
       border-radius: var(--radius-sm);
       background: var(--recovery-bg);
       color: var(--primary-indigo);
@@ -762,9 +840,10 @@
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
+      border: 1px solid var(--recovery-border);
     }
     .ai-explanation-title {
-      font-size: 0.95rem;
+      font-size: 1rem;
       font-weight: 800;
       color: var(--text-main);
       margin-bottom: 0.4rem;
@@ -773,7 +852,7 @@
       list-style: none;
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 0.65rem 1.5rem;
+      gap: 0.75rem 1.75rem;
       font-size: 0.85rem;
       color: #334155;
     }
@@ -794,17 +873,19 @@
       position: fixed;
       bottom: 2rem;
       right: 2rem;
-      background: var(--primary);
+      background: rgba(15, 23, 42, 0.92);
+      backdrop-filter: blur(14px);
       color: #ffffff;
       padding: 0.85rem 1.35rem;
       border-radius: var(--radius-md);
       font-size: 0.875rem;
       font-weight: 600;
-      box-shadow: var(--shadow-hover);
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.2);
       z-index: 200;
       display: flex;
       align-items: center;
       gap: 0.65rem;
+      border: 1px solid rgba(255, 255, 255, 0.15);
       transform: translateY(100px);
       opacity: 0;
       transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
@@ -818,7 +899,6 @@
     @media (max-width: 1024px) {
       .recovery-plans-grid { grid-template-columns: 1fr; }
       .metrics-grid { grid-template-columns: 1fr; }
-      .dashboard-two-col { grid-template-columns: 1fr; }
       .ai-explanation-list { grid-template-columns: 1fr; }
     }
     @media (max-width: 768px) {
@@ -829,8 +909,13 @@
 </head>
 <body>
 
+  <!-- Background Ambient Glow Orbs for Glassmorphic Depth -->
+  <div class="ambient-glow glow-1"></div>
+  <div class="ambient-glow glow-2"></div>
+  <div class="ambient-glow glow-3"></div>
+
   <!-- =============================================================
-       LEFT SIDEBAR (DESKTOP NAVIGATION)
+       LEFT SIDEBAR (FROSTED GLASS)
   ============================================================= -->
   <aside id="sidebar">
     <div class="brand-box">
@@ -841,7 +926,7 @@
       </div>
       <div>
         <div class="brand-title">AeroRoute AI</div>
-        <div style="font-size: 0.725rem; color: var(--text-muted); font-weight: 500;">TravelShield Engine</div>
+        <div style="font-size: 0.725rem; color: var(--text-sub); font-weight: 600;">TravelShield Engine</div>
       </div>
     </div>
 
@@ -897,7 +982,7 @@
       </li>
     </ul>
 
-    <!-- Hackathon Judge Quick Walkthrough Stepper -->
+    <!-- Hackathon Quick Demo Stepper -->
     <div class="demo-flow-box">
       <div class="demo-flow-title">
         <span>⚡</span>
@@ -924,7 +1009,7 @@
        MAIN VIEW CONTAINER
   ============================================================= -->
   <main id="main-wrap">
-    <!-- Topbar Header -->
+    <!-- Frosted Topbar -->
     <header class="top-header">
       <div class="header-breadcrumb">
         <span>AeroRoute Command</span>
@@ -948,7 +1033,7 @@
          SCREEN 1: DASHBOARD
     =========================================================== -->
     <section id="screen-dashboard" class="screen-view active">
-      <!-- Active Disruption Banner -->
+      <!-- Active Disruption Alert -->
       <div class="disruption-alert-card" id="dash-alert-banner">
         <div style="display: flex; align-items: center; gap: 1.25rem;">
           <div class="alert-icon-wrap">
@@ -962,7 +1047,7 @@
             <div class="alert-main-title">
               <span>Train delayed by 4 hours</span>
               <span class="badge badge-danger">CRITICAL PRIORITY</span>
-              <span style="font-size: 0.75rem; color: var(--text-muted); font-family: monospace;">ID: DIS-8942-IN</span>
+              <span style="font-size: 0.75rem; color: var(--text-sub); font-family: monospace;">ID: DIS-8942-IN</span>
             </div>
             <p class="alert-sub-desc">
               Train 12127 Mumbai-Pune delayed by 240 mins. <b>Your Pune &rarr; Goa bus connection will be missed.</b>
@@ -1036,7 +1121,7 @@
       <div class="card">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
           <div>
-            <h2 style="font-size: 1.15rem; font-weight: 700;">Active Trips &amp; Itineraries</h2>
+            <h2 style="font-size: 1.15rem; font-weight: 800;">Active Trips &amp; Itineraries</h2>
             <p style="font-size: 0.85rem; color: var(--text-muted);">Real-time telemetry and schedule tracking</p>
           </div>
           <button class="btn btn-outline" style="font-size: 0.8rem; padding: 0.4rem 0.85rem;" onclick="showScreen('trip-details')">
@@ -1046,11 +1131,11 @@
 
         <div class="trip-preview-row">
           <div style="display: flex; align-items: center; gap: 1rem;">
-            <div style="width: 40px; height: 40px; border-radius: var(--radius-sm); background: var(--danger-bg); color: var(--danger-solid); display: flex; align-items: center; justify-content: center; font-size: 1.25rem;">
+            <div style="width: 42px; height: 42px; border-radius: var(--radius-sm); background: var(--danger-bg); color: var(--danger-solid); display: flex; align-items: center; justify-content: center; font-size: 1.25rem; border: 1px solid var(--danger-border);">
               🚆
             </div>
             <div>
-              <div style="font-weight: 700; font-size: 0.95rem;">Mumbai &rarr; Pune &rarr; Goa</div>
+              <div style="font-weight: 800; font-size: 0.95rem;">Mumbai &rarr; Pune &rarr; Goa</div>
               <div style="font-size: 0.825rem; color: var(--text-muted); margin-top: 0.2rem;">
                 Train 12127 &middot; Dep 06:30 AM &middot; <span style="color: var(--danger-solid); font-weight: 700;">+240m delay</span>
               </div>
@@ -1064,11 +1149,11 @@
 
         <div class="trip-preview-row">
           <div style="display: flex; align-items: center; gap: 1rem;">
-            <div style="width: 40px; height: 40px; border-radius: var(--radius-sm); background: var(--success-bg); color: var(--success-solid); display: flex; align-items: center; justify-content: center; font-size: 1.25rem;">
+            <div style="width: 42px; height: 42px; border-radius: var(--radius-sm); background: var(--success-bg); color: var(--success-solid); display: flex; align-items: center; justify-content: center; font-size: 1.25rem; border: 1px solid var(--success-border);">
               ✈️
             </div>
             <div>
-              <div style="font-weight: 700; font-size: 0.95rem;">Delhi (DEL) &rarr; Bengaluru (BLR)</div>
+              <div style="font-weight: 800; font-size: 0.95rem;">Delhi (DEL) &rarr; Bengaluru (BLR)</div>
               <div style="font-size: 0.825rem; color: var(--text-muted); margin-top: 0.2rem;">
                 Flight 6E-652 &middot; Dep 02:15 PM &middot; Gate B4
               </div>
@@ -1496,22 +1581,22 @@
 
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem;">
         <div class="card">
-          <h3 style="font-size: 1.05rem; font-weight: 700; margin-bottom: 1rem;">⚡ Autonomous Recovery Rules</h3>
+          <h3 style="font-size: 1.05rem; font-weight: 800; margin-bottom: 1rem;">⚡ Autonomous Recovery Rules</h3>
           <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.25rem;">
             When delay duration exceeds threshold, TravelShield autonomous engine triggers instant bookings.
           </p>
 
-          <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.85rem 0; border-bottom: 1px solid var(--border);">
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.85rem 0; border-bottom: 1px solid rgba(226, 232, 240, 0.7);">
             <div>
-              <div style="font-weight: 600; font-size: 0.875rem;">Autonomous Rebooking Protocol</div>
+              <div style="font-weight: 700; font-size: 0.875rem;">Autonomous Rebooking Protocol</div>
               <div style="font-size: 0.775rem; color: var(--text-muted);">Triggers when delay > 45 minutes</div>
             </div>
             <span class="badge badge-success">Enabled</span>
           </div>
 
-          <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.85rem 0; border-bottom: 1px solid var(--border);">
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.85rem 0; border-bottom: 1px solid rgba(226, 232, 240, 0.7);">
             <div>
-              <div style="font-weight: 600; font-size: 0.875rem;">Hotel Forfeiture Protection</div>
+              <div style="font-weight: 700; font-size: 0.875rem;">Hotel Forfeiture Protection</div>
               <div style="font-size: 0.775rem; color: var(--text-muted);">Sends automated delayed arrival notice to front desk</div>
             </div>
             <span class="badge badge-success">Enabled</span>
@@ -1519,7 +1604,7 @@
 
           <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.85rem 0;">
             <div>
-              <div style="font-weight: 600; font-size: 0.875rem;">Zero-Click DGCA Rail Claim</div>
+              <div style="font-weight: 700; font-size: 0.875rem;">Zero-Click DGCA Rail Claim</div>
               <div style="font-size: 0.775rem; color: var(--text-muted);">Files delay refund automatically for >3h train delay</div>
             </div>
             <span class="badge badge-success">Enabled</span>
@@ -1527,18 +1612,18 @@
         </div>
 
         <div class="card">
-          <h3 style="font-size: 1.05rem; font-weight: 700; margin-bottom: 1rem;">👤 Traveler Profile</h3>
+          <h3 style="font-size: 1.05rem; font-weight: 800; margin-bottom: 1rem;">👤 Traveler Profile</h3>
           <div style="display: flex; flex-direction: column; gap: 0.85rem; font-size: 0.875rem;">
             <div>
-              <span style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">PRIMARY TRAVELER</span>
-              <div style="font-weight: 700; font-size: 0.95rem; margin-top: 0.15rem;">Jenny Wilson</div>
+              <span style="font-size: 0.75rem; font-weight: 800; color: var(--text-sub); text-transform: uppercase;">PRIMARY TRAVELER</span>
+              <div style="font-weight: 800; font-size: 0.95rem; margin-top: 0.15rem;">Jenny Wilson</div>
             </div>
             <div>
-              <span style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">FREQUENT FLYER / RAIL LOYALTY</span>
+              <span style="font-size: 0.75rem; font-weight: 800; color: var(--text-sub); text-transform: uppercase;">FREQUENT FLYER / RAIL LOYALTY</span>
               <div style="font-weight: 600; margin-top: 0.15rem;">Air India Flying Returns: AI-98241098 &middot; IRCTC: 771829</div>
             </div>
             <div>
-              <span style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">SEAT &amp; MEAL PREFERENCE</span>
+              <span style="font-size: 0.75rem; font-weight: 800; color: var(--text-sub); text-transform: uppercase;">SEAT &amp; MEAL PREFERENCE</span>
               <div style="font-weight: 600; margin-top: 0.15rem;">Window Seat &middot; Vegetarian (Hindu / Jain)</div>
             </div>
           </div>
@@ -1583,7 +1668,7 @@
     // Interactive Demo Flow for Judges
     function executeDemoStep(stepNumber) {
       document.querySelectorAll('.demo-step-btn').forEach(b => b.classList.remove('current'));
-      const btn = document.getElementById(`step-btn-1` ? `step-btn-${stepNumber}` : null);
+      const btn = document.getElementById(`step-btn-${stepNumber}`);
       if (btn) btn.classList.add('current');
 
       if (stepNumber === 1) {
