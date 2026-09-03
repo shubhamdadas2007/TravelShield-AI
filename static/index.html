@@ -3,1177 +3,2785 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TravelShield AI — Enterprise Multimodal Disruption Recovery Engine</title>
-  <meta name="description" content="AI Multimodal Disruption Recovery Engine with Impact Diagnosis, Connection Recovery, and Financial Exposure calculation.">
-  <link rel="stylesheet" href="./css/styles.css">
+  <title>Baseline — Tennis Club & Academy</title>
   
-  <!-- Firebase JS SDK (v10 compat mode) -->
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+  <!-- Google Font: Onest (400, 500) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500&display=swap" rel="stylesheet">
+  
+  <!-- Lenis ES-module importmap -->
+  <script type="importmap">
+  {
+    "imports": {
+      "lenis": "https://cdn.jsdelivr.net/npm/lenis@1.1.18/+esm"
+    }
+  }
+  </script>
+
+  <style>
+    /* -------------------------------------------------------------
+       1. CSS VARIABLES & PALETTE
+    ------------------------------------------------------------- */
+    :root {
+      --background: #ffffff;
+      --foreground: #0a0a0a;
+      --brand: #2563c9;       /* primary royal blue */
+      --brand-deep: #0f2f63;  /* deep navy — hero/stats/footer base */
+      --brand-light: #5790e6; /* light blue accent / focus ring */
+      --accent-teal: #0b6e97; /* blue court caption tint */
+      --surface: #f4f4f4;     /* off-white section bg */
+      --surface-card: #ffffff;
+      --ink: #0a0a0a;         /* near-black headings */
+      --ink-soft: #717784;    /* muted body */
+      --ghost: #d7dae1;       /* oversized ghost text */
+      --hairline: #e6e8ec;    /* subtle borders */
+      --on-brand: #ffffff;    /* text on navy */
+      
+      /* Radii */
+      --radius-card: 1.5rem;
+      --radius-card-lg: 2rem;
+      --radius-pill: 62.5rem;
+      --radius-xl: 0.75rem;
+
+      /* Easings */
+      --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+      --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+      --ease-in-out-cubic: cubic-bezier(0.65, 0, 0.35, 1);
+    }
+
+    /* -------------------------------------------------------------
+       2. ADAPTIVE REM SCALE GRID (BAKED IN EXACTLY)
+    ------------------------------------------------------------- */
+    html { font-size: 16px; }
+    @media (max-width: 1920px) { html { font-size: 0.833333vw; } } /* base 1920 */
+    @media (max-width: 1440px) { html { font-size: 1.111111vw; } } /* base 1440 */
+    @media (max-width: 1024px) { html { font-size: 1.5625vw; } }   /* base 1024 */
+    @media (max-width: 640px)  { html { font-size: 4.444444vw; } } /* base 360  */
+
+    /* -------------------------------------------------------------
+       3. CSS RESET & PAGE FRAME
+    ------------------------------------------------------------- */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    html {
+      scroll-behavior: smooth;
+    }
+    body {
+      min-height: 100vh;
+      background: var(--background);
+      color: var(--foreground);
+      font-family: "Onest", system-ui, -apple-system, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      overflow-x: hidden;
+    }
+    img {
+      display: block;
+      max-width: 100%;
+      height: auto;
+    }
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+    button {
+      font-family: inherit;
+      cursor: pointer;
+      border: none;
+      background: none;
+    }
+    ul, ol {
+      list-style: none;
+    }
+    :focus-visible {
+      outline: 2px solid var(--brand-light);
+      outline-offset: 2px;
+    }
+
+    /* Page container <main> with page inset */
+    main {
+      width: 100%;
+      overflow-x: clip;
+      padding: 0.5rem; /* mobile */
+    }
+    @media (min-width: 640px) {
+      main {
+        padding: 0.75rem; /* sm */
+      }
+    }
+
+    /* -------------------------------------------------------------
+       4. CLIP-MASK & REVEAL UTILITIES
+    ------------------------------------------------------------- */
+    .clip-box {
+      display: inline-block;
+      overflow: hidden;
+      vertical-align: top;
+      padding-bottom: 0.14em;
+    }
+    .clip-box-line {
+      display: block;
+      overflow: hidden;
+      padding-bottom: 0.14em;
+    }
+    .clip-inner {
+      display: inline-block;
+      transform: translateY(115%);
+      opacity: 0;
+      will-change: transform, opacity;
+      transition: transform 950ms var(--ease-out-expo), opacity 950ms var(--ease-out-expo);
+    }
+    .revealed .clip-inner,
+    .is-revealed .clip-inner {
+      transform: translateY(0) !important;
+      opacity: 1 !important;
+    }
+
+    /* Inview spring animation base */
+    [data-inview] {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 800ms var(--ease-out-expo), transform 800ms var(--ease-out-expo);
+      will-change: transform, opacity;
+    }
+    [data-inview].inview-active {
+      opacity: 1 !important;
+      transform: translateY(0) scale(1) !important;
+    }
+
+    /* -------------------------------------------------------------
+       5. SHARED UI COMPONENTS
+    ------------------------------------------------------------- */
+    /* Eyebrow */
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.75rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.22em;
+    }
+    .eyebrow-dot {
+      width: 0.375rem;
+      height: 0.375rem;
+      border-radius: var(--radius-pill);
+      flex-shrink: 0;
+    }
+    .eyebrow-dark {
+      color: var(--ink-soft);
+    }
+    .eyebrow-dark .eyebrow-dot {
+      background: var(--brand);
+    }
+    .eyebrow-light {
+      color: rgba(255, 255, 255, 0.70);
+    }
+    .eyebrow-light .eyebrow-dot {
+      background: var(--brand-light);
+    }
+
+    /* Pill Button */
+    .pill-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      border-radius: var(--radius-pill);
+      padding: 0.875rem 1.75rem;
+      font-size: 0.875rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease, transform 0.25s ease;
+      position: relative;
+    }
+    .pill-btn-arrow {
+      width: 1rem;
+      height: 1rem;
+      transition: transform 0.25s ease;
+    }
+    @media (hover: hover) and (min-width: 769px) {
+      .pill-btn:hover .pill-btn-arrow {
+        transform: translateX(5px);
+      }
+    }
+    .pill-btn-light {
+      background: #ffffff;
+      color: var(--brand-deep);
+    }
+    @media (hover: hover) and (min-width: 769px) {
+      .pill-btn-light:hover {
+        background: var(--brand-light);
+        color: #ffffff;
+      }
+    }
+    .pill-btn-solid {
+      background: var(--ink);
+      color: #ffffff;
+    }
+    @media (hover: hover) and (min-width: 769px) {
+      .pill-btn-solid:hover {
+        background: var(--brand-deep);
+      }
+    }
+    .pill-btn-outline {
+      border: 1px solid currentColor;
+      color: var(--ink);
+    }
+    @media (hover: hover) and (min-width: 769px) {
+      .pill-btn-outline:hover {
+        background: var(--ink);
+        color: #ffffff;
+      }
+    }
+
+    /* Carousel Arrow Button */
+    .arrow-btn {
+      width: 3rem;
+      height: 3rem;
+      border-radius: var(--radius-pill);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.25s ease;
+    }
+    @media (min-width: 640px) {
+      .arrow-btn {
+        width: 3.5rem;
+        height: 3.5rem;
+      }
+    }
+    .arrow-btn-outline {
+      border: 1px solid var(--hairline);
+      background: transparent;
+      color: var(--ink);
+    }
+    @media (hover: hover) and (min-width: 769px) {
+      .arrow-btn-outline:hover {
+        border-color: var(--ink);
+      }
+    }
+    .arrow-btn-solid {
+      background: var(--ink);
+      border: 1px solid var(--ink);
+      color: #ffffff;
+    }
+    @media (hover: hover) and (min-width: 769px) {
+      .arrow-btn-solid:hover {
+        background: var(--brand-deep);
+        border-color: var(--brand-deep);
+      }
+    }
+    .arrow-btn-icon {
+      width: 1.25rem;
+      height: 1.25rem;
+      transition: transform 0.25s ease;
+    }
+    @media (hover: hover) and (min-width: 769px) {
+      .arrow-btn:hover .arrow-btn-icon {
+        transform: scale(1.15);
+      }
+      .arrow-btn-prev:hover .arrow-btn-icon {
+        transform: scaleX(-1) scale(1.15) !important;
+      }
+    }
+    .arrow-btn-prev .arrow-btn-icon {
+      transform: scaleX(-1);
+    }
+
+    /* Carousel Dots */
+    .carousel-dots {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .carousel-dot {
+      padding: 0.375rem;
+      display: flex;
+      align-items: center;
+    }
+    .carousel-dot-inner {
+      height: 0.375rem;
+      border-radius: var(--radius-pill);
+      transition: width 0.3s var(--ease-out-expo), background 0.3s ease;
+    }
+    /* Dark Tone Dots */
+    .dots-dark .carousel-dot-inner {
+      width: 0.375rem;
+      background: var(--ghost);
+    }
+    .dots-dark .carousel-dot.active .carousel-dot-inner {
+      width: 1.25rem;
+      background: var(--ink);
+    }
+    /* Light Tone Dots */
+    .dots-light .carousel-dot-inner {
+      width: 0.375rem;
+      background: rgba(255, 255, 255, 0.40);
+    }
+    .dots-light .carousel-dot.active .carousel-dot-inner {
+      width: 1.25rem;
+      background: #ffffff;
+    }
+
+    /* -------------------------------------------------------------
+       6. INTRO LOADER CURTAIN
+    ------------------------------------------------------------- */
+    #intro-loader {
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      background: var(--brand-deep);
+      color: #ffffff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2rem;
+      will-change: transform;
+      transition: transform 850ms var(--ease-in-out-cubic);
+    }
+    .loader-wordmark {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      transform: translateY(16px);
+      opacity: 0;
+      transition: transform 600ms var(--ease-out-expo), opacity 600ms var(--ease-out-expo);
+    }
+    .loader-wordmark.active {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    .loader-wordmark span {
+      font-size: 1.5rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+    }
+    .loader-track {
+      width: 10rem;
+      height: 1px;
+      border-radius: var(--radius-pill);
+      background: rgba(255, 255, 255, 0.20);
+      overflow: hidden;
+    }
+    .loader-bar {
+      width: 100%;
+      height: 100%;
+      background: #ffffff;
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 1280ms var(--ease-in-out-cubic);
+    }
+
+    /* -------------------------------------------------------------
+       7. SECTION: HERO
+    ------------------------------------------------------------- */
+    #hero {
+      position: relative;
+      isolation: isolate;
+      overflow: hidden;
+      border-radius: var(--radius-card-lg);
+      background: var(--brand-deep);
+      color: #ffffff;
+      height: calc(100svh - 1rem);
+      min-height: 36rem;
+      display: flex;
+      flex-direction: column;
+    }
+    @media (min-width: 640px) {
+      #hero {
+        height: calc(100svh - 1.5rem);
+      }
+    }
+
+    .hero-parallax-plate {
+      position: absolute;
+      inset: 0;
+      z-index: -10;
+      overflow: hidden;
+    }
+    .hero-parallax-inner {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: -16%;
+      height: 132%;
+      width: 100%;
+      will-change: transform;
+    }
+    .hero-parallax-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .hero-parallax-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, rgba(15, 47, 99, 0.65), rgba(15, 47, 99, 0.35), rgba(15, 47, 99, 0.75));
+    }
+
+    /* Header inside Hero */
+    .site-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.5rem 1.5rem 0;
+      font-size: 0.75rem;
+      color: #ffffff;
+      z-index: 10;
+    }
+    @media (min-width: 640px) {
+      .site-header {
+        padding: 2rem 2.5rem 0;
+      }
+    }
+    .header-left {
+      flex: 1;
+      display: none;
+      align-items: center;
+      gap: 2rem;
+    }
+    @media (min-width: 1024px) {
+      .header-left {
+        display: flex;
+      }
+    }
+    .header-left a {
+      color: rgba(255, 255, 255, 0.90);
+      transition: color 0.2s ease;
+    }
+    .header-left a:hover {
+      color: #ffffff;
+    }
+
+    .header-center {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    @media (min-width: 1024px) {
+      .header-center {
+        justify-content: center;
+      }
+    }
+    .header-brand-title {
+      font-size: 1rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+    }
+
+    .header-right {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 1rem;
+    }
+    @media (min-width: 640px) {
+      .header-right {
+        gap: 1.25rem;
+      }
+    }
+    .btn-book-visit {
+      display: none;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #ffffff;
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+    @media (min-width: 640px) {
+      .btn-book-visit {
+        display: inline-block;
+      }
+    }
+    .btn-book-visit:hover {
+      text-decoration: underline;
+    }
+
+    .burger-btn {
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: var(--radius-pill);
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(8px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      transition: background 0.2s ease;
+    }
+    .burger-btn:hover {
+      background: rgba(255, 255, 255, 0.25);
+    }
+    .burger-bar {
+      width: 1rem;
+      height: 1px;
+      background: #ffffff;
+    }
+
+    /* Giant Hero Title */
+    .hero-title-container {
+      padding: 1rem 1.5rem 0;
+      z-index: 10;
+    }
+    @media (min-width: 640px) {
+      .hero-title-container {
+        padding: 1rem 2.5rem 0;
+      }
+    }
+    #hero-title {
+      font-size: 12.5vw;
+      font-weight: 500;
+      text-transform: uppercase;
+      line-height: 0.85;
+      letter-spacing: -0.02em;
+      white-space: nowrap;
+    }
+    #hero-title .clip-inner {
+      transition: transform 1100ms var(--ease-out-expo), opacity 1100ms var(--ease-out-expo);
+    }
+
+    /* Hero Bottom Row */
+    .hero-bottom {
+      margin-top: auto;
+      padding: 0 1.5rem 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      z-index: 10;
+    }
+    @media (min-width: 640px) {
+      .hero-bottom {
+        padding: 0 2.5rem 2.5rem;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: flex-end;
+      }
+    }
+    .hero-tagline {
+      font-size: 2.4rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      line-height: 0.95;
+      letter-spacing: -0.02em;
+      color: rgba(255, 255, 255, 0.85);
+    }
+    .hero-tagline .clip-inner {
+      transition: transform 900ms var(--ease-out-expo), opacity 900ms var(--ease-out-expo);
+    }
+
+    .hero-right-cluster {
+      display: flex;
+      align-items: flex-end;
+      gap: 1rem;
+    }
+
+    /* Hero Collection Slider */
+    .collection-slider-wrap {
+      display: none;
+      width: 16rem;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+    @media (min-width: 768px) {
+      .collection-slider-wrap {
+        display: flex;
+      }
+    }
+    .collection-card {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      border-radius: var(--radius-card);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      background: rgba(255, 255, 255, 0.10);
+      padding: 0.75rem;
+      box-shadow: 0 8px 30px rgba(15, 47, 99, 0.20);
+      backdrop-filter: blur(8px);
+      min-height: 5rem;
+    }
+    .collection-card-img {
+      width: 3.5rem;
+      height: 3.5rem;
+      border-radius: var(--radius-xl);
+      object-fit: cover;
+      flex-shrink: 0;
+    }
+    .collection-brand {
+      font-size: 0.7rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .collection-title {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      opacity: 0.80;
+    }
+    .collection-cta {
+      font-size: 0.65rem;
+      text-decoration: underline;
+      display: inline-block;
+      margin-top: 0.2rem;
+      cursor: pointer;
+    }
+
+    /* Hero Membership Card */
+    .membership-card {
+      width: 100%;
+      max-width: 20rem;
+      border-radius: var(--radius-card);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      background: rgba(255, 255, 255, 0.10);
+      padding: 0.75rem;
+      box-shadow: 0 8px 30px rgba(15, 47, 99, 0.20);
+      backdrop-filter: blur(8px);
+      display: flex;
+      gap: 0.75rem;
+      align-items: stretch;
+    }
+    @media (min-width: 640px) {
+      .membership-card {
+        max-width: 15rem;
+      }
+    }
+    .membership-left {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      flex: 1;
+    }
+    .membership-value {
+      font-size: 1.875rem;
+      font-weight: 500;
+      line-height: 1;
+    }
+    .membership-avatars {
+      display: flex;
+      align-items: center;
+      margin: 0.35rem 0;
+    }
+    .avatar-dot {
+      width: 1.25rem;
+      height: 1.25rem;
+      border-radius: var(--radius-pill);
+      border: 1px solid rgba(15, 47, 99, 0.40);
+      margin-left: -0.5rem;
+    }
+    .avatar-dot:first-child {
+      margin-left: 0;
+    }
+    .membership-caption {
+      font-size: 0.65rem;
+      opacity: 0.80;
+    }
+    .membership-img {
+      width: 4rem;
+      aspect-ratio: 3/4;
+      border-radius: var(--radius-xl);
+      object-fit: cover;
+      flex-shrink: 0;
+    }
+
+    /* -------------------------------------------------------------
+       8. SECTION: TRUST ("Trusted by serious players")
+    ------------------------------------------------------------- */
+    #trust {
+      position: relative;
+      isolation: isolate;
+      overflow: hidden;
+      background: var(--background);
+      padding: 4rem 1.5rem;
+    }
+    @media (min-width: 640px) {
+      #trust {
+        padding: 5rem 2.5rem;
+      }
+    }
+
+    .trust-badges-row {
+      position: relative;
+      z-index: 20;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+    @media (min-width: 640px) {
+      .trust-badges-row {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: flex-start;
+      }
+    }
+
+    .percentage-badge {
+      width: 7rem;
+      height: 7rem;
+      border-radius: var(--radius-pill);
+      background: var(--surface);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      flex-shrink: 0;
+    }
+    @media (min-width: 640px) {
+      .percentage-badge {
+        width: 8rem;
+        height: 8rem;
+      }
+    }
+    .percent-num {
+      font-size: 1.5rem;
+      font-weight: 500;
+    }
+    .percent-caption {
+      font-size: 0.6rem;
+      color: var(--ink-soft);
+      max-width: 7em;
+      line-height: 1.25;
+      margin-top: 0.25rem;
+    }
+
+    .badge-card {
+      max-width: 28rem;
+      border-radius: var(--radius-card);
+      background: var(--surface);
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    @media (min-width: 640px) {
+      .badge-card {
+        padding: 1.5rem;
+        gap: 1.25rem;
+      }
+    }
+    .index-chip {
+      align-self: flex-start;
+      border-radius: var(--radius-xl);
+      background: var(--background);
+      padding: 0.5rem 1rem;
+      font-size: 1.25rem;
+      font-weight: 500;
+    }
+    .badge-title {
+      font-size: 1.125rem;
+      font-weight: 500;
+    }
+    .badge-body {
+      font-size: 0.75rem;
+      color: var(--ink-soft);
+      line-height: 1.6;
+    }
+
+    /* Oversized Ghost Heading */
+    .trust-ghost-container {
+      position: relative;
+      pointer-events: none;
+      z-index: 0;
+      user-select: none;
+      max-width: 88rem;
+      margin: 3rem auto 0;
+    }
+    #trust-title {
+      font-size: 8.2vw;
+      font-weight: 500;
+      text-transform: uppercase;
+      line-height: 1.02;
+      letter-spacing: -0.02em;
+    }
+    .ghost-row {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+    }
+    .ghost-word {
+      color: var(--ghost);
+      display: inline-block;
+      will-change: transform;
+      padding-bottom: 0.12em;
+    }
+    .ghost-word-ink {
+      color: var(--ink) !important;
+    }
+
+    /* Center Coach Card */
+    .coach-card-container {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      justify-content: center;
+      margin: 2rem auto;
+    }
+    @media (min-width: 640px) {
+      .coach-card-container {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        margin: 0;
+      }
+    }
+    .coach-card {
+      width: 13rem;
+      aspect-ratio: 3/4;
+      border-radius: var(--radius-card);
+      background: var(--brand);
+      overflow: hidden;
+      transform: rotate(6deg);
+      position: relative;
+      box-shadow: 0 15px 40px rgba(15, 47, 99, 0.15);
+      transition: transform 0.3s ease;
+    }
+    @media (min-width: 640px) {
+      .coach-card {
+        width: 16rem;
+      }
+    }
+    .coach-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: opacity 300ms ease;
+    }
+    .coach-caption {
+      position: absolute;
+      inset: auto 0.75rem 0.75rem 0.75rem;
+      border-radius: var(--radius-xl);
+      background: rgba(15, 47, 99, 0.40);
+      color: #ffffff;
+      backdrop-filter: blur(8px);
+      padding: 0.5rem 0.75rem;
+      display: flex;
+      flex-direction: column;
+    }
+    .coach-name {
+      font-size: 0.875rem;
+      font-weight: 500;
+    }
+    .coach-role {
+      font-size: 0.65rem;
+      opacity: 0.80;
+    }
+
+    /* Trust Controls Row */
+    .trust-controls {
+      position: relative;
+      z-index: 20;
+      margin-top: 3rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    @media (min-width: 640px) {
+      .trust-controls {
+        margin-top: 6rem;
+      }
+    }
+
+    /* -------------------------------------------------------------
+       9. SECTION: PROGRAMS
+    ------------------------------------------------------------- */
+    #programs {
+      background: var(--surface);
+      padding: 6rem 1.5rem;
+    }
+    @media (min-width: 640px) {
+      #programs {
+        padding: 6rem 2.5rem;
+      }
+    }
+    #programs-title {
+      font-size: 3rem;
+      font-weight: 500;
+      line-height: 0.95;
+      letter-spacing: -0.02em;
+      margin-top: 1rem;
+    }
+    .programs-list {
+      margin-top: 3.5rem;
+    }
+    .program-row-link {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      padding: 1.75rem 0;
+      border-top: 1px solid var(--hairline);
+      transition: background 0.2s ease;
+    }
+    .programs-list > li:last-child .program-row-link {
+      border-bottom: 1px solid var(--hairline);
+    }
+    .program-row-link:focus-visible {
+      background: var(--background);
+    }
+    .program-index {
+      width: 2.5rem;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--ink-soft);
+      flex-shrink: 0;
+    }
+    .program-content {
+      flex: 1;
+    }
+    .program-name {
+      font-size: 1.5rem;
+      font-weight: 500;
+      letter-spacing: -0.02em;
+    }
+    @media (min-width: 640px) {
+      .program-name {
+        font-size: 1.875rem;
+      }
+    }
+    .program-desc {
+      font-size: 0.875rem;
+      color: var(--ink-soft);
+      margin-top: 0.25rem;
+    }
+    .program-arrow-circle {
+      width: 2.75rem;
+      height: 2.75rem;
+      border-radius: var(--radius-pill);
+      border: 1px solid var(--hairline);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .program-arrow-icon {
+      width: 1.25rem;
+      height: 1.25rem;
+      opacity: 0.55;
+      transform: translateX(0);
+      transition: transform 0.25s ease, opacity 0.25s ease;
+    }
+    @media (hover: hover) and (min-width: 769px) {
+      .program-row-link:hover .program-arrow-icon {
+        transform: translateX(8px);
+        opacity: 1;
+      }
+    }
+
+    /* -------------------------------------------------------------
+       10. SECTION: FACILITIES
+    ------------------------------------------------------------- */
+    #facilities {
+      background: var(--background);
+      border-radius: var(--radius-card-lg);
+      margin-top: -2.5rem;
+      padding: 4rem 1.5rem 5rem;
+      position: relative;
+      z-index: 5;
+    }
+    @media (min-width: 640px) {
+      #facilities {
+        padding: 4rem 2.5rem 5rem;
+      }
+    }
+    .facilities-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 2.5rem;
+      align-items: flex-end;
+    }
+    @media (min-width: 768px) {
+      .facilities-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+    .facilities-intro {
+      max-width: 24rem;
+    }
+    .facilities-icon-img {
+      width: 4rem;
+      height: 4rem;
+      border-radius: var(--radius-card);
+      object-fit: cover;
+    }
+    #facilities-title {
+      font-size: 3rem;
+      font-weight: 500;
+      line-height: 0.95;
+      letter-spacing: -0.02em;
+      margin-top: 1.5rem;
+    }
+    .facilities-body {
+      font-size: 0.875rem;
+      color: var(--ink-soft);
+      max-width: 20rem;
+      margin-top: 1.5rem;
+      line-height: 1.6;
+    }
+    .facilities-body .word-fade {
+      display: inline-block;
+      opacity: 0;
+      transform: translateY(18px);
+      transition: opacity 700ms var(--ease-out-quart), transform 700ms var(--ease-out-quart);
+    }
+    .facilities-body.inview-active .word-fade {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .court-cards-row {
+      display: flex;
+      align-items: flex-end;
+      gap: 1.25rem;
+    }
+    .court-tile {
+      flex: 1;
+      aspect-ratio: 3/4;
+      border-radius: var(--radius-card);
+      background: var(--surface);
+      overflow: hidden;
+      position: relative;
+      transition: transform 0.3s ease;
+    }
+    .court-tile-staggered {
+      margin-bottom: 2rem;
+    }
+    @media (hover: hover) and (min-width: 769px) {
+      .court-tile:hover {
+        transform: scale(1.03);
+      }
+    }
+    .court-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .court-glass-caption {
+      position: absolute;
+      inset: auto 0.75rem 0.75rem 0.75rem;
+      border-radius: var(--radius-xl);
+      backdrop-filter: blur(8px);
+      color: #ffffff;
+      padding: 0.75rem 1rem;
+    }
+    .caption-clay {
+      background: rgba(15, 47, 99, 0.40);
+    }
+    .caption-blue {
+      background: rgba(11, 110, 151, 0.55);
+    }
+    .court-tile-name {
+      font-size: 0.875rem;
+      font-weight: 500;
+    }
+    .court-tile-desc {
+      font-size: 0.65rem;
+      opacity: 0.85;
+      margin-top: 0.2rem;
+    }
+
+    /* -------------------------------------------------------------
+       11. SECTION: STATS
+    ------------------------------------------------------------- */
+    #stats {
+      background: var(--brand-deep);
+      color: #ffffff;
+      border-radius: var(--radius-card-lg);
+      margin-top: 0.75rem;
+      padding: 5rem 1.5rem;
+    }
+    @media (min-width: 640px) {
+      #stats {
+        padding: 5rem 2.5rem;
+      }
+    }
+    #stats-title {
+      font-size: 3rem;
+      font-weight: 500;
+      line-height: 0.95;
+      letter-spacing: -0.02em;
+      margin-top: 1rem;
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      column-gap: 2rem;
+      row-gap: 3rem;
+      margin-top: 4rem;
+    }
+    @media (min-width: 1024px) {
+      .stats-grid {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+    .stat-cell {
+      border-top: 1px solid rgba(255, 255, 255, 0.20);
+      padding-top: 1.25rem;
+    }
+    .stat-value {
+      font-size: 3.75rem;
+      font-weight: 500;
+      line-height: 1;
+      letter-spacing: -0.02em;
+    }
+    @media (min-width: 640px) {
+      .stat-value {
+        font-size: 4.5rem;
+      }
+    }
+    .stat-label {
+      font-size: 0.875rem;
+      color: rgba(255, 255, 255, 0.65);
+      margin-top: 0.75rem;
+    }
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      border: 0;
+    }
+
+    /* -------------------------------------------------------------
+       12. SECTION: TESTIMONIALS
+    ------------------------------------------------------------- */
+    #testimonials {
+      background: var(--background);
+      padding: 5rem 1.5rem;
+    }
+    @media (min-width: 640px) {
+      #testimonials {
+        padding: 6rem 2.5rem;
+      }
+    }
+    #testimonials-title {
+      font-size: 3rem;
+      font-weight: 500;
+      line-height: 0.95;
+      letter-spacing: -0.02em;
+      margin-top: 1rem;
+    }
+    .testimonials-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.25rem;
+      margin-top: 3.5rem;
+    }
+    @media (min-width: 768px) {
+      .testimonials-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+    .testimonial-card {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 100%;
+      border-radius: var(--radius-card);
+      background: var(--surface);
+      padding: 1.75rem;
+      transition: transform 0.3s ease;
+    }
+    @media (hover: hover) and (min-width: 769px) {
+      .testimonial-card:hover {
+        transform: translateY(-8px);
+      }
+    }
+    .quote-glyph {
+      font-size: 2.25rem;
+      color: var(--brand);
+      line-height: 1;
+    }
+    .testimonial-quote {
+      font-size: 1.125rem;
+      line-height: 1.6;
+      color: var(--ink);
+      margin-top: 1rem;
+    }
+    .testimonial-author {
+      border-top: 1px solid var(--hairline);
+      padding-top: 1rem;
+      margin-top: 1.5rem;
+    }
+    .author-name {
+      font-weight: 500;
+      display: block;
+    }
+    .author-role {
+      font-size: 0.875rem;
+      color: var(--ink-soft);
+      font-style: normal;
+      display: block;
+      margin-top: 0.2rem;
+    }
+
+    /* -------------------------------------------------------------
+       13. SECTION: FOOTER
+    ------------------------------------------------------------- */
+    #contact {
+      background: var(--brand-deep);
+      color: #ffffff;
+      border-radius: var(--radius-card-lg);
+      margin-top: 0.75rem;
+      padding: 3.5rem 1.5rem;
+    }
+    @media (min-width: 640px) {
+      #contact {
+        padding: 4rem 2.5rem;
+      }
+    }
+    .footer-cta-band {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+      padding-bottom: 3.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+    @media (min-width: 640px) {
+      .footer-cta-band {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: flex-end;
+      }
+    }
+    .footer-cta-title {
+      font-size: 3.75rem;
+      font-weight: 500;
+      line-height: 0.92;
+      letter-spacing: -0.02em;
+      margin-top: 1rem;
+    }
+    .footer-cols-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 2.5rem;
+      padding: 3.5rem 0;
+    }
+    @media (min-width: 768px) {
+      .footer-cols-grid {
+        grid-template-columns: 1.4fr 1fr 1fr 1fr;
+      }
+    }
+    .footer-brand-col {
+      max-width: 20rem;
+    }
+    .footer-brand-title {
+      font-size: 1.125rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .footer-blurb {
+      font-size: 0.875rem;
+      color: rgba(255, 255, 255, 0.65);
+      line-height: 1.6;
+      margin-top: 1rem;
+    }
+    .footer-address {
+      font-style: normal;
+      margin-top: 1.5rem;
+      font-size: 0.875rem;
+      color: rgba(255, 255, 255, 0.80);
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+    .footer-address a {
+      color: rgba(255, 255, 255, 0.80);
+      transition: color 0.2s ease;
+    }
+    .footer-address a:hover {
+      color: #ffffff;
+      text-decoration: underline;
+    }
+    .footer-address-muted {
+      color: rgba(255, 255, 255, 0.55);
+    }
+    .footer-nav-col-title {
+      font-size: 0.75rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      color: rgba(255, 255, 255, 0.50);
+    }
+    .footer-links-list {
+      margin-top: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      font-size: 0.875rem;
+      color: rgba(255, 255, 255, 0.80);
+    }
+    .footer-links-list a:hover {
+      color: #ffffff;
+      text-decoration: underline;
+    }
+
+    .footer-bottom-bar {
+      border-top: 1px solid rgba(255, 255, 255, 0.15);
+      padding-top: 2rem;
+      font-size: 0.875rem;
+      color: rgba(255, 255, 255, 0.60);
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+    @media (min-width: 640px) {
+      .footer-bottom-bar {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+      }
+    }
+    .footer-bottom-links {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+    .footer-bottom-links a:hover {
+      color: #ffffff;
+    }
+
+    /* -------------------------------------------------------------
+       14. CONTACT MODAL (PORTALED)
+    ------------------------------------------------------------- */
+    #contact-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 90;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      padding: 0.75rem;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 250ms ease;
+    }
+    @media (min-width: 640px) {
+      #contact-modal {
+        align-items: center;
+        padding: 1.5rem;
+      }
+    }
+    #contact-modal.open {
+      pointer-events: auto;
+      opacity: 1;
+    }
+    .modal-backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(15, 47, 99, 0.40);
+      backdrop-filter: blur(8px);
+    }
+    .modal-panel {
+      position: relative;
+      max-height: 92svh;
+      overflow-y: auto;
+      border-radius: var(--radius-card-lg);
+      background: var(--surface-card);
+      padding: 1.5rem;
+      width: 100%;
+      max-width: 32rem;
+      color: var(--ink);
+      box-shadow: 0 25px 60px rgba(15, 47, 99, 0.30);
+      transform: translateY(28px) scale(0.96);
+      transition: transform 350ms var(--ease-out-expo);
+      z-index: 10;
+    }
+    @media (min-width: 640px) {
+      .modal-panel {
+        padding: 2rem;
+      }
+    }
+    #contact-modal.open .modal-panel {
+      transform: translateY(0) scale(1);
+    }
+    .modal-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+    }
+    .modal-title {
+      font-size: 2.25rem;
+      font-weight: 500;
+      line-height: 0.95;
+      letter-spacing: -0.02em;
+      margin-top: 0.75rem;
+    }
+    @media (min-width: 640px) {
+      .modal-title {
+        font-size: 3rem;
+      }
+    }
+    .modal-close-btn {
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: var(--radius-pill);
+      background: var(--surface);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: background 0.2s ease;
+    }
+    .modal-close-btn:hover {
+      background: var(--hairline);
+    }
+    .modal-close-icon {
+      width: 1.25rem;
+      height: 1.25rem;
+      transition: transform 0.25s ease;
+    }
+    @media (hover: hover) and (min-width: 769px) {
+      .modal-close-btn:hover .modal-close-icon {
+        transform: rotate(90deg);
+      }
+    }
+    .modal-form {
+      margin-top: 1.75rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+    .form-label {
+      font-size: 0.75rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: var(--ink-soft);
+    }
+    .form-input, .form-textarea {
+      width: 100%;
+      border-radius: var(--radius-xl);
+      border: 1px solid var(--hairline);
+      background: var(--background);
+      padding: 0.75rem 1rem;
+      font-size: 0.875rem;
+      font-family: inherit;
+      color: var(--foreground);
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
+    .form-input:focus, .form-textarea:focus {
+      border-color: var(--brand-light);
+    }
+    .modal-success-panel {
+      margin-top: 2rem;
+      border-radius: var(--radius-card);
+      background: var(--surface);
+      padding: 1.5rem;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .success-check-circle {
+      width: 3rem;
+      height: 3rem;
+      border-radius: var(--radius-pill);
+      background: var(--brand);
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* -------------------------------------------------------------
+       15. FULLSCREEN MENU OVERLAY
+    ------------------------------------------------------------- */
+    #menu-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 70;
+      display: flex;
+      flex-direction: column;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 250ms ease;
+    }
+    #menu-overlay.open {
+      pointer-events: auto;
+      opacity: 1;
+    }
+    .menu-backdrop {
+      position: absolute;
+      inset: 0;
+      background: var(--brand-deep);
+    }
+    .menu-panel {
+      position: relative;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      padding: 0.5rem;
+      z-index: 10;
+      transform: translateY(-24px);
+      transition: transform 300ms var(--ease-out-expo);
+    }
+    @media (min-width: 640px) {
+      .menu-panel {
+        padding: 0.75rem;
+      }
+    }
+    #menu-overlay.open .menu-panel {
+      transform: translateY(0);
+    }
+    .menu-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.5rem 1.5rem 0;
+    }
+    @media (min-width: 640px) {
+      .menu-header {
+        padding: 2rem 2.5rem 0;
+      }
+    }
+    .menu-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: #ffffff;
+      font-size: 1rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+    }
+    .menu-close-btn {
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: var(--radius-pill);
+      background: rgba(255, 255, 255, 0.15);
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s ease;
+    }
+    .menu-close-btn:hover {
+      background: rgba(255, 255, 255, 0.25);
+    }
+    @media (hover: hover) and (min-width: 769px) {
+      .menu-close-btn:hover svg {
+        transform: rotate(90deg);
+      }
+    }
+    .menu-close-btn svg {
+      transition: transform 0.25s ease;
+    }
+    .menu-nav {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 0 1.5rem;
+      gap: 0.5rem;
+    }
+    @media (min-width: 640px) {
+      .menu-nav {
+        padding: 0 2.5rem;
+      }
+    }
+    .menu-link {
+      display: block;
+      font-size: 3rem;
+      font-weight: 500;
+      color: #ffffff;
+      line-height: 1;
+      letter-spacing: -0.02em;
+      transition: color 0.2s ease;
+    }
+    @media (min-width: 640px) {
+      .menu-link {
+        font-size: 4.5rem;
+      }
+    }
+    .menu-link:hover {
+      color: var(--brand-light);
+    }
+    .menu-footer {
+      border-top: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 2rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+    @media (min-width: 640px) {
+      .menu-footer {
+        padding: 2rem 2.5rem;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+      }
+    }
+    .menu-socials {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      font-size: 0.875rem;
+      color: rgba(255, 255, 255, 0.70);
+    }
+    .menu-socials a:hover {
+      color: #ffffff;
+    }
+  </style>
 </head>
 <body>
 
-  <!-- Left Sidebar (Matching Reference UI Design) -->
-  <aside class="sidebar">
-    <div>
-      <div class="brand-logo">
-        <div class="brand-icon-box">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
-          </svg>
+  <!-- =============================================================
+       INTRO LOADER CURTAIN
+  ============================================================= -->
+  <div id="intro-loader">
+    <div class="loader-wordmark" id="loader-wordmark">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="9"/>
+        <path d="M4.8 5.6A9 9 0 0 0 4.8 18.4"/>
+        <path d="M19.2 5.6a9 9 0 0 1 0 12.8"/>
+      </svg>
+      <span>Baseline</span>
+    </div>
+    <div class="loader-track">
+      <div class="loader-bar" id="loader-bar"></div>
+    </div>
+  </div>
+
+  <!-- =============================================================
+       MAIN PAGE CONTAINER
+  ============================================================= -->
+  <main>
+
+    <!-- -----------------------------------------------------------
+         1. HERO SECTION
+    ----------------------------------------------------------- -->
+    <section id="hero">
+      <!-- Parallax background image plate -->
+      <div class="hero-parallax-plate">
+        <div class="hero-parallax-inner" id="hero-parallax-layer">
+          <img 
+            class="hero-parallax-img" 
+            src="https://api.getlayers.ai/storage/v1/object/public/public/assets/baseline-88535e4000/hero/hero-court.webp" 
+            alt="Player lunging for a shot on a hard court"
+            fetchpriority="high"
+            loading="eager"
+          >
         </div>
-        <div>
-          <span>TravelShield</span>
-          <div style="font-size:0.65rem; color:#94a3b8; font-weight:700; letter-spacing:0.06em; text-transform:uppercase;">Enterprise Tier</div>
-        </div>
+        <div class="hero-parallax-overlay"></div>
       </div>
 
-      <ul class="nav-menu">
-        <li class="nav-item active" id="nav-dashboard" onclick="switchTab('dashboard')">
-          <a href="#">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
-            Dashboard
+      <!-- Site Header -->
+      <header class="site-header">
+        <nav class="header-left">
+          <a href="#programs">Programs &amp; Coaches</a>
+          <a href="#facilities">Club &amp; Events</a>
+        </nav>
+
+        <div class="header-center">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="9"/>
+            <path d="M4.8 5.6A9 9 0 0 0 4.8 18.4"/>
+            <path d="M19.2 5.6a9 9 0 0 1 0 12.8"/>
+          </svg>
+          <span class="header-brand-title">Baseline</span>
+        </div>
+
+        <div class="header-right">
+          <button class="btn-book-visit open-modal-trigger" type="button">Book a Visit</button>
+          <button class="burger-btn" id="open-menu-btn" type="button" aria-label="Open menu">
+            <span class="burger-bar"></span>
+            <span class="burger-bar"></span>
+          </button>
+        </div>
+      </header>
+
+      <!-- Giant Title Block -->
+      <div class="hero-title-container">
+        <h1 id="hero-title">
+          <span class="clip-box"><span class="clip-inner" style="transition-delay: 0ms;">Own</span></span>
+          <span class="clip-box"><span class="clip-inner" style="transition-delay: 140ms;">The</span></span>
+          <span class="clip-box"><span class="clip-inner" style="transition-delay: 280ms;">Court</span></span>
+        </h1>
+      </div>
+
+      <!-- Bottom Row -->
+      <div class="hero-bottom">
+        <p class="hero-tagline" id="hero-tagline">
+          <span class="clip-box-line"><span class="clip-inner" style="transition-delay: 350ms;">Show Up,</span></span>
+          <span class="clip-box-line"><span class="clip-inner" style="transition-delay: 460ms;">Level Up</span></span>
+        </p>
+
+        <div class="hero-right-cluster">
+          <!-- Collection Slider -->
+          <div class="collection-slider-wrap" id="collection-slider" data-inview style="transition-delay: 650ms;">
+            <div class="collection-card" id="collection-card">
+              <img id="collection-img" class="collection-card-img" src="https://api.getlayers.ai/storage/v1/object/public/public/assets/baseline-88535e4000/2.webp" alt="Player driving a backhand on a hard court">
+              <div>
+                <div class="collection-brand" id="collection-brand">Baseline Pro</div>
+                <div class="collection-title" id="collection-title">Featured Gear</div>
+                <a class="collection-cta" id="collection-cta">Shop the kit &rarr;</a>
+              </div>
+            </div>
+            <!-- Carousel Dots (Light tone) -->
+            <div class="carousel-dots dots-light" id="collection-dots">
+              <button class="carousel-dot active" aria-label="Slide 1"><span class="carousel-dot-inner"></span></button>
+              <button class="carousel-dot" aria-label="Slide 2"><span class="carousel-dot-inner"></span></button>
+              <button class="carousel-dot" aria-label="Slide 3"><span class="carousel-dot-inner"></span></button>
+            </div>
+          </div>
+
+          <!-- Membership Card -->
+          <article class="membership-card" id="membership-card" data-inview style="transition-delay: 780ms;">
+            <div class="membership-left">
+              <div class="membership-value">9K+</div>
+              <div class="membership-avatars">
+                <div class="avatar-dot" style="background: #5790e6;"></div>
+                <div class="avatar-dot" style="background: #c2e029;"></div>
+                <div class="avatar-dot" style="background: #0b6e97;"></div>
+                <div class="avatar-dot" style="background: #ffffff;"></div>
+              </div>
+              <div class="membership-caption">Members on court</div>
+            </div>
+            <img class="membership-img" src="https://api.getlayers.ai/storage/v1/object/public/public/assets/baseline-88535e4000/1.webp" alt="Player waiting to return on a clay court" loading="lazy">
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- -----------------------------------------------------------
+         2. TRUST SECTION ("Trusted by serious players")
+    ----------------------------------------------------------- -->
+    <section id="trust">
+      <!-- Top badges row -->
+      <div class="trust-badges-row">
+        <div class="percentage-badge" data-inview>
+          <div class="percent-num">100%</div>
+          <div class="percent-caption">Coaching built around your game</div>
+        </div>
+
+        <article class="badge-card" data-inview style="transition-delay: 120ms;">
+          <div class="index-chip">#01</div>
+          <h3 class="badge-title">Trusted by serious players</h3>
+          <p class="badge-body">From first-timers to nationally ranked juniors, players train here because the progress shows up on the scoreboard.</p>
+        </article>
+      </div>
+
+      <!-- Oversized ghost heading -->
+      <div class="trust-ghost-container">
+        <h2 id="trust-title">
+          <div class="ghost-row">
+            <span class="clip-box"><span class="clip-inner ghost-word ghost-w1" id="ghost-w1">Expert</span></span>
+            <span class="clip-box"><span class="clip-inner ghost-word ghost-w2" id="ghost-w2">Result-</span></span>
+          </div>
+          <div class="ghost-row">
+            <span class="clip-box"><span class="clip-inner ghost-word ghost-word-ink ghost-w3" id="ghost-w3">Driven</span></span>
+            <span class="clip-box"><span class="clip-inner ghost-word ghost-w4" id="ghost-w4">Coaching</span></span>
+          </div>
+        </h2>
+      </div>
+
+      <!-- Center coach card -->
+      <div class="coach-card-container">
+        <figure class="coach-card" id="coach-card" data-inview>
+          <img class="coach-img" id="coach-img" src="https://api.getlayers.ai/storage/v1/object/public/public/assets/baseline-88535e4000/5.webp" alt="Head coach set in a ready stance on clay">
+          <figcaption class="coach-caption">
+            <span class="coach-name" id="coach-name">Marco Vidal</span>
+            <span class="coach-role" id="coach-role">Head Coach</span>
+          </figcaption>
+        </figure>
+      </div>
+
+      <!-- Carousel controls row -->
+      <div class="trust-controls">
+        <button class="arrow-btn arrow-btn-outline arrow-btn-prev" id="trust-prev-btn" aria-label="Previous coach">
+          <svg class="arrow-btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 12h14M13 6l6 6-6 6"/>
+          </svg>
+        </button>
+
+        <div class="carousel-dots dots-dark" id="trust-dots">
+          <button class="carousel-dot active" aria-label="Slide 1"><span class="carousel-dot-inner"></span></button>
+          <button class="carousel-dot" aria-label="Slide 2"><span class="carousel-dot-inner"></span></button>
+          <button class="carousel-dot" aria-label="Slide 3"><span class="carousel-dot-inner"></span></button>
+        </div>
+
+        <button class="arrow-btn arrow-btn-solid" id="trust-next-btn" aria-label="Next coach">
+          <svg class="arrow-btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 12h14M13 6l6 6-6 6"/>
+          </svg>
+        </button>
+      </div>
+    </section>
+
+    <!-- -----------------------------------------------------------
+         3. PROGRAMS SECTION
+    ----------------------------------------------------------- -->
+    <section id="programs">
+      <div class="eyebrow eyebrow-dark">
+        <span class="eyebrow-dot"></span>
+        <span>Training programs</span>
+      </div>
+
+      <h2 id="programs-title">
+        <span class="clip-box-line"><span class="clip-inner" style="transition-delay: 0ms;">Built for</span></span>
+        <span class="clip-box-line"><span class="clip-inner" style="transition-delay: 120ms;">every level</span></span>
+      </h2>
+
+      <ul class="programs-list">
+        <li data-inview style="transition-delay: 0ms;">
+          <a class="program-row-link" href="#junior">
+            <span class="program-index">01</span>
+            <div class="program-content">
+              <div class="program-name">Junior Development</div>
+              <div class="program-desc">Fundamentals, footwork, and match play for ages 6–14.</div>
+            </div>
+            <div class="program-arrow-circle">
+              <svg class="program-arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M5 12h14M13 6l6 6-6 6"/>
+              </svg>
+            </div>
           </a>
         </li>
-        <li class="nav-item" id="nav-diagnosis" onclick="switchTab('diagnosis')">
-          <a href="#">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
-            Impact Diagnosis
+        <li data-inview style="transition-delay: 90ms;">
+          <a class="program-row-link" href="#performance">
+            <span class="program-index">02</span>
+            <div class="program-content">
+              <div class="program-name">Performance Squad</div>
+              <div class="program-desc">High-volume training for competitive and ranked players.</div>
+            </div>
+            <div class="program-arrow-circle">
+              <svg class="program-arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M5 12h14M13 6l6 6-6 6"/>
+              </svg>
+            </div>
           </a>
         </li>
-        <li class="nav-item" id="nav-recovery" onclick="switchTab('recovery')">
-          <a href="#">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
-            Recovery Command
+        <li data-inview style="transition-delay: 180ms;">
+          <a class="program-row-link" href="#adult">
+            <span class="program-index">03</span>
+            <div class="program-content">
+              <div class="program-name">Adult Clinics</div>
+              <div class="program-desc">Small-group sessions to sharpen technique and fitness.</div>
+            </div>
+            <div class="program-arrow-circle">
+              <svg class="program-arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M5 12h14M13 6l6 6-6 6"/>
+              </svg>
+            </div>
           </a>
         </li>
-        <li class="nav-item" id="nav-search" onclick="switchTab('search')">
-          <a href="#">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-            Multi-Modal Search
-          </a>
-        </li>
-        <li class="nav-item" id="nav-history" onclick="switchTab('history')">
-          <a href="#">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-            History
-          </a>
-        </li>
-        <li class="nav-item" id="nav-settings" onclick="switchTab('settings')">
-          <a href="#">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
-            Settings
-          </a>
-        </li>
-        <li class="nav-item" id="nav-gemini-assistant" onclick="toggleGeminiDrawer()">
-          <a href="#" style="color:#4f46e5; font-weight:700;">
-            <span style="font-size:1.1rem;">✨</span>
-            Gemini Assistant
+        <li data-inview style="transition-delay: 270ms;">
+          <a class="program-row-link" href="#private">
+            <span class="program-index">04</span>
+            <div class="program-content">
+              <div class="program-name">Private Coaching</div>
+              <div class="program-desc">One-to-one sessions tailored to your goals and schedule.</div>
+            </div>
+            <div class="program-arrow-circle">
+              <svg class="program-arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M5 12h14M13 6l6 6-6 6"/>
+              </svg>
+            </div>
           </a>
         </li>
       </ul>
-    </div>
+    </section>
 
-    <!-- Bottom Sidebar Action -->
-    <div style="margin-top:auto; padding-top:1.5rem;">
-      <button class="btn btn-primary" style="width:100%; justify-content:center; padding:0.8rem; background:#3b82f6; border-radius:12px; font-weight:700;" onclick="openDisruptionModal()">
-        + New Analysis / Report
-      </button>
-      
-      <div class="sidebar-contact-card" style="margin-top:1rem;">
-        <div style="font-size:1.1rem; margin-bottom:0.25rem;">✨</div>
-        <p>Gemini 3.6 Flash Concierge</p>
-        <button onclick="toggleGeminiDrawer()">Ask Assistant</button>
-      </div>
-    </div>
-  </aside>
-
-  <!-- Main Wrapper -->
-  <div class="main-wrapper">
-
-    <!-- Topbar Header -->
-    <header class="topbar">
-      <div style="display:flex; align-items:center; gap:1.25rem;">
-        <h1 style="font-size:1.4rem; font-weight:800; color:var(--text-primary);" id="page-title">Recovery Engine</h1>
-        <span style="font-size:0.75rem; background:#eff6ff; color:#2563eb; border:1px solid #bfdbfe; font-weight:700; padding:0.2rem 0.6rem; border-radius:9999px; display:inline-flex; align-items:center; gap:0.35rem;">
-          <span style="width:6px; height:6px; background:#2563eb; border-radius:50%; display:inline-block;"></span>
-          Live Data: Active
-        </span>
-        <span id="backend-indicator" style="font-size:0.75rem; background:#ecfdf5; color:#059669; border:1px solid #a7f3d0; font-weight:700; padding:0.2rem 0.6rem; border-radius:9999px; display:inline-flex; align-items:center; gap:0.35rem; cursor:pointer;" onclick="switchTab('settings')" title="FastAPI Backend Status (Click to configure)">
-          <span id="backend-dot" style="width:6px; height:6px; background:#10b981; border-radius:50%; display:inline-block;"></span>
-          <span id="backend-label">Backend: Connected (v2.3)</span>
-        </span>
-      </div>
-
-      <div class="search-input-topbar">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-        <input type="text" placeholder="Search booking reference (e.g. YH892A)...">
-      </div>
-
-      <div style="display:flex; align-items:center; gap:1rem;">
-        <!-- Integrated Glassmorphism CTA Button -->
-        <a href="#recovery" onclick="switchTab('recovery')" class="glassmorphism-cta-btn" title="AI Multimodal Disruption Recovery">
-          <div class="glassmorphism-cta-inner">
-            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80" alt="Advisor" style="width:24px; height:24px; border-radius:50%; object-fit:cover; border:1px solid rgba(255,255,255,0.4);">
-            <span>Recover Journey</span>
-            <span style="background:rgba(255,255,255,0.2); width:20px; height:20px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-size:0.7rem;">✨</span>
-          </div>
-        </a>
-
-        <div class="user-profile">
-          <div id="auth-user-container" style="display:flex; align-items:center; gap:0.75rem;">
-            <div class="avatar" id="user-avatar">JW</div>
-            <div style="display:flex; flex-direction:column;">
-              <span style="font-weight:700; font-size:0.875rem;" id="user-display-name">Jenny Wilson</span>
-              <span style="font-size:0.725rem; font-weight:700;" id="user-auth-status">● Firebase Authenticated</span>
-            </div>
-            <button class="btn btn-outline" style="padding:0.35rem 0.75rem; font-size:0.775rem;" id="btn-auth-action" onclick="handleAuthAction()">Logout</button>
-          </div>
-        </div>
-      </div>
-    </header>
-
-    <!-- Content Body -->
-    <main class="content-body">
-
-      <!-- SCREEN 1: IMPACT DIAGNOSIS VIEW -->
-      <div id="section-diagnosis" style="display: block;">
-        <div class="disruption-alert-banner">
-          <div style="display:flex; align-items:center; gap:0.85rem;">
-            <span class="badge-active-disruption">⚠️ ACTIVE DISRUPTION</span>
-            <span style="font-size:0.875rem; font-weight:700; color:#475569;">Booking PNR: <b style="color:#0f172a;">YH892A</b></span>
-          </div>
-          <button class="btn btn-outline" style="padding:0.4rem 0.85rem; font-size:0.8rem;" onclick="shareReport()">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
-            Share Report
-          </button>
-        </div>
-
-        <div style="margin-bottom:1.5rem;">
-          <h2 style="font-size:1.75rem; font-weight:800; font-family:'Outfit',sans-serif; color:#0f172a;">Impact Diagnosis</h2>
-          <p style="font-size:0.9rem; color:#64748b; margin-top:0.25rem;">Analyzing downstream effects of delayed inbound flight AI 492 / Train 12123.</p>
-        </div>
-
-        <div class="impact-grid-container">
-          <!-- Left Column -->
-          <div>
-            <div class="delay-impact-card">
-              <div style="display:flex; align-items:center; gap:0.5rem; color:#64748b; font-size:0.85rem; font-weight:700; margin-bottom:0.85rem;">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                Total Delay Impact
-              </div>
-              <div style="display:flex; align-items:baseline; gap:2rem;">
-                <div>
-                  <div class="big-delay-number">6h 30m</div>
-                  <div style="font-size:0.75rem; font-weight:800; color:#94a3b8; text-transform:uppercase; letter-spacing:0.06em; margin-top:0.35rem;">Estimated Net Delay</div>
-                </div>
-                <div>
-                  <div style="display:flex; align-items:center; gap:0.5rem; color:#dc2626; font-weight:800; font-size:1.15rem;">
-                    <span style="width:10px; height:10px; background:#dc2626; border-radius:50%; display:inline-block;"></span>
-                    Arriving Late
-                  </div>
-                  <div style="font-size:0.85rem; color:#64748b; margin-top:0.25rem;">Revised ETA: 23:45 IST (+1 Day)</div>
-                </div>
-              </div>
-            </div>
-
-            <div class="route-graph-box">
-              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
-                <div style="font-weight:800; font-size:1.05rem; display:flex; align-items:center; gap:0.5rem;">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-                  Route & Connection Status
-                </div>
-                <span style="background:#fee2e2; color:#b91c1c; font-size:0.725rem; font-weight:800; padding:0.25rem 0.6rem; border-radius:9999px; border:1px solid #fca5a5;">
-                  ✕ Connection Missed
-                </span>
-              </div>
-
-              <div style="position:relative;">
-                <div class="graph-track-line"></div>
-
-                <div class="graph-station-row">
-                  <div class="graph-bullet completed"></div>
-                  <div class="station-card-inner">
-                    <div style="display:flex; justify-content:space-between; align-items:center;">
-                      <div>
-                        <span style="font-size:0.725rem; font-weight:700; color:#64748b; text-transform:uppercase;">Origin (Completed)</span>
-                        <div style="font-size:1.25rem; font-weight:900; color:#0f172a;">DEL (Delhi)</div>
-                      </div>
-                      <span style="font-size:0.8rem; font-weight:700; color:#10b981; background:#ecfdf5; padding:0.2rem 0.5rem; border-radius:6px;">On Time</span>
-                    </div>
-                    <div style="font-size:0.825rem; color:#64748b; margin-top:0.25rem;">Flight AI 812 · Dep: 14:00 · Arr: 16:15</div>
-                  </div>
-                </div>
-
-                <div class="graph-station-row">
-                  <div class="graph-bullet disrupted"></div>
-                  <div class="station-card-inner disrupted-node">
-                    <div style="display:flex; align-items:center; gap:0.4rem; color:#dc2626; font-size:0.75rem; font-weight:800;">
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-                      Disruption Point
-                    </div>
-                    <div style="font-size:1.35rem; font-weight:900; color:#0f172a; margin-top:0.15rem;">BOM (Mumbai)</div>
-                    <div style="font-size:0.825rem; color:#b91c1c; font-weight:600; margin-top:0.35rem;">
-                      Inbound arrival delayed by 3h 15m due to severe weather & runway maintenance.
-                    </div>
-                  </div>
-                </div>
-
-                <div class="graph-station-row" style="margin-bottom:0;">
-                  <div class="graph-bullet unreachable"></div>
-                  <div class="station-card-inner unreachable-node">
-                    <span style="font-size:0.725rem; font-weight:700; color:#94a3b8; text-transform:uppercase;">Destination (Unreachable)</span>
-                    <div style="font-size:1.25rem; font-weight:900; color:#64748b;">GOI (Goa)</div>
-                    <div style="font-size:0.825rem; color:#ef4444; font-weight:700; margin-top:0.35rem; display:flex; align-items:center; gap:0.35rem;">
-                      <span>✈</span> Flight AI 492 Missed (Departed 18:30)
-                    </div>
-                  </div>
-                </div>
-
-              </div>
-            </div>
-          </div>
-
-          <!-- Right Column -->
-          <div>
-            <div class="financial-exposure-card">
-              <div style="display:flex; justify-content:space-between; align-items:center;">
-                <div style="font-size:0.85rem; font-weight:800; color:#64748b; text-transform:uppercase; letter-spacing:0.04em;">Financial Exposure</div>
-                <div style="display:flex; gap:0.25rem;">
-                  <button class="btn btn-outline" style="padding:0.2rem 0.5rem; font-size:0.7rem; font-weight:700;" onclick="toggleCurrency('USD')">$ USD</button>
-                  <button class="btn btn-outline" style="padding:0.2rem 0.5rem; font-size:0.7rem; font-weight:700;" onclick="toggleCurrency('INR')">₹ INR</button>
-                </div>
-              </div>
-              <div style="font-size:0.75rem; color:#94a3b8; font-weight:700; margin-top:0.2rem;">ESTIMATED OUT-OF-POCKET</div>
-              <div class="exposure-amount-header" id="exposure-total-display">$845.00</div>
-
-              <div class="exposure-row">
-                <span style="color:#64748b;">Lost Hotel Night</span>
-                <b id="exposure-hotel-display">$210.00</b>
-              </div>
-              <div class="exposure-row">
-                <span style="color:#64748b;">Last-Minute Rebooking</span>
-                <b id="exposure-rebook-display">$550.00</b>
-              </div>
-              <div class="exposure-row">
-                <span style="color:#64748b;">Incidentals / Meals</span>
-                <b id="exposure-meals-display">$85.00</b>
-              </div>
-            </div>
-
-            <div class="card">
-              <div style="font-weight:800; font-size:1.05rem; margin-bottom:1rem; display:flex; align-items:center; gap:0.5rem;">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
-                Downstream Bookings
-              </div>
-
-              <div class="downstream-booking-item">
-                <div style="display:flex; align-items:center; gap:0.75rem;">
-                  <div style="font-size:1.25rem;">🏨</div>
-                  <div>
-                    <b style="font-size:0.875rem;">Radisson Blu GOI</b>
-                    <div style="font-size:0.75rem; color:#64748b;">Check-in: Today, 15:00</div>
-                    <div style="font-size:0.725rem; color:#dc2626; font-weight:700;">⚠ Missed Check-in window</div>
-                  </div>
-                </div>
-                <span class="badge-risk">AT RISK</span>
-              </div>
-
-              <div class="downstream-booking-item">
-                <div style="display:flex; align-items:center; gap:0.75rem;">
-                  <div style="font-size:1.25rem;">🚗</div>
-                  <div>
-                    <b style="font-size:0.875rem;">Hertz Rental · GOI Apt</b>
-                    <div style="font-size:0.75rem; color:#64748b;">Pickup: Today, 18:30</div>
-                    <div style="font-size:0.725rem; color:#64748b;">Reservation holds until 23:59</div>
-                  </div>
-                </div>
-                <span class="badge-pending-status">PENDING</span>
-              </div>
-            </div>
-
-          </div>
-        </div>
-
-        <div class="diagnosis-bottom-bar">
-          <div>
-            <span style="font-weight:700; color:#0f172a; font-size:0.95rem;">Diagnosis complete. 3 recovery options generated.</span>
-            <div style="font-size:0.775rem; color:#64748b;">All options ranked by cost, delay minimization, and itinerary feasibility.</div>
-          </div>
-          <div style="display:flex; gap:0.75rem;">
-            <button class="btn btn-outline" onclick="showToast('Disruption diagnosis acknowledged.', 'info')">Acknowledge Only</button>
-            <button class="btn btn-primary" style="background:#4f46e5; padding:0.75rem 1.5rem;" onclick="switchTab('recovery')">
-              Compare Recovery Plans →
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <!-- SCREEN 2: RECOVERY COMMAND CENTER -->
-      <div id="section-recovery" style="display: none;">
-        <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:1.5rem;">
-          <div>
-            <div style="display:flex; align-items:center; gap:0.6rem; margin-bottom:0.4rem;">
-              <span style="background:#fee2e2; color:#dc2626; font-size:0.75rem; font-weight:800; padding:0.25rem 0.55rem; border-radius:6px; letter-spacing:0.04em;">
-                FLIGHT CANCELLED
-              </span>
-              <span style="font-size:0.8rem; color:#64748b; font-weight:600;">• Action Required</span>
-            </div>
-            <h2 style="font-size:1.85rem; font-weight:900; font-family:'Outfit',sans-serif; color:#0f172a;">Recovering Mumbai to Goa Trip</h2>
-            <p style="font-size:0.9rem; color:#64748b; margin-top:0.25rem;">Flight SG-142 / Train 12123 cancelled due to severe weather conditions.</p>
-          </div>
-
-          <div style="background:white; border:1px solid var(--border-color); border-radius:14px; padding:0.85rem 1.25rem; text-align:right;">
-            <div style="font-size:0.75rem; font-weight:700; color:#64748b;">AI Recommendation Confidence</div>
-            <div style="display:flex; align-items:center; gap:0.75rem; margin-top:0.35rem;">
-              <div class="confidence-bar-wrap">
-                <div class="confidence-bar-fill" style="width: 92%;"></div>
-              </div>
-              <span style="font-weight:900; font-size:1.15rem; color:#4f46e5;">92%</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="plans-comparison-grid">
-          <!-- Plan 1: The Sprinter -->
-          <div class="comparison-col-card selected-plan" id="plan-card-sprinter" onclick="selectCommandPlan('The Sprinter', 95)">
-            <div class="plan-selected-badge" id="plan-badge-sprinter">
-              ✓ Selected Plan
-            </div>
-
-            <div>
-              <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-top:0.5rem;">
-                <div>
-                  <h3 style="font-size:1.3rem; font-weight:900; font-family:'Outfit',sans-serif;">The Sprinter</h3>
-                  <div style="font-size:0.75rem; font-weight:800; color:#64748b; text-transform:uppercase; letter-spacing:0.04em;">FASTEST RECOVERY</div>
-                </div>
-                <div class="plan-score-badge top-score">
-                  <div style="font-size:1.25rem; font-weight:900; line-height:1;">95</div>
-                  <div style="font-size:0.65rem; font-weight:700; text-transform:uppercase;">Score</div>
-                </div>
-              </div>
-
-              <div style="margin:1.25rem 0; display:flex; flex-direction:column; gap:0.85rem;">
-                <div style="display:flex; justify-content:space-between;">
-                  <span style="font-size:0.85rem; color:#64748b;">Arrives</span>
-                  <div style="text-align:right;">
-                    <b style="font-size:0.875rem;">ETA: 14:30 Today</b>
-                    <div style="font-size:0.725rem; color:#dc2626;">+2h Delay</div>
-                  </div>
-                </div>
-                <div style="display:flex; justify-content:space-between;">
-                  <span style="font-size:0.85rem; color:#64748b;">Cost Impact</span>
-                  <b style="font-size:0.875rem; color:#0f172a;">+$250</b>
-                </div>
-                <div style="display:flex; justify-content:space-between;">
-                  <span style="font-size:0.85rem; color:#64748b;">Flexibility</span>
-                  <b style="font-size:0.875rem; color:#0f172a;">Low</b>
-                </div>
-                <div style="display:flex; justify-content:space-between; align-items:center;">
-                  <span style="font-size:0.85rem; color:#64748b;">Mode</span>
-                  <span style="font-size:1.25rem;">✈</span>
-                </div>
-              </div>
-
-              <div class="why-this-plan-box">
-                <div style="font-weight:700; color:#0f172a; margin-bottom:0.25rem;">💡 Why this plan?</div>
-                Best for business travel. Direct flight reroute on partner airline avoids further weather risks and preserves your Radisson hotel check-in.
-              </div>
-            </div>
-
-            <button class="btn btn-primary" id="plan-btn-sprinter" style="width:100%; justify-content:center; background:#4f46e5; padding:0.85rem;" onclick="event.stopPropagation(); selectCommandPlan('The Sprinter', 95)">
-              ✓ Active Plan
-            </button>
-          </div>
-
-          <!-- Plan 2: The Optimal -->
-          <div class="comparison-col-card" id="plan-card-optimal" onclick="selectCommandPlan('The Optimal', 82)">
-            <div class="plan-selected-badge" id="plan-badge-optimal" style="display:none;">
-              ✓ Selected Plan
-            </div>
-
-            <div>
-              <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-top:0.5rem;">
-                <div>
-                  <h3 style="font-size:1.3rem; font-weight:900; font-family:'Outfit',sans-serif;">The Optimal</h3>
-                  <div style="font-size:0.75rem; font-weight:800; color:#64748b; text-transform:uppercase; letter-spacing:0.04em;">BALANCED APPROACH</div>
-                </div>
-                <div class="plan-score-badge">
-                  <div style="font-size:1.25rem; font-weight:900; line-height:1;">82</div>
-                  <div style="font-size:0.65rem; font-weight:700; text-transform:uppercase;">Score</div>
-                </div>
-              </div>
-
-              <div style="margin:1.25rem 0; display:flex; flex-direction:column; gap:0.85rem;">
-                <div style="display:flex; justify-content:space-between;">
-                  <span style="font-size:0.85rem; color:#64748b;">Arrives</span>
-                  <div style="text-align:right;">
-                    <b style="font-size:0.875rem;">ETA: 17:45 Today</b>
-                    <div style="font-size:0.725rem; color:#eab308;">+5h Delay</div>
-                  </div>
-                </div>
-                <div style="display:flex; justify-content:space-between;">
-                  <span style="font-size:0.85rem; color:#64748b;">Investment</span>
-                  <b style="font-size:0.875rem; color:#0f172a;">$150 (Upgrade)</b>
-                </div>
-                <div style="display:flex; justify-content:space-between;">
-                  <span style="font-size:0.85rem; color:#64748b;">Comfort</span>
-                  <b style="font-size:0.875rem; color:#0f172a;">Premium</b>
-                </div>
-                <div style="display:flex; justify-content:space-between; align-items:center;">
-                  <span style="font-size:0.85rem; color:#64748b;">Mode</span>
-                  <span style="font-size:1.1rem;">🚆 → ✈</span>
-                </div>
-              </div>
-
-              <div class="why-this-plan-box">
-                <div style="font-weight:700; color:#0f172a; margin-bottom:0.25rem;">ℹ Why this plan?</div>
-                Mix of high-speed rail to Pune and short connecting flight. Zero out-of-pocket cancellation fees with guaranteed connection.
-              </div>
-            </div>
-
-            <button class="btn btn-outline" id="plan-btn-optimal" style="width:100%; justify-content:center; padding:0.85rem;" onclick="event.stopPropagation(); selectCommandPlan('The Optimal', 82)">
-              Select This Plan
-            </button>
-          </div>
-
-          <!-- Plan 3: The Economical -->
-          <div class="comparison-col-card" id="plan-card-economical" onclick="selectCommandPlan('The Economical', 68)">
-            <div class="plan-selected-badge" id="plan-badge-economical" style="display:none;">
-              ✓ Selected Plan
-            </div>
-
-            <div>
-              <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-top:0.5rem;">
-                <div>
-                  <h3 style="font-size:1.3rem; font-weight:900; font-family:'Outfit',sans-serif;">The Economical</h3>
-                  <div style="font-size:0.75rem; font-weight:800; color:#64748b; text-transform:uppercase; letter-spacing:0.04em;">BUDGET SAVER</div>
-                </div>
-                <div class="plan-score-badge">
-                  <div style="font-size:1.25rem; font-weight:900; line-height:1;">68</div>
-                  <div style="font-size:0.65rem; font-weight:700; text-transform:uppercase;">Score</div>
-                </div>
-              </div>
-
-              <div style="margin:1.25rem 0; display:flex; flex-direction:column; gap:0.85rem;">
-                <div style="display:flex; justify-content:space-between;">
-                  <span style="font-size:0.85rem; color:#64748b;">Arrives</span>
-                  <div style="text-align:right;">
-                    <b style="font-size:0.875rem;">ETA: 08:00 Tomorrow</b>
-                    <div style="font-size:0.725rem; color:#64748b;">Next Morning</div>
-                  </div>
-                </div>
-                <div style="display:flex; justify-content:space-between;">
-                  <span style="font-size:0.85rem; color:#64748b;">Reimbursement</span>
-                  <b style="font-size:0.875rem; color:#10b981;">+$50 Credit</b>
-                </div>
-                <div style="display:flex; justify-content:space-between;">
-                  <span style="font-size:0.85rem; color:#64748b;">Stress Level</span>
-                  <b style="font-size:0.875rem; color:#0f172a;">High</b>
-                </div>
-                <div style="display:flex; justify-content:space-between; align-items:center;">
-                  <span style="font-size:0.85rem; color:#64748b;">Mode</span>
-                  <span style="font-size:1.25rem;">🚌</span>
-                </div>
-              </div>
-
-              <div class="why-this-plan-box">
-                <div style="font-weight:700; color:#0f172a; margin-bottom:0.25rem;">ℹ Why this plan?</div>
-                Overnight premium sleeper coach. Receive a wallet credit for the inconvenience and hotel is auto-rescheduled for next morning check-in.
-              </div>
-            </div>
-
-            <button class="btn btn-outline" id="plan-btn-economical" style="width:100%; justify-content:center; padding:0.85rem;" onclick="event.stopPropagation(); selectCommandPlan('The Economical', 68)">
-              Select This Plan
-            </button>
-          </div>
-
-        </div>
-      </div>
-
-      <!-- SCREEN 3: DASHBOARD TAB -->
-      <div id="section-dashboard" style="display: none;">
-        <div class="kpi-cards-grid">
-          <div class="kpi-card">
-            <div>
-              <div class="kpi-title">Total Bookings</div>
-              <div class="kpi-value" id="kpi-bookings">1,284</div>
-              <div class="kpi-tag positive">↗ 12% this month</div>
-            </div>
-            <div class="kpi-icon-box blue">📱</div>
-          </div>
-
-          <div class="kpi-card">
-            <div>
-              <div class="kpi-title">Pending Issues</div>
-              <div class="kpi-value" id="kpi-pending">24</div>
-              <div class="kpi-tag warning">↘ 12 resolved</div>
-            </div>
-            <div class="kpi-icon-box rose">⚠️</div>
-          </div>
-
-          <div class="kpi-card">
-            <div>
-              <div class="kpi-title">Active Customers</div>
-              <div class="kpi-value" id="kpi-customers">3,492</div>
-              <div class="kpi-tag positive">↗ 16% this month</div>
-            </div>
-            <div class="kpi-icon-box emerald">👥</div>
-          </div>
-
-          <div class="kpi-card">
-            <div>
-              <div class="kpi-title">Total Revenue</div>
-              <div class="kpi-value" id="kpi-revenue">₹84,250</div>
-              <div class="kpi-tag positive">↗ 9.4% this month</div>
-            </div>
-            <div class="kpi-icon-box cyan">💵</div>
-          </div>
-        </div>
-
-        <div class="dashboard-main-grid">
-          <div>
-            <div class="card">
-              <div class="card-header">
-                <div class="card-title">Monthly Revenue Trend</div>
-                <select style="padding:0.35rem 0.75rem; border:1px solid var(--border-color); border-radius:8px; font-size:0.8rem; font-weight:600; outline:none;">
-                  <option>Last 6 Months</option>
-                  <option>Year 2026</option>
-                </select>
-              </div>
-
-              <div class="chart-bars-container">
-                <div class="bar-col"><div class="bar-fill" style="height:45%;"></div><span class="bar-label">Jul</span></div>
-                <div class="bar-col"><div class="bar-fill" style="height:60%;"></div><span class="bar-label">Aug</span></div>
-                <div class="bar-col"><div class="bar-fill" style="height:72%;"></div><span class="bar-label">Sep</span></div>
-                <div class="bar-col"><div class="bar-fill" style="height:55%;"></div><span class="bar-label">Oct</span></div>
-                <div class="bar-col"><div class="bar-fill" style="height:85%;"></div><span class="bar-label">Nov</span></div>
-                <div class="bar-col"><div class="bar-fill" style="height:95%;"></div><span class="bar-label">Dec</span></div>
-              </div>
-            </div>
-
-            <div class="card">
-              <div class="card-header">
-                <div class="card-title">Recent Bookings</div>
-                <a href="#" style="font-size:0.825rem; font-weight:700; color:var(--primary); text-decoration:none;">View All</a>
-              </div>
-
-              <table class="custom-table">
-                <thead>
-                  <tr>
-                    <th>Traveler Name</th>
-                    <th>Flight / Route</th>
-                    <th>Carrier</th>
-                    <th>Date</th>
-                    <th>Status</th>
-                  </tr>
-                </thead>
-                <tbody id="recent-bookings-tbody">
-                  <tr>
-                    <td><b>Sarah Johnson</b></td>
-                    <td>JFK → LHR</td>
-                    <td>British Airways</td>
-                    <td>Oct 24, 2026</td>
-                    <td><span class="status-pill confirmed">CONFIRMED</span></td>
-                  </tr>
-                  <tr>
-                    <td><b>Rahul Sharma</b></td>
-                    <td>BOM → GOI via PUNE</td>
-                    <td>Deccan Queen + IntrCity</td>
-                    <td>Oct 25, 2026</td>
-                    <td><span class="status-pill recovered">RECOVERED</span></td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          <div>
-            <div class="card">
-              <div class="card-header">
-                <div class="card-title">Recent Activity</div>
-              </div>
-              <div class="activity-feed-list" id="activity-feed-container"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- SCREEN 4: MULTI-MODAL SEARCH TAB -->
-      <div id="section-search" style="display: none;">
-        <div class="card">
-          <h2 style="font-size:1.25rem; font-weight:800; margin-bottom:1rem;">Search Flights, Trains & Buses for ANY Indian City</h2>
+    <!-- -----------------------------------------------------------
+         4. FACILITIES SECTION
+    ----------------------------------------------------------- -->
+    <section id="facilities">
+      <div class="facilities-grid">
+        <!-- Intro Column -->
+        <div class="facilities-intro">
+          <img class="facilities-icon-img" src="https://api.getlayers.ai/storage/v1/object/public/public/assets/baseline-88535e4000/3.webp" alt="Player stretching for a forehand on clay" data-inview loading="lazy">
           
-          <div style="display:grid; grid-template-columns: 2fr 2fr 1.2fr 1fr auto; gap:1rem; align-items:flex-end;">
-            <div style="position:relative;">
-              <label style="font-size:0.75rem; font-weight:700; color:var(--text-secondary); text-transform:uppercase;">From (City / Station)</label>
-              <input type="text" id="input-from" value="Mumbai" placeholder="e.g. Mumbai, BOM, CSMT..." style="width:100%; padding:0.7rem 1rem; border:1px solid var(--border-color); border-radius:8px; outline:none; font-weight:600;" autocomplete="off" oninput="handleAutocomplete('from', this.value)">
-              <div class="autocomplete-dropdown" id="dropdown-from" style="position:absolute; top:100%; left:0; right:0; background:white; border:1px solid var(--border-color); border-radius:8px; box-shadow:var(--shadow-elevated); z-index:100; display:none;"></div>
-            </div>
+          <h2 id="facilities-title">
+            <span class="clip-box-line"><span class="clip-inner" style="transition-delay: 0ms;">Tour Our</span></span>
+            <span class="clip-box-line"><span class="clip-inner" style="transition-delay: 120ms;">World-Class</span></span>
+            <span class="clip-box-line"><span class="clip-inner" style="transition-delay: 240ms;">Courts</span></span>
+          </h2>
 
-            <div style="position:relative;">
-              <label style="font-size:0.75rem; font-weight:700; color:var(--text-secondary); text-transform:uppercase;">To (City / Station)</label>
-              <input type="text" id="input-to" value="Delhi" placeholder="e.g. Delhi, DEL, NDLS..." style="width:100%; padding:0.7rem 1rem; border:1px solid var(--border-color); border-radius:8px; outline:none; font-weight:600;" autocomplete="off" oninput="handleAutocomplete('to', this.value)">
-              <div class="autocomplete-dropdown" id="dropdown-to" style="position:absolute; top:100%; left:0; right:0; background:white; border:1px solid var(--border-color); border-radius:8px; box-shadow:var(--shadow-elevated); z-index:100; display:none;"></div>
-            </div>
+          <p class="facilities-body" id="facilities-body" data-inview>
+            Reserve a court for focused practice, squad drills, or private sessions — and train in the same conditions you'll compete in.
+          </p>
+        </div>
 
+        <!-- Court Cards Row -->
+        <div class="court-cards-row">
+          <figure class="court-tile" data-inview style="transition-delay: 0ms;">
+            <img class="court-img" src="https://api.getlayers.ai/storage/v1/object/public/public/assets/baseline-88535e4000/1.webp" alt="Player on the baseline of an outdoor clay court" loading="lazy">
+            <figcaption class="court-glass-caption caption-clay">
+              <div class="court-tile-name">Redline Clay</div>
+              <div class="court-tile-desc">A fast outdoor clay court tuned for long, physical rallies.</div>
+            </figcaption>
+          </figure>
+
+          <figure class="court-tile court-tile-staggered" data-inview style="transition-delay: 140ms;">
+            <img class="court-img" src="https://api.getlayers.ai/storage/v1/object/public/public/assets/baseline-88535e4000/4.webp" alt="Player following through on a blue hard court" loading="lazy">
+            <figcaption class="court-glass-caption caption-blue">
+              <div class="court-tile-name">Harbor Court</div>
+              <div class="court-tile-desc">A sheltered hard court built for precision and night play.</div>
+            </figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- -----------------------------------------------------------
+         5. STATS SECTION
+    ----------------------------------------------------------- -->
+    <section id="stats">
+      <div class="eyebrow eyebrow-light">
+        <span class="eyebrow-dot"></span>
+        <span>By the numbers</span>
+      </div>
+
+      <h2 id="stats-title">
+        <span class="clip-box-line"><span class="clip-inner" style="transition-delay: 0ms;">A club that</span></span>
+        <span class="clip-box-line"><span class="clip-inner" style="transition-delay: 120ms;">keeps score</span></span>
+      </h2>
+
+      <dl class="stats-grid">
+        <div class="stat-cell" data-inview style="transition-delay: 0ms;">
+          <dt class="sr-only">Certified coaches</dt>
+          <dd class="stat-value">24</dd>
+          <dd class="stat-label">Certified coaches</dd>
+        </div>
+        <div class="stat-cell" data-inview style="transition-delay: 110ms;">
+          <dt class="sr-only">Championship courts</dt>
+          <dd class="stat-value">12</dd>
+          <dd class="stat-label">Championship courts</dd>
+        </div>
+        <div class="stat-cell" data-inview style="transition-delay: 220ms;">
+          <dt class="sr-only">Members training</dt>
+          <dd class="stat-value">9K+</dd>
+          <dd class="stat-label">Members training</dd>
+        </div>
+        <div class="stat-cell" data-inview style="transition-delay: 330ms;">
+          <dt class="sr-only">Years on the baseline</dt>
+          <dd class="stat-value">15</dd>
+          <dd class="stat-label">Years on the baseline</dd>
+        </div>
+      </dl>
+    </section>
+
+    <!-- -----------------------------------------------------------
+         6. TESTIMONIALS SECTION
+    ----------------------------------------------------------- -->
+    <section id="testimonials">
+      <div class="eyebrow eyebrow-dark">
+        <span class="eyebrow-dot"></span>
+        <span>What players say</span>
+      </div>
+
+      <h2 id="testimonials-title">
+        <span class="clip-box-line"><span class="clip-inner" style="transition-delay: 0ms;">Loved by</span></span>
+        <span class="clip-box-line"><span class="clip-inner" style="transition-delay: 120ms;">the locker room</span></span>
+      </h2>
+
+      <ul class="testimonials-grid">
+        <li data-inview style="transition-delay: 0ms;">
+          <div class="testimonial-card">
             <div>
-              <label style="font-size:0.75rem; font-weight:700; color:var(--text-secondary); text-transform:uppercase;">Travel Date</label>
-              <input type="date" id="input-date" style="width:100%; padding:0.7rem 1rem; border:1px solid var(--border-color); border-radius:8px; outline:none; font-weight:600;">
+              <div class="quote-glyph">&ldquo;</div>
+              <blockquote class="testimonial-quote">
+                I added a level to my serve in one season. The coaching is detailed and it actually sticks.
+              </blockquote>
             </div>
+            <figcaption class="testimonial-author">
+              <span class="author-name">Priya Anand</span>
+              <cite class="author-role">Performance Squad</cite>
+            </figcaption>
+          </div>
+        </li>
 
+        <li data-inview style="transition-delay: 120ms;">
+          <div class="testimonial-card">
             <div>
-              <label style="font-size:0.75rem; font-weight:700; color:var(--text-secondary); text-transform:uppercase;">Passengers</label>
-              <select id="input-passengers" style="width:100%; padding:0.7rem 1rem; border:1px solid var(--border-color); border-radius:8px; outline:none; font-weight:600;">
-                <option value="1">1 Passenger</option>
-                <option value="2">2 Passengers</option>
-              </select>
+              <div class="quote-glyph">&ldquo;</div>
+              <blockquote class="testimonial-quote">
+                Best courts in the city and a team that treats every member like a competitor.
+              </blockquote>
             </div>
-
-            <button class="btn btn-primary" style="height:42px;" onclick="executeMultiModalSearch()">🔍 Search All</button>
+            <figcaption class="testimonial-author">
+              <span class="author-name">Lukas Brenner</span>
+              <cite class="author-role">Adult Clinics</cite>
+            </figcaption>
           </div>
-        </div>
+        </li>
 
-        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap:1.25rem;" id="search-results-grid"></div>
-      <!-- SCREEN 5: SETTINGS TAB (ALL TOGGLES ENABLED) -->
-      <div id="section-settings" style="display: none;">
-        <div style="margin-bottom:1.5rem;">
-          <h2 style="font-size:1.75rem; font-weight:800; font-family:'Outfit',sans-serif; color:#0f172a;">Settings & Automation Controls</h2>
-          <p style="font-size:0.9rem; color:#64748b; margin-top:0.25rem;">Configure automated multi-modal disruption recovery and proactive travel notifications.</p>
-        </div>
-
-        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap:1.25rem;">
-          <!-- Card 1: Disruption Automation -->
-          <div class="card">
-            <h3 style="font-size:1.1rem; font-weight:800; margin-bottom:1rem; display:flex; align-items:center; gap:0.5rem;">
-              ⚡ Autonomous Recovery Toggles
-            </h3>
-
-            <div class="toggle-switch-container">
-              <div>
-                <b style="font-size:0.9rem; color:#0f172a;">Autonomous Multi-Modal Rerouting</b>
-                <div style="font-size:0.75rem; color:#64748b; margin-top:0.2rem;">Auto-generates & holds replacement train/bus/flight when delay > 45 mins.</div>
-              </div>
-              <label class="switch">
-                <input type="checkbox" id="toggle-rerouting" checked onchange="handleToggleChange('Autonomous Multi-Modal Rerouting', this.checked)">
-                <span class="slider"></span>
-              </label>
+        <li data-inview style="transition-delay: 240ms;">
+          <div class="testimonial-card">
+            <div>
+              <div class="quote-glyph">&ldquo;</div>
+              <blockquote class="testimonial-quote">
+                My daughter went from shy beginner to club champion. Worth every minute.
+              </blockquote>
             </div>
-
-            <div class="toggle-switch-container">
-              <div>
-                <b style="font-size:0.9rem; color:#0f172a;">Hotel Check-In Protection</b>
-                <div style="font-size:0.75rem; color:#64748b; margin-top:0.2rem;">Automatically notifies hotel front desk of late check-in to prevent room release.</div>
-              </div>
-              <label class="switch">
-                <input type="checkbox" id="toggle-hotel" checked onchange="handleToggleChange('Hotel Check-In Protection', this.checked)">
-                <span class="slider"></span>
-              </label>
-            </div>
-
-            <div class="toggle-switch-container">
-              <div>
-                <b style="font-size:0.9rem; color:#0f172a;">Car Rental Hold Sync</b>
-                <div style="font-size:0.75rem; color:#64748b; margin-top:0.2rem;">Extends pickup window at destination airport (Hertz / Avis) during delays.</div>
-              </div>
-              <label class="switch">
-                <input type="checkbox" id="toggle-rental" checked onchange="handleToggleChange('Car Rental Hold Sync', this.checked)">
-                <span class="slider"></span>
-              </label>
-            </div>
+            <figcaption class="testimonial-author">
+              <span class="author-name">Dana Okafor</span>
+              <cite class="author-role">Parent, Junior Development</cite>
+            </figcaption>
           </div>
+        </li>
+      </ul>
+    </section>
 
-          <!-- Card 2: AI & Notification Controls -->
-          <div class="card">
-            <h3 style="font-size:1.1rem; font-weight:800; margin-bottom:1rem; display:flex; align-items:center; gap:0.5rem;">
-              🤖 AI & Alerts Configuration
-            </h3>
-
-            <div class="toggle-switch-container">
-              <div>
-                <b style="font-size:0.9rem; color:#0f172a;">24/7 Gemini 3.6 Flash Concierge</b>
-                <div style="font-size:0.75rem; color:#64748b; margin-top:0.2rem;">Real-time AI reasoning powered by Google Gemini for conversational recovery.</div>
-              </div>
-              <label class="switch">
-                <input type="checkbox" id="toggle-gemini" checked onchange="handleToggleChange('24/7 Gemini Concierge', this.checked)">
-                <span class="slider"></span>
-              </label>
-            </div>
-
-            <div class="toggle-switch-container">
-              <div>
-                <b style="font-size:0.9rem; color:#0f172a;">Instant SMS & Push Notifications</b>
-                <div style="font-size:0.75rem; color:#64748b; margin-top:0.2rem;">Receive immediate departure gate changes, train delays, and recovery options.</div>
-              </div>
-              <label class="switch">
-                <input type="checkbox" id="toggle-alerts" checked onchange="handleToggleChange('Instant Disruption Alerts', this.checked)">
-                <span class="slider"></span>
-              </label>
-            </div>
-
-            <div class="toggle-switch-container">
-              <div>
-                <b style="font-size:0.9rem; color:#0f172a;">Smart Currency Converter (USD / INR)</b>
-                <div style="font-size:0.75rem; color:#64748b; margin-top:0.2rem;">Live exposure & fare calculations automatically synced between $ and ₹.</div>
-              </div>
-              <label class="switch">
-                <input type="checkbox" id="toggle-currency-sync" checked onchange="handleToggleChange('Smart Currency Converter', this.checked)">
-                <span class="slider"></span>
-              </label>
-            </div>
-          </div>
-
-          <!-- Card 3: Traveler Profile & Loyalty Sync -->
-          <div class="card">
-            <h3 style="font-size:1.1rem; font-weight:800; margin-bottom:1rem; display:flex; align-items:center; gap:0.5rem;">
-              👤 Traveler Profile & Loyalty Sync
-            </h3>
-
-            <div style="display:flex; flex-direction:column; gap:0.75rem;">
-              <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem;">
-                <div>
-                  <label style="font-size:0.75rem; font-weight:700; color:#64748b;">TRAVELER NAME</label>
-                  <input type="text" id="pref-traveler-name" value="Jenny Wilson" style="width:100%; padding:0.55rem 0.75rem; border:1px solid var(--border-color); border-radius:8px; font-size:0.85rem; outline:none;">
-                </div>
-                <div>
-                  <label style="font-size:0.75rem; font-weight:700; color:#64748b;">EMAIL ADDRESS</label>
-                  <input type="email" id="pref-traveler-email" value="jenny.wilson@travelshield.ai" style="width:100%; padding:0.55rem 0.75rem; border:1px solid var(--border-color); border-radius:8px; font-size:0.85rem; outline:none;">
-                </div>
-              </div>
-
-              <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem;">
-                <div>
-                  <label style="font-size:0.75rem; font-weight:700; color:#64748b;">AIRLINE FREQUENT FLYER</label>
-                  <input type="text" id="pref-airline-loyalty" value="AI-98241098" placeholder="e.g. AI-98241098" style="width:100%; padding:0.55rem 0.75rem; border:1px solid var(--border-color); border-radius:8px; font-size:0.85rem; outline:none;">
-                </div>
-                <div>
-                  <label style="font-size:0.75rem; font-weight:700; color:#64748b;">IRCTC / RAIL LOYALTY ID</label>
-                  <input type="text" id="pref-rail-loyalty" value="IRCTC-771829" placeholder="e.g. IRCTC-771829" style="width:100%; padding:0.55rem 0.75rem; border:1px solid var(--border-color); border-radius:8px; font-size:0.85rem; outline:none;">
-                </div>
-              </div>
-
-              <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem;">
-                <div>
-                  <label style="font-size:0.75rem; font-weight:700; color:#64748b;">SEATING PREFERENCE</label>
-                  <select id="pref-seating" style="width:100%; padding:0.55rem 0.75rem; border:1px solid var(--border-color); border-radius:8px; font-size:0.85rem; outline:none; background:white;">
-                    <option value="window" selected>Window Seat</option>
-                    <option value="aisle">Aisle Seat</option>
-                    <option value="extra-legroom">Extra Legroom</option>
-                  </select>
-                </div>
-                <div>
-                  <label style="font-size:0.75rem; font-weight:700; color:#64748b;">DIETARY PREFERENCE</label>
-                  <select id="pref-meal" style="width:100%; padding:0.55rem 0.75rem; border:1px solid var(--border-color); border-radius:8px; font-size:0.85rem; outline:none; background:white;">
-                    <option value="veg" selected>Vegetarian (Hindu / Jain)</option>
-                    <option value="non-veg">Non-Vegetarian</option>
-                    <option value="vegan">Vegan</option>
-                    <option value="diabetic">Diabetic Friendly</option>
-                  </select>
-                </div>
-              </div>
-
-              <button class="btn btn-primary" style="margin-top:0.35rem; justify-content:center; padding:0.65rem; background:#4f46e5;" onclick="saveTravelerProfile()">
-                Save Traveler Profile
-              </button>
-            </div>
-          </div>
-
-          <!-- Card 4: Disruption Tolerance & Policy Rules -->
-          <div class="card">
-            <h3 style="font-size:1.1rem; font-weight:800; margin-bottom:1rem; display:flex; align-items:center; gap:0.5rem;">
-              🎯 Disruption Tolerance & Policy Rules
-            </h3>
-
-            <div style="display:flex; flex-direction:column; gap:0.75rem;">
-              <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem;">
-                <div>
-                  <label style="font-size:0.75rem; font-weight:700; color:#64748b;">REROUTE DELAY TRIGGER</label>
-                  <select id="policy-delay-trigger" style="width:100%; padding:0.55rem 0.75rem; border:1px solid var(--border-color); border-radius:8px; font-size:0.85rem; outline:none; background:white;">
-                    <option value="30">Delay > 30 Mins (Aggressive)</option>
-                    <option value="45" selected>Delay > 45 Mins (Standard)</option>
-                    <option value="60">Delay > 60 Mins (Relaxed)</option>
-                    <option value="90">Delay > 90 Mins (Conservative)</option>
-                  </select>
-                </div>
-                <div>
-                  <label style="font-size:0.75rem; font-weight:700; color:#64748b;">MINIMUM CONNECTION BUFFER</label>
-                  <select id="policy-buffer-time" style="width:100%; padding:0.55rem 0.75rem; border:1px solid var(--border-color); border-radius:8px; font-size:0.85rem; outline:none; background:white;">
-                    <option value="45">45 Mins (Tight Transit)</option>
-                    <option value="60" selected>60 Mins (Recommended)</option>
-                    <option value="90">90 Mins (Safe Transit)</option>
-                    <option value="120">120 Mins (Heavy Baggage)</option>
-                  </select>
-                </div>
-              </div>
-
-              <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem;">
-                <div>
-                  <label style="font-size:0.75rem; font-weight:700; color:#64748b;">DEFAULT RECOVERY TIER</label>
-                  <select id="policy-default-strategy" style="width:100%; padding:0.55rem 0.75rem; border:1px solid var(--border-color); border-radius:8px; font-size:0.85rem; outline:none; background:white;">
-                    <option value="speed" selected>The Sprinter (Speed Priority)</option>
-                    <option value="balanced">The Optimal (Comfort & Value)</option>
-                    <option value="budget">The Economical (Cost Priority)</option>
-                  </select>
-                </div>
-                <div>
-                  <label style="font-size:0.75rem; font-weight:700; color:#64748b;">MAX OUT-OF-POCKET LIMIT</label>
-                  <input type="text" id="policy-max-cost" value="$250.00" style="width:100%; padding:0.55rem 0.75rem; border:1px solid var(--border-color); border-radius:8px; font-size:0.85rem; outline:none;">
-                </div>
-              </div>
-
-              <button class="btn btn-primary" style="margin-top:0.35rem; justify-content:center; padding:0.65rem; background:#4f46e5;" onclick="saveDisruptionPolicies()">
-                Save Disruption Policies
-              </button>
-            </div>
-          </div>
-
-          <!-- Card 5: Live API Keys & Integration Controls -->
-          <div class="card">
-            <h3 style="font-size:1.1rem; font-weight:800; margin-bottom:1rem; display:flex; align-items:center; gap:0.5rem;">
-              🔑 API Keys & Live Integrations
-            </h3>
-
-            <div style="display:flex; flex-direction:column; gap:0.75rem;">
-              <div>
-                <label style="font-size:0.75rem; font-weight:700; color:#64748b;">GEMINI 3.6 FLASH API KEY</label>
-                <div style="display:flex; gap:0.5rem;">
-                  <input type="password" id="key-gemini" placeholder="•••••••• (Active & Configured)" style="flex:1; padding:0.55rem 0.75rem; border:1px solid var(--border-color); border-radius:8px; font-size:0.85rem; outline:none; font-family:monospace;">
-                  <button type="button" class="btn btn-outline" style="padding:0.4rem 0.65rem; font-size:0.75rem;" onclick="toggleKeyVisibility('key-gemini')">👁</button>
-                </div>
-              </div>
-
-              <div>
-                <label style="font-size:0.75rem; font-weight:700; color:#64748b;">AVIATIONSTACK FLIGHT API KEY</label>
-                <div style="display:flex; gap:0.5rem;">
-                  <input type="password" id="key-aviationstack" value="66ffbf6a7c0fc63a1a593ed8cf28df31" style="flex:1; padding:0.55rem 0.75rem; border:1px solid var(--border-color); border-radius:8px; font-size:0.85rem; outline:none; font-family:monospace;">
-                  <button type="button" class="btn btn-outline" style="padding:0.4rem 0.65rem; font-size:0.75rem;" onclick="toggleKeyVisibility('key-aviationstack')">👁</button>
-                </div>
-              </div>
-
-              <div>
-                <label style="font-size:0.75rem; font-weight:700; color:#64748b;">AOPAY BUS BOOKING API ENDPOINT</label>
-                <input type="text" id="key-aopay" value="https://api.aopay.in/v2/bus/search" style="width:100%; padding:0.55rem 0.75rem; border:1px solid var(--border-color); border-radius:8px; font-size:0.85rem; outline:none; font-family:monospace;">
-              </div>
-
-              <button class="btn btn-primary" style="margin-top:0.35rem; justify-content:center; padding:0.65rem; background:#4f46e5;" onclick="saveApiKeys()">
-                Save & Update Live API Keys
-              </button>
-            </div>
-          </div>
-
-          <!-- Card 6: Emergency & Notification Channels -->
-          <div class="card">
-            <h3 style="font-size:1.1rem; font-weight:800; margin-bottom:1rem; display:flex; align-items:center; gap:0.5rem;">
-              📱 Emergency & Notification Channels
-            </h3>
-
-            <div style="display:flex; flex-direction:column; gap:0.85rem;">
-              <div>
-                <label style="font-size:0.75rem; font-weight:700; color:#64748b;">WHATSAPP CONCIERGE NUMBER</label>
-                <div style="display:flex; gap:0.5rem; margin-top:0.25rem;">
-                  <input type="tel" id="notif-whatsapp" value="+91 98200 12345" placeholder="+91..." style="flex:1; padding:0.55rem 0.75rem; border:1px solid var(--border-color); border-radius:8px; font-size:0.85rem; outline:none;">
-                  <button class="btn btn-outline" style="padding:0.4rem 0.75rem; font-size:0.75rem;" onclick="showToast('💬 WhatsApp Test Alert sent to your number!', 'success')">Test Send</button>
-                </div>
-              </div>
-
-              <div class="toggle-switch-container" style="padding:0.4rem 0;">
-                <div>
-                  <b style="font-size:0.85rem; color:#0f172a;">Auto-File Airline Delay Compensation</b>
-                  <div style="font-size:0.725rem; color:#64748b;">Drafts DGCA / EU261 passenger charter claims when delay exceeds 3 hours.</div>
-                </div>
-                <label class="switch">
-                  <input type="checkbox" id="toggle-compensation" checked onchange="handleToggleChange('Auto Delay Compensation Filing', this.checked)">
-                  <span class="slider"></span>
-                </label>
-              </div>
-
-              <div class="toggle-switch-container" style="padding:0.4rem 0;">
-                <div>
-                  <b style="font-size:0.85rem; color:#0f172a;">Live Gate Change Broadcast</b>
-                  <div style="font-size:0.725rem; color:#64748b;">Push notifications for terminal changes, baggage belts, and platform shifts.</div>
-                </div>
-                <label class="switch">
-                  <input type="checkbox" id="toggle-gate-broadcast" checked onchange="handleToggleChange('Gate Change Alerts', this.checked)">
-                  <span class="slider"></span>
-                </label>
-              </div>
-            </div>
-          </div>
-
-          <!-- Card 7: FastAPI Backend Server Configuration -->
-          <div class="card">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
-              <h3 style="font-size:1.1rem; font-weight:800; display:flex; align-items:center; gap:0.5rem;">
-                ⚙️ FastAPI Backend Server Configuration
-              </h3>
-              <span id="settings-backend-pill" class="status-pill confirmed" style="font-size:0.75rem;">Connected (v2.3.0)</span>
-            </div>
-
-            <p style="font-size:0.825rem; color:#64748b; line-height:1.5; margin-bottom:1rem;">
-              TravelShield AI runs a high-performance Python FastAPI backend engine with SQLite database persistence, live Aviationstack flight tracking, and AOPAY bus search adapters.
-            </p>
-
-            <div style="display:grid; grid-template-columns:1fr auto auto; gap:0.75rem; align-items:center;">
-              <div>
-                <label style="font-size:0.75rem; font-weight:700; color:#64748b;">BACKEND API BASE URL</label>
-                <input type="text" id="backend-url-input" value="http://127.0.0.1:8000" style="width:100%; padding:0.65rem 0.85rem; border:1px solid var(--border-color); border-radius:8px; font-size:0.85rem; outline:none; font-family:monospace;">
-              </div>
-              <button class="btn btn-primary" style="align-self:flex-end; padding:0.65rem 1rem; background:#4f46e5;" onclick="testAndSaveBackendUrl()">
-                Test & Connect
-              </button>
-              <a href="http://127.0.0.1:8000/docs" target="_blank" class="btn btn-outline" style="align-self:flex-end; padding:0.65rem 1rem;" title="Open interactive Swagger API documentation">
-                API Docs (/docs) ↗
-              </a>
-            </div>
-
-            <div style="margin-top:1rem; background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:0.75rem 1rem; font-size:0.775rem; color:#475569; display:flex; justify-content:space-between; align-items:center;">
-              <div>
-                <b>To run backend locally:</b> Double click <code>start_backend.bat</code> or run <code>python -m uvicorn app.main:app --reload</code>
-              </div>
-              <span style="color:#10b981; font-weight:700;">Port: 8000</span>
-            </div>
-          </div>
-
-          <!-- Card 8: Data, Privacy & Demo Reset -->
-          <div class="card">
-            <h3 style="font-size:1.1rem; font-weight:800; margin-bottom:1rem; display:flex; align-items:center; gap:0.5rem;">
-              🛡️ Data Management & Recovery Audit
-            </h3>
-
-            <p style="font-size:0.825rem; color:#64748b; line-height:1.5; margin-bottom:1rem;">
-              Export full forensic audit trails of itinerary disruptions, or reset local demo scenarios for testing.
-            </p>
-
-            <div style="display:flex; flex-direction:column; gap:0.75rem;">
-              <button class="btn btn-outline" style="justify-content:center; padding:0.65rem; font-weight:700; display:flex; align-items:center; gap:0.5rem;" onclick="downloadAuditReport()">
-                📥 Download Disruption Audit Report (.JSON)
-              </button>
-              <button class="btn btn-outline" style="justify-content:center; padding:0.65rem; font-weight:700; color:#b45309; border-color:#fde68a; background:#fffbeb;" onclick="clearDisruptionCache()">
-                🧹 Clear Disruption Cache & Stored Itineraries
-              </button>
-              <button class="btn btn-outline" style="justify-content:center; padding:0.65rem; font-weight:700; color:#4f46e5; border-color:#c7d2fe; background:#eff6ff;" onclick="resetDemoSettings()">
-                🔄 Reset All Settings to Demo Defaults
-              </button>
-            </div>
-          </div>
-
-        </div>
-      </div>
-
-      <!-- SCREEN 6: HISTORY TAB -->
-      <div id="section-history" style="display: none;">
-        <div style="margin-bottom:1.5rem;">
-          <h2 style="font-size:1.75rem; font-weight:800; font-family:'Outfit',sans-serif; color:#0f172a;">Recovery History</h2>
-          <p style="font-size:0.9rem; color:#64748b; margin-top:0.25rem;">Audit log of disrupted itineraries and applied AI recovery actions.</p>
-        </div>
-
-        <div class="card">
-          <table class="custom-table">
-            <thead>
-              <tr>
-                <th>Booking Ref</th>
-                <th>Original Route</th>
-                <th>Disruption Event</th>
-                <th>Recovery Applied</th>
-                <th>Outcome</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><b>YH892A</b></td>
-                <td>DEL → BOM → GOI</td>
-                <td><span style="color:#dc2626; font-weight:700;">Flight Delay (+6h 30m)</span></td>
-                <td><b>The Sprinter (Score 95)</b> · Flight Reroute</td>
-                <td><span class="status-pill recovered">RECOVERED</span></td>
-              </tr>
-              <tr>
-                <td><b>TR710K</b></td>
-                <td>BOM → PUNE → GOI</td>
-                <td><span style="color:#b45309; font-weight:700;">Train 12123 Cancelled</span></td>
-                <td><b>The Economical (Score 68)</b> · IntrCity Volvo</td>
-                <td><span class="status-pill confirmed">CONFIRMED</span></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-    </main>
-  </div>
-
-  <!-- SCREEN 5: DISRUPTION DETECTED MODAL -->
-  <div class="modal-overlay" id="disruption-detected-modal" style="display:none;">
-    <div class="modal-content" style="max-width:540px; padding:2rem;">
-      <button class="modal-close-btn" onclick="closeDisruptionModal()">✕</button>
-      
-      <div style="display:flex; align-items:center; gap:0.6rem; margin-bottom:1rem;">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-        <span style="font-weight:900; font-size:1.15rem; font-family:'Outfit',sans-serif;">TravelShield</span>
-      </div>
-
-      <div style="margin-bottom:1rem;">
-        <span style="background:#fef3c7; color:#b45309; font-size:0.725rem; font-weight:800; padding:0.25rem 0.55rem; border-radius:6px; letter-spacing:0.04em;">
-          ⚠ FLIGHT / TRIP DISRUPTED
-        </span>
-      </div>
-
-      <h3 style="font-size:1.4rem; font-weight:900; line-height:1.25; color:#0f172a; font-family:'Outfit',sans-serif;">
-        Disruption Detected: Your BOM to GOI trip is affected.
-      </h3>
-      <p style="font-size:0.875rem; color:#64748b; margin-top:0.5rem; line-height:1.45;">
-        We've identified a significant delay with your upcoming connection. Don't worry—our recovery engine is already working on alternative plans.
-      </p>
-
-      <div style="background:#fffafa; border:1px solid #fee2e2; border-radius:12px; padding:1.1rem; margin:1.25rem 0; display:flex; justify-content:space-between; align-items:center;">
+    <!-- -----------------------------------------------------------
+         7. FOOTER SECTION
+    ----------------------------------------------------------- -->
+    <footer id="contact">
+      <!-- CTA Band -->
+      <div class="footer-cta-band">
         <div>
-          <div style="font-size:0.7rem; font-weight:800; color:#94a3b8; text-transform:uppercase;">Original Route</div>
-          <div style="font-size:1.05rem; font-weight:800; color:#0f172a; margin-top:0.2rem;">Air India AI 492 / Train 12123</div>
-          <div style="font-size:0.8rem; color:#64748b; margin-top:0.15rem;">Mumbai (BOM) → Goa (GOI)</div>
+          <div class="eyebrow eyebrow-light">
+            <span class="eyebrow-dot"></span>
+            <span>Get started</span>
+          </div>
+          <p class="footer-cta-title">
+            <span class="clip-box-line"><span class="clip-inner" style="transition-delay: 0ms;">Ready to</span></span>
+            <span class="clip-box-line"><span class="clip-inner" style="transition-delay: 120ms;">play?</span></span>
+          </p>
         </div>
-        <div style="text-align:right;">
-          <div style="font-size:0.7rem; font-weight:800; color:#94a3b8; text-transform:uppercase;">Status</div>
-          <div style="font-size:1.05rem; font-weight:900; color:#dc2626; margin-top:0.2rem;">Delayed: 6h 30m</div>
-        </div>
+
+        <button class="pill-btn pill-btn-light open-modal-trigger" type="button" data-inview style="transition-delay: 150ms;">
+          <span>Book a Visit</span>
+          <svg class="pill-btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 12h14M13 6l6 6-6 6"/>
+          </svg>
+        </button>
       </div>
 
-      <div style="background:#f8fafc; border-radius:12px; padding:1rem; margin-bottom:1.25rem; display:flex; align-items:flex-start; gap:0.75rem;">
-        <div style="background:#fef3c7; color:#b45309; width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:0.85rem;">🕒</div>
+      <!-- Columns Grid -->
+      <div class="footer-cols-grid">
+        <!-- Brand column -->
+        <div class="footer-brand-col">
+          <div class="footer-brand-title">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="9"/>
+              <path d="M4.8 5.6A9 9 0 0 0 4.8 18.4"/>
+              <path d="M19.2 5.6a9 9 0 0 1 0 12.8"/>
+            </svg>
+            <span>Baseline</span>
+          </div>
+          <p class="footer-blurb">
+            A members' tennis club and academy where focused coaching meets championship courts.
+          </p>
+          <address class="footer-address">
+            <a href="mailto:play@baseline.club">play@baseline.club</a>
+            <a href="tel:+12125550148">+1 (212) 555-0148</a>
+            <span class="footer-address-muted">120 Court Lane, New York</span>
+          </address>
+        </div>
+
+        <!-- Programs Column -->
         <div>
-          <div style="font-weight:800; font-size:0.85rem; color:#0f172a;">Arriving Late</div>
-          <div style="font-size:0.8rem; color:#64748b; margin-top:0.2rem;">
-            Due to this delay, you are expected to arrive in Goa 6 hours and 30 minutes later than originally scheduled.
-          </div>
+          <div class="footer-nav-col-title">Programs</div>
+          <ul class="footer-links-list">
+            <li><a href="#junior">Junior Development</a></li>
+            <li><a href="#performance">Performance Squad</a></li>
+            <li><a href="#adult">Adult Clinics</a></li>
+            <li><a href="#private">Private Coaching</a></li>
+          </ul>
+        </div>
+
+        <!-- Club Column -->
+        <div>
+          <div class="footer-nav-col-title">Club</div>
+          <ul class="footer-links-list">
+            <li><a href="#membership">Membership</a></li>
+            <li><a href="#facilities">Facilities</a></li>
+            <li><a href="#club">Events</a></li>
+            <li><a href="#shop">Pro Shop</a></li>
+          </ul>
+        </div>
+
+        <!-- Company Column -->
+        <div>
+          <div class="footer-nav-col-title">Company</div>
+          <ul class="footer-links-list">
+            <li><a href="#about">About</a></li>
+            <li><a href="#programs">Coaches</a></li>
+            <li><a href="#careers">Careers</a></li>
+            <li><a href="#contact">Contact</a></li>
+          </ul>
         </div>
       </div>
 
-      <button class="btn btn-primary" style="width:100%; justify-content:center; padding:0.85rem; background:#4f46e5; border-radius:10px; font-weight:700;" onclick="closeDisruptionModal(); switchTab('diagnosis');">
-        View Recovery Options →
-      </button>
-
-      <div style="border:1px dashed #e2e8f0; border-radius:12px; padding:1rem; margin-top:1.25rem; text-align:center;">
-        <div style="font-size:1.1rem;">🎁</div>
-        <div style="font-weight:800; font-size:0.85rem; margin-top:0.25rem;">Refer a Friend, Get Rewarded</div>
-        <div style="font-size:0.75rem; color:#64748b; margin-top:0.2rem;">Help your friends travel stress-free. You both get $25 in credits.</div>
-        <a href="#" style="font-size:0.75rem; font-weight:800; color:#4f46e5; display:inline-block; margin-top:0.5rem; text-decoration:none;" onclick="showToast('Referral link copied to clipboard!', 'success'); return false;">GET INVITE LINK</a>
+      <!-- Bottom Bar -->
+      <div class="footer-bottom-bar">
+        <div>&copy; 2026 Baseline Tennis Club. All rights reserved.</div>
+        <nav class="footer-bottom-links" aria-label="Social links">
+          <a href="#instagram">Instagram</a>
+          <a href="#x">X</a>
+          <a href="#youtube">YouTube</a>
+          <a href="#linkedin">LinkedIn</a>
+        </nav>
+        <nav class="footer-bottom-links" aria-label="Legal links">
+          <a href="#privacy">Privacy</a>
+          <a href="#terms">Terms</a>
+        </nav>
       </div>
-    </div>
-  </div>
+    </footer>
 
-  <!-- AUTH MODAL -->
-  <div class="modal-overlay" id="auth-modal">
-    <div class="modal-content">
-      <button class="modal-close-btn" onclick="closeAuthModal()">✕</button>
-      
-      <div style="text-align:center; margin-bottom:1.25rem;">
-        <h3 style="font-size:1.3rem; font-weight:800;" id="auth-modal-title">Sign In to TravelShield</h3>
-        <p style="font-size:0.8rem; color:var(--text-secondary); margin-top:0.25rem;">Access AI disruption recovery & travel management</p>
-      </div>
+  </main>
 
-      <div class="auth-tabs">
-        <button class="auth-tab-btn active" id="tab-login" onclick="setAuthTab('login')">Sign In</button>
-        <button class="auth-tab-btn" id="tab-register" onclick="setAuthTab('register')">Register</button>
-      </div>
-
-      <button type="button" class="btn btn-outline" style="width:100%; justify-content:center; padding:0.65rem; margin-bottom:1rem; border-color:#3b82f6; color:#2563eb; font-weight:700; background:#eff6ff;" onclick="quickDemoLogin()">
-        ⚡ Quick 1-Click Login (Jenny Wilson - Verified)
-      </button>
-
-      <form id="auth-form" onsubmit="handleAuthSubmit(event)">
-        <div style="display:flex; flex-direction:column; gap:0.85rem;">
-          <div>
-            <label style="font-size:0.75rem; font-weight:700; color:var(--text-secondary);">EMAIL ADDRESS</label>
-            <input type="email" id="auth-email" required placeholder="name@example.com" style="width:100%; padding:0.65rem 0.85rem; border:1px solid var(--border-color); border-radius:8px; outline:none; font-size:0.85rem;">
+  <!-- =============================================================
+       CONTACT MODAL (PORTALED AT BODY LEVEL)
+  ============================================================= -->
+  <div id="contact-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title-heading">
+    <div class="modal-backdrop" id="modal-backdrop"></div>
+    <div class="modal-panel">
+      <div class="modal-header">
+        <div>
+          <div class="eyebrow eyebrow-dark">
+            <span class="eyebrow-dot"></span>
+            <span>Book a visit</span>
           </div>
-          <div>
-            <label style="font-size:0.75rem; font-weight:700; color:var(--text-secondary);">PASSWORD</label>
-            <input type="password" id="auth-password" required placeholder="••••••••" style="width:100%; padding:0.65rem 0.85rem; border:1px solid var(--border-color); border-radius:8px; outline:none; font-size:0.85rem;">
-          </div>
-
-          <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center; padding:0.75rem; margin-top:0.5rem;" id="auth-submit-btn">
-            Sign In with Email
-          </button>
-
-          <button type="button" class="btn btn-outline" style="width:100%; justify-content:center; padding:0.75rem; margin-top:0.35rem; font-weight:700; display:flex; align-items:center; gap:0.6rem; border-color:#e2e8f0;" onclick="signInWithRealGoogleMail()">
-            <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.26v3.15C3.29 21.36 7.37 24 12 24z"/><path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.26C.46 8.16 0 9.98 0 12s.46 3.84 1.26 5.42l4.02-3.15z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.37 0 3.29 2.64 1.26 6.58l4.02 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/></svg>
-            Sign in with Google Mail (Gmail)
-          </button>
+          <h2 class="modal-title" id="modal-title-heading">
+            <span class="clip-box-line"><span class="clip-inner" style="transition-delay: 0ms;">Come see</span></span>
+            <span class="clip-box-line"><span class="clip-inner" style="transition-delay: 90ms;">the courts</span></span>
+          </h2>
         </div>
+
+        <button class="modal-close-btn" id="modal-close-btn" aria-label="Close modal" type="button">
+          <svg class="modal-close-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 6l12 12M18 6L6 18"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Form -->
+      <form class="modal-form" id="visit-form" novalidate>
+        <div class="form-group">
+          <label class="form-label" for="field-name">Full name</label>
+          <input class="form-input" type="text" id="field-name" name="name" placeholder="Alex Rivera" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="field-email">Email</label>
+          <input class="form-input" type="email" id="field-email" name="email" placeholder="you@email.com" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="field-message">What would you like to play?</label>
+          <textarea class="form-textarea" id="field-message" name="message" rows="3" placeholder="I'd love to try a private lesson on the clay courts…"></textarea>
+        </div>
+
+        <button class="pill-btn pill-btn-solid" id="modal-submit-btn" type="submit" style="margin-top: 0.5rem; justify-content: center;">
+          <span id="submit-btn-text">Request a visit</span>
+        </button>
       </form>
-    </div>
-  </div>
 
-  <!-- FLOATING GEMINI ASSISTANT LAUNCHER (Small, Sleek Logo) -->
-  <button class="gemini-floating-btn" id="btn-toggle-gemini-assistant" onclick="toggleGeminiDrawer()" title="Ask Gemini AI Assistant">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0;">
-      <path d="M12 2C12 7.52285 7.52285 12 2 12C7.52285 12 12 16.4771 12 22C12 16.4771 16.4771 12 22 12C16.4771 12 12 7.52285 12 2Z" fill="url(#gemini-btn-icon-grad)"/>
-      <defs>
-        <linearGradient id="gemini-btn-icon-grad" x1="2" y1="2" x2="22" y2="22" gradientUnits="userSpaceOnUse">
-          <stop stop-color="#38bdf8"/>
-          <stop offset="0.5" stop-color="#818cf8"/>
-          <stop offset="1" stop-color="#c084fc"/>
-        </linearGradient>
-      </defs>
-    </svg>
-    <span>Ask Gemini</span>
-    <span style="width:6px; height:6px; background:#4ade80; border-radius:50%; display:inline-block;"></span>
-  </button>
-
-  <!-- FLOATING GEMINI CHAT DRAWER -->
-  <div class="gemini-chat-drawer" id="gemini-assistant-drawer" style="display:none;">
-    <div class="gemini-drawer-header">
-      <div style="display:flex; align-items:center; gap:0.6rem;">
-        <div style="background:rgba(255,255,255,0.12); width:28px; height:28px; border-radius:7px; display:flex; align-items:center; justify-content:center;">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M12 2C12 7.52285 7.52285 12 2 12C7.52285 12 12 16.4771 12 22C12 16.4771 16.4771 12 22 12C16.4771 12 12 7.52285 12 2Z" fill="url(#gemini-drawer-header-grad)"/>
-            <defs>
-              <linearGradient id="gemini-drawer-header-grad" x1="2" y1="2" x2="22" y2="22" gradientUnits="userSpaceOnUse">
-                <stop stop-color="#38bdf8"/>
-                <stop offset="0.5" stop-color="#818cf8"/>
-                <stop offset="1" stop-color="#c084fc"/>
-              </linearGradient>
-            </defs>
+      <!-- Success Panel (hidden initially) -->
+      <div class="modal-success-panel" id="modal-success-panel" style="display: none;">
+        <div class="success-check-circle">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 13l4 4L19 7"/>
           </svg>
         </div>
-        <div>
-          <div style="font-weight:800; font-size:0.92rem; font-family:'Outfit',sans-serif;">Gemini AI Assistant</div>
-          <div style="font-size:0.7rem; color:#94a3b8; display:flex; align-items:center; gap:0.35rem;">
-            <span style="width:6px; height:6px; background:#10b981; border-radius:50%; display:inline-block;"></span>
-            Gemini 3.6 Flash · Online
-          </div>
-        </div>
+        <h3 style="font-size: 1.125rem; font-weight: 500;">Request received</h3>
+        <p style="font-size: 0.875rem; color: var(--ink-soft); line-height: 1.5;" id="success-msg">
+          Thanks for reaching out — our team will be in touch to lock in your visit.
+        </p>
+        <button class="pill-btn pill-btn-solid" id="modal-done-btn" type="button" style="margin-top: 0.5rem;">
+          <span>Done</span>
+        </button>
       </div>
-      <button onclick="toggleGeminiDrawer()" style="background:none; border:none; color:#94a3b8; font-size:1.25rem; cursor:pointer;">✕</button>
-    </div>
-
-    <div class="gemini-drawer-body" id="gemini-drawer-messages">
-      <!-- Initial AI Message -->
-      <div style="background:white; border:1px solid #e2e8f0; border-radius:14px; padding:0.85rem 1rem; font-size:0.85rem; color:#0f172a; line-height:1.45; box-shadow:0 2px 5px rgba(0,0,0,0.03);">
-        <div style="display:flex; align-items:center; gap:6px; margin-bottom:5px; font-size:0.75rem; font-weight:700; color:#4f46e5;">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M12 2C12 7.52285 7.52285 12 2 12C7.52285 12 12 16.4771 12 22C12 16.4771 16.4771 12 22 12C16.4771 12 12 7.52285 12 2Z" fill="url(#gemini-btn-icon-grad)"/></svg>
-          Gemini 3.6 Flash Concierge
-        </div>
-        👋 <b>Hi Jenny!</b> I've analyzed your itinerary (PNR YH892A). Your inbound flight AI 812 was delayed by 6h 30m, causing a missed connection to Goa. How can I help you recover your journey?
-      </div>
-
-      <!-- Quick Prompt Chips -->
-      <div style="display:flex; flex-wrap:wrap; gap:0.4rem; margin:0.25rem 0;">
-        <button class="ai-prompt-chip" onclick="sendGeminiPrompt('What is the fastest way to reach Goa today?')">⚡ Fastest Route</button>
-        <button class="ai-prompt-chip" onclick="sendGeminiPrompt('Will I lose my Radisson hotel reservation?')">🏨 Protect Hotel</button>
-        <button class="ai-prompt-chip" onclick="sendGeminiPrompt('How does The Sprinter compare to The Economical?')">⚖️ Compare Plans</button>
-        <button class="ai-prompt-chip" onclick="sendGeminiPrompt('Explain my $845 financial exposure')">💰 Exposure Breakdown</button>
-      </div>
-    </div>
-
-    <div class="gemini-drawer-footer">
-      <input type="text" id="gemini-drawer-input" class="gemini-drawer-input" placeholder="Ask Gemini about your trip..." onkeydown="if(event.key==='Enter') sendGeminiDrawerMessage()">
-      <button class="btn btn-primary" style="padding:0.65rem 0.95rem; border-radius:10px; background:#4f46e5;" onclick="sendGeminiDrawerMessage()">
-        ➤
-      </button>
     </div>
   </div>
 
-  <div id="toast-area"></div>
+  <!-- =============================================================
+       FULLSCREEN MENU OVERLAY (PORTALED AT BODY LEVEL)
+  ============================================================= -->
+  <div id="menu-overlay">
+    <div class="menu-backdrop" id="menu-backdrop"></div>
+    <div class="menu-panel">
+      <div class="menu-header">
+        <div class="menu-brand">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="9"/>
+            <path d="M4.8 5.6A9 9 0 0 0 4.8 18.4"/>
+            <path d="M19.2 5.6a9 9 0 0 1 0 12.8"/>
+          </svg>
+          <span>Baseline</span>
+        </div>
 
-  <script src="./js/app.js"></script>
+        <button class="menu-close-btn" id="menu-close-btn" aria-label="Close menu" type="button">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 6l12 12M18 6L6 18"/>
+          </svg>
+        </button>
+      </div>
+
+      <nav class="menu-nav" aria-label="Main menu">
+        <a class="menu-link menu-nav-link" href="#programs">Programs</a>
+        <a class="menu-link menu-nav-link" href="#facilities">Facilities</a>
+        <a class="menu-link menu-nav-link" href="#testimonials">Reviews</a>
+        <a class="menu-link menu-nav-link" href="#contact">Contact</a>
+      </nav>
+
+      <div class="menu-footer">
+        <button class="pill-btn pill-btn-light open-modal-trigger" type="button" id="menu-book-btn">
+          <span>Book a Visit</span>
+          <svg class="pill-btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 12h14M13 6l6 6-6 6"/>
+          </svg>
+        </button>
+
+        <nav class="menu-socials" aria-label="Social media">
+          <a href="#instagram">Instagram</a>
+          <a href="#x">X</a>
+          <a href="#youtube">YouTube</a>
+          <a href="#linkedin">LinkedIn</a>
+        </nav>
+      </div>
+    </div>
+  </div>
+
+  <!-- =============================================================
+       SCRIPTS: LENIS, REM ADAPTER, SPRINGS, CAROUSELS, MODAL
+  ============================================================= -->
+  <script type="module">
+    import Lenis from 'lenis';
+
+    // -------------------------------------------------------------
+    // 1. ADAPTIVE REM SCALE (SCALE UP >1920px)
+    // -------------------------------------------------------------
+    const htmlEl = document.documentElement;
+    function updateRemScale() {
+      const FONT_BASE = 16, BASE_W = 1920, COEF = 0.6666;
+      const reduction = ((BASE_W - window.innerWidth) / BASE_W) * 100 * COEF;
+      const size = FONT_BASE - (FONT_BASE * reduction) / 100;
+      if (size > FONT_BASE) {
+        htmlEl.style.fontSize = size + "px";
+      } else {
+        htmlEl.style.removeProperty("font-size");
+      }
+    }
+    window.addEventListener("resize", updateRemScale);
+    updateRemScale();
+
+    // -------------------------------------------------------------
+    // 2. LENIS SMOOTH SCROLL INIT
+    // -------------------------------------------------------------
+    const lenis = new Lenis({
+      smoothWheel: true,
+      duration: 1.2,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t))
+    });
+
+    function raf(time) {
+      lenis.raf(time);
+      requestAnimationFrame(raf);
+    }
+    requestAnimationFrame(raf);
+
+    // Scroll lock helpers
+    function lockScroll() {
+      lenis.stop();
+      htmlEl.style.position = 'relative';
+      htmlEl.style.overflow = 'hidden';
+      htmlEl.style.height = '100%';
+    }
+    function unlockScroll() {
+      lenis.start();
+      htmlEl.style.removeProperty('position');
+      htmlEl.style.removeProperty('overflow');
+      htmlEl.style.removeProperty('height');
+    }
+
+    // Scroll to top on first load
+    window.scrollTo(0, 0);
+
+    // -------------------------------------------------------------
+    // 3. INTRO LOADER ORCHESTRATION
+    // -------------------------------------------------------------
+    const MIN_VISIBLE_MS = 1400;
+    const MAX_VISIBLE_MS = 2600;
+    const EXIT_MS = 850;
+    let ready = false;
+
+    const loaderEl = document.getElementById('intro-loader');
+    const loaderWordmark = document.getElementById('loader-wordmark');
+    const loaderBar = document.getElementById('loader-bar');
+
+    // Initially lock scroll while loader is active
+    lockScroll();
+
+    // Wordmark entrance
+    setTimeout(() => {
+      loaderWordmark.classList.add('active');
+    }, 50);
+
+    // Progress bar fill
+    setTimeout(() => {
+      loaderBar.style.transform = 'scaleX(1)';
+    }, 120);
+
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const effectiveMinVisible = prefersReducedMotion ? 200 : MIN_VISIBLE_MS;
+
+    function finishLoader() {
+      if (ready) return;
+      ready = true;
+
+      // Hero reveal triggers
+      triggerHeroReveals();
+
+      // Unlock scroll
+      unlockScroll();
+
+      if (prefersReducedMotion) {
+        loaderEl.remove();
+      } else {
+        loaderEl.style.transform = 'translateY(-105%)';
+        setTimeout(() => {
+          loaderEl.remove();
+        }, EXIT_MS);
+      }
+    }
+
+    const loadStartTime = Date.now();
+    window.addEventListener('load', () => {
+      const elapsed = Date.now() - loadStartTime;
+      const remaining = Math.max(0, effectiveMinVisible - elapsed);
+      setTimeout(finishLoader, remaining);
+    });
+
+    // Safety fallback
+    setTimeout(finishLoader, MAX_VISIBLE_MS);
+
+    // -------------------------------------------------------------
+    // 4. HERO SECTION REVEALS & PARALLAX
+    // -------------------------------------------------------------
+    function triggerHeroReveals() {
+      // 1. Title word-by-word reveal
+      const heroTitle = document.getElementById('hero-title');
+      if (heroTitle) heroTitle.classList.add('is-revealed');
+
+      // 2. Tagline stacked lines reveal
+      const heroTagline = document.getElementById('hero-tagline');
+      if (heroTagline) heroTagline.classList.add('is-revealed');
+
+      // 3. Collection slider and membership card inview
+      const colSlider = document.getElementById('collection-slider');
+      const memCard = document.getElementById('membership-card');
+      if (colSlider) colSlider.classList.add('inview-active');
+      if (memCard) memCard.classList.add('inview-active');
+
+      // Start collection autoplay once ready
+      startCollectionAutoplay();
+    }
+
+    // Scroll parallax for Hero background plate
+    const heroSection = document.getElementById('hero');
+    const heroParallaxLayer = document.getElementById('hero-parallax-layer');
+
+    lenis.on('scroll', (e) => {
+      if (!heroSection || !heroParallaxLayer) return;
+      const rect = heroSection.getBoundingClientRect();
+      const h = window.innerHeight;
+      if (rect.bottom > 0 && rect.top < h) {
+        // progress 0 (at top) -> 1 (scrolled off)
+        const progress = Math.min(1, Math.max(0, -rect.top / (rect.height || 1)));
+        const shiftY = progress * 12; // 0% -> 12%
+        heroParallaxLayer.style.transform = `translateY(${shiftY}%)`;
+      }
+
+      // Parallax for Trust ghost words
+      updateTrustParallax();
+    });
+
+    // -------------------------------------------------------------
+    // 5. HERO COLLECTION SLIDER
+    // -------------------------------------------------------------
+    const collectionData = [
+      {
+        img: 'https://api.getlayers.ai/storage/v1/object/public/public/assets/baseline-88535e4000/2.webp',
+        brand: 'Baseline Pro',
+        title: 'Featured Gear',
+        cta: 'Shop the kit \u2192',
+        alt: 'Player driving a backhand on a hard court'
+      },
+      {
+        img: 'https://api.getlayers.ai/storage/v1/object/public/public/assets/baseline-88535e4000/3.webp',
+        brand: 'Court Series',
+        title: 'Summer Drop',
+        cta: 'View the line \u2192',
+        alt: 'Player stretching for a forehand on clay'
+      },
+      {
+        img: 'https://api.getlayers.ai/storage/v1/object/public/public/assets/baseline-88535e4000/5.webp',
+        brand: 'Academy Kit',
+        title: 'Junior Range',
+        cta: 'Browse juniors \u2192',
+        alt: 'Player set in a ready stance on clay'
+      }
+    ];
+
+    let collectionIndex = 0;
+    let collectionInterval = null;
+    const colCard = document.getElementById('collection-card');
+    const colImg = document.getElementById('collection-img');
+    const colBrand = document.getElementById('collection-brand');
+    const colTitle = document.getElementById('collection-title');
+    const colCta = document.getElementById('collection-cta');
+    const colDots = document.querySelectorAll('#collection-dots .carousel-dot');
+
+    function setCollectionSlide(idx) {
+      if (!colCard) return;
+      collectionIndex = (idx + collectionData.length) % collectionData.length;
+      
+      // Cross-fade animation
+      colCard.style.transition = 'opacity 200ms ease, transform 200ms ease';
+      colCard.style.opacity = '0';
+      colCard.style.transform = 'translateY(16px) scale(0.96)';
+
+      setTimeout(() => {
+        const item = collectionData[collectionIndex];
+        colImg.src = item.img;
+        colImg.alt = item.alt;
+        colBrand.textContent = item.brand;
+        colTitle.textContent = item.title;
+        colCta.textContent = item.cta;
+
+        colDots.forEach((d, i) => {
+          d.classList.toggle('active', i === collectionIndex);
+        });
+
+        colCard.style.transition = 'opacity 350ms var(--ease-out-expo), transform 350ms var(--ease-out-expo)';
+        colCard.style.opacity = '1';
+        colCard.style.transform = 'translateY(0) scale(1)';
+      }, 200);
+    }
+
+    function startCollectionAutoplay() {
+      if (collectionInterval) clearInterval(collectionInterval);
+      collectionInterval = setInterval(() => {
+        setCollectionSlide(collectionIndex + 1);
+      }, 3800);
+    }
+
+    colDots.forEach((dot, idx) => {
+      dot.addEventListener('click', () => {
+        setCollectionSlide(idx);
+        startCollectionAutoplay();
+      });
+    });
+
+    // -------------------------------------------------------------
+    // 6. TRUST COACH CAROUSEL & GHOST PARALLAX
+    // -------------------------------------------------------------
+    const coachData = [
+      {
+        words: ["Expert", "Result-", "Driven", "Coaching"],
+        img: "https://api.getlayers.ai/storage/v1/object/public/public/assets/baseline-88535e4000/5.webp",
+        name: "Marco Vidal",
+        role: "Head Coach",
+        alt: "Head coach set in a ready stance on clay"
+      },
+      {
+        words: ["Sharper", "Faster", "Stronger", "Player"],
+        img: "https://api.getlayers.ai/storage/v1/object/public/public/assets/baseline-88535e4000/4.webp",
+        name: "Elena Sokolova",
+        role: "Performance Coach",
+        alt: "Performance coach following through on a serve"
+      },
+      {
+        words: ["Future", "Champions", "Start", "Here"],
+        img: "https://api.getlayers.ai/storage/v1/object/public/public/assets/baseline-88535e4000/1.webp",
+        name: "James Okoro",
+        role: "Juniors Lead",
+        alt: "Juniors lead waiting to return on clay"
+      }
+    ];
+
+    let coachIndex = 0;
+    const ghostW1 = document.getElementById('ghost-w1');
+    const ghostW2 = document.getElementById('ghost-w2');
+    const ghostW3 = document.getElementById('ghost-w3');
+    const ghostW4 = document.getElementById('ghost-w4');
+    const coachImg = document.getElementById('coach-img');
+    const coachName = document.getElementById('coach-name');
+    const coachRole = document.getElementById('coach-role');
+    const trustDots = document.querySelectorAll('#trust-dots .carousel-dot');
+
+    function setCoachSlide(idx) {
+      coachIndex = (idx + coachData.length) % coachData.length;
+      const data = coachData[coachIndex];
+
+      // 1. Cross-fade photo
+      if (coachImg) {
+        coachImg.style.opacity = '0';
+        setTimeout(() => {
+          coachImg.src = data.img;
+          coachImg.alt = data.alt;
+          coachName.textContent = data.name;
+          coachRole.textContent = data.role;
+          coachImg.style.opacity = '1';
+        }, 150);
+      }
+
+      // 2. Re-fire clip-mask reveal on ghost words
+      const words = [ghostW1, ghostW2, ghostW3, ghostW4];
+      words.forEach((w, i) => {
+        if (!w) return;
+        w.style.transition = 'none';
+        w.style.transform = 'translateY(115%)';
+        w.style.opacity = '0';
+        w.textContent = data.words[i];
+      });
+
+      // trigger reflow
+      void ghostW1.offsetWidth;
+
+      words.forEach((w, i) => {
+        if (!w) return;
+        w.style.transition = 'transform 700ms var(--ease-out-expo), opacity 700ms var(--ease-out-expo)';
+        w.style.transitionDelay = (i * 60) + 'ms';
+        w.style.transform = 'translateY(0)';
+        w.style.opacity = '1';
+      });
+
+      // 3. Update dots
+      trustDots.forEach((d, i) => {
+        d.classList.toggle('active', i === coachIndex);
+      });
+    }
+
+    document.getElementById('trust-prev-btn')?.addEventListener('click', () => {
+      setCoachSlide(coachIndex - 1);
+    });
+    document.getElementById('trust-next-btn')?.addEventListener('click', () => {
+      setCoachSlide(coachIndex + 1);
+    });
+    trustDots.forEach((d, i) => {
+      d.addEventListener('click', () => setCoachSlide(i));
+    });
+
+    // Scroll parallax on ghost words
+    const trustSection = document.getElementById('trust');
+    function updateTrustParallax() {
+      if (!trustSection) return;
+      const rect = trustSection.getBoundingClientRect();
+      const h = window.innerHeight;
+      if (rect.bottom > 0 && rect.top < h) {
+        const p = Math.min(1, Math.max(0, (h - rect.top) / (h + rect.height)));
+        // top-left: x: -3% -> 3%
+        const x1 = -3 + p * 6;
+        // top-right: x: 3% -> -3%
+        const x2 = 3 - p * 6;
+        // bottom-left: x: -2% -> 4%
+        const x3 = -2 + p * 6;
+        // bottom-right: x: 4% -> -3%
+        const x4 = 4 - p * 7;
+
+        if (ghostW1) ghostW1.style.marginLeft = `${x1}%`;
+        if (ghostW2) ghostW2.style.marginRight = `${x2}%`;
+        if (ghostW3) ghostW3.style.marginLeft = `${x3}%`;
+        if (ghostW4) ghostW4.style.marginRight = `${x4}%`;
+      }
+    }
+
+    // -------------------------------------------------------------
+    // 7. FACILITIES WORD-BY-WORD FADE+RISE
+    // -------------------------------------------------------------
+    const facilitiesBody = document.getElementById('facilities-body');
+    if (facilitiesBody) {
+      const text = facilitiesBody.textContent.trim();
+      const words = text.split(/\s+/);
+      facilitiesBody.innerHTML = words.map((w, idx) => {
+        const delay = 250 + idx * 28;
+        return `<span class="word-fade" style="transition-delay: ${delay}ms;">${w}</span>`;
+      }).join(' ');
+    }
+
+    // -------------------------------------------------------------
+    // 8. INTERSECTION OBSERVER FOR IN-VIEW REVEALS
+    // -------------------------------------------------------------
+    const inviewObserver = new IntersectionObserver((entries, obs) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('inview-active');
+          entry.target.classList.add('is-revealed');
+          
+          // Also trigger any stacked-lines inside
+          const innerReveals = entry.target.querySelectorAll('.clip-inner');
+          innerReveals.forEach(el => {
+            el.style.transform = 'translateY(0)';
+            el.style.opacity = '1';
+          });
+
+          obs.unobserve(entry.target);
+        }
+      });
+    }, {
+      threshold: 0.15,
+      rootMargin: '0px 0px -50px 0px'
+    });
+
+    document.querySelectorAll('[data-inview]').forEach(el => {
+      inviewObserver.observe(el);
+    });
+
+    // Also observe headings for clip-mask stacked lines
+    const headingsToObserve = [
+      document.getElementById('programs-title'),
+      document.getElementById('facilities-title'),
+      document.getElementById('stats-title'),
+      document.getElementById('testimonials-title'),
+      document.querySelector('.footer-cta-title')
+    ];
+    headingsToObserve.forEach(h => {
+      if (h) {
+        h.setAttribute('data-inview', '');
+        inviewObserver.observe(h);
+      }
+    });
+
+    // -------------------------------------------------------------
+    // 9. CONTACT MODAL LOGIC
+    // -------------------------------------------------------------
+    const contactModal = document.getElementById('contact-modal');
+    const modalBackdrop = document.getElementById('modal-backdrop');
+    const modalCloseBtn = document.getElementById('modal-close-btn');
+    const modalForm = document.getElementById('visit-form');
+    const modalSubmitBtn = document.getElementById('modal-submit-btn');
+    const submitBtnText = document.getElementById('submit-btn-text');
+    const modalSuccessPanel = document.getElementById('modal-success-panel');
+    const modalDoneBtn = document.getElementById('modal-done-btn');
+    const successMsg = document.getElementById('success-msg');
+    const fieldName = document.getElementById('field-name');
+
+    function openModal() {
+      contactModal.classList.add('open');
+      lockScroll();
+      setTimeout(() => {
+        fieldName?.focus();
+      }, 120);
+    }
+
+    function closeModal() {
+      contactModal.classList.remove('open');
+      unlockScroll();
+      setTimeout(() => {
+        // reset form states
+        modalForm.style.display = 'flex';
+        modalSuccessPanel.style.display = 'none';
+        modalForm.reset();
+        modalSubmitBtn.disabled = false;
+        submitBtnText.textContent = 'Request a visit';
+      }, 350);
+    }
+
+    document.querySelectorAll('.open-modal-trigger').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        closeMenu();
+        openModal();
+      });
+    });
+
+    modalCloseBtn?.addEventListener('click', closeModal);
+    modalBackdrop?.addEventListener('click', closeModal);
+    modalDoneBtn?.addEventListener('click', closeModal);
+
+    // Form submission stub (no real API call)
+    modalForm?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const nameVal = fieldName.value.trim() || 'there';
+      const firstName = nameVal.split(' ')[0];
+
+      modalSubmitBtn.disabled = true;
+      submitBtnText.textContent = 'Sending…';
+
+      setTimeout(() => {
+        modalForm.style.display = 'none';
+        successMsg.textContent = `Thanks, ${firstName} — our team will be in touch to lock in your visit.`;
+        modalSuccessPanel.style.display = 'flex';
+      }, 800);
+    });
+
+    // -------------------------------------------------------------
+    // 10. FULLSCREEN MENU OVERLAY LOGIC
+    // -------------------------------------------------------------
+    const menuOverlay = document.getElementById('menu-overlay');
+    const menuBackdrop = document.getElementById('menu-backdrop');
+    const openMenuBtn = document.getElementById('open-menu-btn');
+    const menuCloseBtn = document.getElementById('menu-close-btn');
+    const menuNavLinks = document.querySelectorAll('.menu-nav-link');
+
+    function openMenu() {
+      menuOverlay.classList.add('open');
+      lockScroll();
+    }
+
+    function closeMenu() {
+      menuOverlay.classList.remove('open');
+      unlockScroll();
+    }
+
+    openMenuBtn?.addEventListener('click', openMenu);
+    menuCloseBtn?.addEventListener('click', closeMenu);
+    menuBackdrop?.addEventListener('click', closeMenu);
+
+    menuNavLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        closeMenu();
+      });
+    });
+
+    // -------------------------------------------------------------
+    // 11. ESCAPE KEY LISTENER (CLOSES MODAL OR MENU)
+    // -------------------------------------------------------------
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        if (contactModal.classList.contains('open')) {
+          closeModal();
+        } else if (menuOverlay.classList.contains('open')) {
+          closeMenu();
+        }
+      }
+    });
+
+    // -------------------------------------------------------------
+    // 12. SMOOTH ANCHOR NAVIGATION VIA LENIS
+    // -------------------------------------------------------------
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function(e) {
+        const targetId = this.getAttribute('href');
+        if (targetId && targetId !== '#') {
+          const targetEl = document.querySelector(targetId);
+          if (targetEl) {
+            e.preventDefault();
+            lenis.scrollTo(targetEl, { offset: -20 });
+          }
+        }
+      });
+    });
+
+  </script>
 </body>
 </html>
